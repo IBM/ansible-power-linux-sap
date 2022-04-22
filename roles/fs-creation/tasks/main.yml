@@ -1,0 +1,37 @@
+# ------------------------------------------------------------------------
+# Copyright 2021, 2022 IBM Corp. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ------------------------------------------------------------------------
+---
+### this role creates filesystem for SAP installations.
+
+# to run rescan-scsi-bus script to refresh device list
+- name: Run rescan-scsi-bus.sh command to check for new devices 
+  shell: /usr/bin/rescan-scsi-bus.sh -a -c -v
+
+- name: Run validaton for terraform variables if terraform_wrapper is true
+  import_tasks: terraform-disks-validation.yml
+  when: disks_configuration | type_debug == "dict"
+
+- name: Use Terraform Warpper and Create Filesystem if terraform_wrapper is true
+  import_tasks: terraform-wrapper.yml
+  when: disks_configuration | type_debug == "dict"
+
+- name: Create Filesystem without terraform wrapper
+  include_tasks: file-system-creation-core.yml
+  with_items:
+  - "{{ disks_configuration }}"
+  loop_control:
+    loop_var: file_system
+  when: disks_configuration | type_debug == "list"

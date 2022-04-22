@@ -1,0 +1,112 @@
+# ------------------------------------------------------------------------
+# Copyright 2021, 2022 IBM Corp. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ------------------------------------------------------------------------
+---
+# this role configures RHEL lpar for sap installation.
+
+# subscribing to RHEL and setting release to {{ rhel_subscription.release }}
+- name: Subscribing to RHEL and setting release to {{ rhel_subscription.release }}
+  redhat_subscription:
+    state: present
+    username: "{{ rhel_subscription.username }}"
+    password: "{{ rhel_subscription.password }}"
+    release: "{{ rhel_subscription.release }}"
+    auto_attach: true
+  when: rhel_subscription is defined
+
+# setting fact for major release. This will be used to setup repos for particular release.
+- set_fact:
+   rhel_major_release={{ rhel_subscription.release | int }}
+  when: rhel_subscription is defined
+
+# Add repos for installing RHEL packages required for SAP installation
+- name: Adding RHEL repos
+  rhsm_repository:
+   name: "{{ item }}"
+   state: enabled
+  with_items:
+  - rhel-{{ rhel_major_release }}-for-ppc64le-baseos-e4s-rpms
+  - rhel-{{ rhel_major_release }}-for-ppc64le-appstream-e4s-rpms
+  - rhel-{{ rhel_major_release }}-for-ppc64le-sap-solutions-e4s-rpms
+  - rhel-{{ rhel_major_release }}-for-ppc64le-sap-netweaver-e4s-rpms
+  - rhel-{{ rhel_major_release }}-for-ppc64le-highavailability-e4s-rpms
+  when: rhel_subscription is defined
+  
+# multipathd daemon is checked whether its up or not. If not, it is started. 
+- name: Ensure multipathd daemon is running
+  service:
+   name: multipathd
+   state: started 
+
+# For modification on network interfaces, create a dictionary of interfaces
+- name: Create interfaces dictionary
+  set_fact:
+   interfaces: "{{ interfaces | default({}) | combine( {item: hostvars[ inventory_hostname ] ['ansible_' + item ]} ) }}"
+  with_items: "{{ ansible_interfaces | replace('-', '_') }}"
+
+# activate jumbo frames and MTU for all network interfaces except management interfaces 
+- name: Activate jumboframes for all networks except management interface and lo and activate tso
+  shell: "ip link set dev {{ item.key }} mtu 9000; ethtool -K {{ item.key }} tso on"
+  with_dict: "{{ interfaces }}"
+  when:
+  - "item.value.ipv4.address is defined"
+  - host_ip is not defined or  item.value.ipv4.address != host_ip
+  - "item.key != 'lo'"
+  - "item.value.mtu != 9000"
+
+# to make the above changes persistent across reboot.
+- name: Set jumboframes permanently so it is valid after reboots for all networks except eth0 and lo
+  lineinfile:
+   dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item.key }}"
+   regexp: "^MTU"
+   line: "MTU='9000'"
+  with_dict: "{{ interfaces }}"
+  when:
+  - "item.value.ipv4.address is defined"
+  - "host_ip is not defined or item.value.ipv4.address != host_ip" 
+  - "item.key != 'lo'"
+  - "item.value.mtu != 9000"
+
+
+- name: Set ETHTOOL_OPT On permanently so it is valid after reboots for all networks except eth0 and lo
+  lineinfile:
+   dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item.key }}"
+   regexp: "^ETHTOOL_OPT"
+   line: "ETHTOOL_OPT='-K {{ item.key }} tso on'"
+  with_dict: "{{ interfaces }}"
+  when:
+  - "item.value.ipv4.address is defined"
+  - "host_ip is not defined or item.value.ipv4.address != host_ip" 
+  - "item.key != 'lo'"
+  - "item.value.mtu != 9000"
+
+# to reinforce changes in current boot 
+- name: Restart network 
+  service:
+   name: NetworkManager 
+   state: restarted
+
+# to Insure that NFS and rpcbind daemon are up. 
+- name: Ensure NFS client is running
+  service:
+   name: nfs-client.target
+   state: started
+   enabled: yes
+
+- name: Ensure rpcbind is running
+  service:
+   name: rpcbind
+   state: started
+   enabled: yes

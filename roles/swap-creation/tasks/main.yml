@@ -1,0 +1,71 @@
+# ------------------------------------------------------------------------
+# Copyright 2021, 2022 IBM Corp. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ------------------------------------------------------------------------
+---
+## this role check for previous swap device and delete it if present. Then configure the new swap device on the disk wwn value passed with swap_disk_wwn
+
+## first validate the date passed with swap_disk_wwn variable
+- name: running rescan command
+  shell: /usr/bin/rescan-scsi-bus.sh -a -c -v
+
+# validate swap_disk_wwn provided with multipath -ll command, for its presence. fail, if doesnot match.
+- name: validating the wwn values passed
+  shell: /sbin/multipath -ll | grep {{ swap_disk_wwn | lower }}
+  register:  validation_check
+  ignore_errors: true
+
+- name: check for the results
+  fail:
+    msg: "command {{ validation_check.cmd }} failed"
+  when: validation_check.rc==1
+
+# if above validation is successful, continue with core logic of removing the already present swap device and creating a new based on wwn passed
+# check for previous swap device, if any configired. If configured, remove it.
+- name: check for any swap device, if present, need to be removed 
+  shell: swapon -s | grep -v Filename | awk '{ print $1 }' 
+  register: swapon_device_list
+
+- name: delete previous swap device 
+  shell: swapoff {{ item }}
+  with_items: "{{ swapon_device_list.stdout_lines }}"
+  when: swapon_device_list.stdout is defined
+
+# validate if multipath alias is enabled. If enabled, set field to check for dm-X name, as 3, else it remains at default 2. 
+- name: to check if multipath alias is enabled.
+  shell: grep "user_friendly_names no" /etc/multipath.conf
+  register: multipath_alias
+  ignore_errors: yes
+- name: setting count variable based on multipath aliasing is enabled or not
+  set_fact:
+   count: 3
+  when: multipath_alias.rc == 1
+  
+- name: get dm device for wwn  {{ swap_disk_wwn }} 
+  shell: "multipath -ll | grep -B 1 {{ swap_disk_wwn | lower  }} | grep dm- | awk '{print \"/dev/\"${{ count | default(2) }}}' "
+  register: swap_dm_name 
+
+- set_fact:
+   swap_dm_device: "{{ swap_dm_name.stdout }}"
+
+# no create a new swap device, based on dm-X name of wwn disk.
+# enabling swap device  
+- name: mkswap on  device  {{ swap_dm_device }} 
+  shell: mkswap {{ swap_dm_device }} 
+
+# activating swap device 
+- name: swapon the device  {{ swap_dm_device }} 
+  shell: swapon {{ swap_dm_device }} 
+
+

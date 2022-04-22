@@ -1,0 +1,71 @@
+# ------------------------------------------------------------------------
+# Copyright 2021, 2022 IBM Corp. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ------------------------------------------------------------------------
+---
+# this task reads the variable passed to execute ansible roles, and manipulate them to be passed to fs_creation role, in a single dictionalry for each name variable passed in variable list. 
+# this is an intermediate task, and is required for terraform execution. It is not required if running fs_creation role directly. 
+
+- name: for loop, to manipulate pv listing. #Use this loop to distribute pvs for names provided and use them later for filesystem creation.
+  shell: i=0; while [[ $i -lt {{ item.1 }} ]]; do echo {{ item.0 }} ; let i=i+1; done
+  register: loop_for_wwn
+  with_together:
+  - "{{ disks_configuration.names | map('trim') | list }}"
+  - "{{  disks_configuration.counts | map('trim') | list }}"
+- set_fact:
+    tmp_wwn_list="{{ tmp_wwn_list | default([]) }} + {{ item.stdout_lines | list|flatten }}"
+  loop: "{{ loop_for_wwn.results }}"
+
+# Create a dict with pv and its type
+- set_fact:
+   pv_listing_dm: "{{ pv_listing_dm | default({}) |  combine({ item.0: item.1  })}}"
+  with_together:
+  - "{{ disks_configuration.wwns | map('trim') | list  }}"
+  - "{{ tmp_wwn_list }}"
+
+- copy: content="{{ pv_listing_dm  }}" dest=/root/tmp_file
+- shell: "cat /root/tmp_file | tr [{},] '\n' | tee /root/tmp_file_mod"
+- shell: "cat /root/tmp_file_mod | sed 's/ //g' | sed 's/\"//g' | grep {{ item }} | sed 's/:{{ item }}//g' | tr '\n' ',' | sed 's/,$//g'"
+  register: tmp_wwn_var
+  loop: "{{ disks_configuration.names | map('trim') | list }}"
+
+- set_fact:
+    wwn_list="{{ wwn_list | default([]) }} + {{ item.stdout_lines | list|flatten }}"
+  loop: "{{ tmp_wwn_var.results }}"
+
+# to create stripes list dict
+- set_fact:
+     disks_config_mod: "{{ disks_config_mod | default([]) + [{ 'name': item.0, 'count' : item.1, 'path' : item.2, 'wwns' : item.3 }] }}"
+  with_together:
+  - "{{ disks_configuration.names | map('trim') | list }}"
+  - "{{ disks_configuration.counts | map('trim') | list }}"
+  - "{{ disks_configuration.paths | map('trim') | list }}"
+  - "{{ wwn_list }}"
+
+# execution of fs_creation role starts here. Iterate for each list created above
+- include_tasks: file-system-creation-core.yml 
+  with_items: 
+  - "{{ disks_config_mod }}" 
+  loop_control:
+    loop_var: file_system
+
+## Remove temp file created. 
+- name: Remove temp file created during execution 
+  file: 
+   state: absent
+   path: "{{ item }}"
+  with_items:
+  - /root/tmp_file
+  - /root/tmp_file_mod 
+  

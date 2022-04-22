@@ -1,0 +1,104 @@
+# ------------------------------------------------------------------------
+# Copyright 2021, 2022 IBM Corp. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ------------------------------------------------------------------------
+---
+### this role creates filesystem for SAP installations. 
+
+# Converting comma seperated wwn list passed as variable to a list of wwns
+- name: Convert a string seperated with commas into a list of elements
+  set_fact: wwn_list="{{ file_system.wwns.split(',') }}"
+
+# stopping multipathd daemon, will restart after rescan. Making sure, that it is ran only once per execution, by introducing multipathd_executed variable and defining it after multipathd is started 
+- name: Ensure multipathd daemon is stopped 
+  service:
+   name: multipathd
+   state: stopped
+  when: multipathd_executed is not defined  
+
+# before starting with filesystem creation, lets scan the for any new disk that may have been added to LPAR 
+- name: Run rescan-scsi-bus.sh command to check for new devices 
+  shell: /usr/bin/rescan-scsi-bus.sh -a -c -v
+  when: multipathd_executed is not defined
+
+# restart multipathd after recan is completed.
+- name: Ensure multipathd daemon is enabled 
+  service:
+   name: multipathd
+   state: started 
+  when: multipathd_executed is not defined
+- set_fact: 
+   multipathd_executed: 1 
+
+# Need to check multipath alias, if it is enabled then to multipath -ll command, returns dm-X device name in 3rd field else, it is in 2nd field. Introduce a count variable for same. If multipath alias is enabled, set count=3, else default if 2.
+- name: Check if multipath alias is enabled.
+  shell: grep "user_friendly_names no" /etc/multipath.conf
+  register: multipath_alias
+  ignore_errors: yes
+  
+- name: Setting count variable based on multipath aliasing is enabled or not
+  set_fact:
+   count: 3
+  when: multipath_alias.rc == 1
+  
+- name: Get the device dm-X name listing using wwn. 
+  shell: "multipath -ll | grep -B 1 {{ item }} | grep dm- | awk '{print \"/dev/\"${{ count | default(2) }}}' "
+  register: wwn_dm_list
+  with_items: "{{ wwn_list | lower }}"
+
+# Create a list based on multipath output.
+- set_fact: empty_list="{{ empty_list | default([]) }}"
+- set_fact: wwn_to_dm_list="{{ empty_list | default([])  }}"
+- set_fact:
+   wwn_to_dm_list="{{ wwn_to_dm_list | default([]) }} + {{ item.stdout_lines | list|flatten }}"
+  loop: "{{ wwn_dm_list.results }}"
+
+- set_fact: pv_create_list="{{ empty_list | default([])  }}"
+- set_fact: pv_create_list="{{ pv_create_list |  default([]) }}  + ['{{ item }}']"
+  with_items: "{{ wwn_to_dm_list |  list|flatten  }}"
+
+# Creating volume group. 
+- name: Create LVM volume group {{ file_system.name }}vg on {{pv_create_list}}
+  lvg:
+    vg: "{{file_system.name}}vg"
+    pvs: "{{pv_create_list}}"
+    state: present   
+
+# Making use of --stripesize as 64K as default, unless passed explicitly in extra vars 
+- name: Create Logical Volume {{ file_system.name }}lv  
+  lvol:
+    vg: "{{ file_system.name }}vg" 
+    lv: "{{ file_system.name }}lv" 
+    size: 100%VG
+    opts: --stripes {{ wwn_list|length }} --stripesize {{ stripe_size | default('64K') }}
+    state: present
+
+- name: Create directory {{ file_system.path }} if doesn't exist
+  file:
+    path: "{{ file_system.path }}" 
+    state: directory
+    mode: '0755'
+
+- name: Create filesystem
+  filesystem:
+    fstype: xfs 
+    dev: "/dev/mapper/{{file_system.name}}vg-{{ file_system.name}}lv" 
+    opts: -K  
+
+- name: Mount lv {{ file_system.name }}lv on {{ file_system.path }}
+  mount:
+    path: "{{ file_system.path }}" 
+    src: "/dev/mapper/{{file_system.name}}vg-{{file_system.name}}lv" 
+    fstype: xfs 
+    state: mounted
