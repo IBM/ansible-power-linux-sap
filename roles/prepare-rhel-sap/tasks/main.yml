@@ -56,16 +56,6 @@
    interfaces: "{{ interfaces | default({}) | combine( {item: hostvars[ inventory_hostname ] ['ansible_' + item ]} ) }}"
   with_items: "{{ ansible_interfaces | replace('-', '_') }}"
 
-# activate jumbo frames and MTU for all network interfaces except management interfaces 
-- name: Activate jumboframes for all networks except management interface and lo and activate tso
-  shell: "ip link set dev {{ item.key }} mtu 9000; ethtool -K {{ item.key }} tso on"
-  with_dict: "{{ interfaces }}"
-  when:
-  - "item.value.ipv4.address is defined"
-  - host_ip is not defined or  item.value.ipv4.address != host_ip
-  - "item.key != 'lo'"
-  - "item.value.mtu != 9000"
-
 # to make the above changes persistent across reboot.
 - name: Set jumboframes permanently so it is valid after reboots for all networks except eth0 and lo
   lineinfile:
@@ -90,7 +80,6 @@
   - "item.value.ipv4.address is defined"
   - "host_ip is not defined or item.value.ipv4.address != host_ip" 
   - "item.key != 'lo'"
-  - "item.value.mtu != 9000"
 
 # to reinforce changes in current boot 
 - name: Restart network 
