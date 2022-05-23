@@ -50,7 +50,6 @@
    name: device-mapper-multipath
    state: present
 
-
 # multipathd daemon is checked whether its up or not. If not, it is started. 
 - name: Ensure multipathd daemon is running
   service:
@@ -62,7 +61,6 @@
   set_fact:
    interfaces: "{{ interfaces | default({}) | combine( {item: hostvars[ inventory_hostname ] ['ansible_' + item ]} ) }}"
   with_items: "{{ ansible_interfaces | replace('-', '_') }}"
-
 
 # to make jumbo frame and TSO  persistent across reboot.
 - name: Set jumboframes permanently so it is valid after reboots for all networks except eth0 and lo
@@ -76,7 +74,6 @@
   - "host_ip is not defined or item.value.ipv4.address != host_ip" 
   - "item.key != 'lo'"
   - "item.value.mtu != 9000"
-
 
 - name: Set ETHTOOL_OPT On permanently so it is valid after reboots for all networks except eth0 and lo
   lineinfile:
