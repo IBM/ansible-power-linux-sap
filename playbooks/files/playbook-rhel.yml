@@ -14,7 +14,7 @@
 # limitations under the License.
 # ------------------------------------------------------------------------
 ---
-- hosts: all
+- hosts: all 
   roles:
   - { role: powervs_prepare_rhel_sap, when: sap_solution is defined }
   - { role: sap-preconfigure, sap_preconfigure_fail_if_reboot_required: no, when: sap_solution is defined }

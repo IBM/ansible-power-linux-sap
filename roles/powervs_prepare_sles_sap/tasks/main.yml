@@ -1,20 +1,5 @@
-# ------------------------------------------------------------------------
-# Copyright 2021, 2022 IBM Corp. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ------------------------------------------------------------------------
 ---
-### this role preconfigures LPAR for SAP installation requirement. Based on SAP_SOLUTION input, saptune configures the system for HANA or NETWEAVER.
+### this role preconfigures LPAR for SAP installation requirement. Based on sap_solution input, saptune configures the system for HANA or NETWEAVER.
 
 # subscribing to SuSE subscription
 # Add repos for installing SLES packages required for SAP installation
@@ -23,6 +8,12 @@
    SUSEConnect -r {{ suse_subscription.key }}  -e {{ suse_subscription.username }}
    SUSEConnect -p sle-module-public-cloud/{{suse_subscription.release}}/ppc64le
   when: suse_subscription is defined
+
+# making sure all requisite filesets are installed. 
+- name: Checking for multipath package
+  package:
+   name: multipath-tools
+   state: present
 
 # multipathd daemon is checked whether its up or not. If not, it is started. 
 - name: Ensure multipathd daemon is running
@@ -35,7 +26,6 @@
   set_fact:
    interfaces: "{{ interfaces | default({}) | combine( {item: hostvars[ inventory_hostname ] ['ansible_' + item ]} ) }}"
   with_items: "{{ ansible_interfaces | replace('-', '_') }}"
-
 
 # to make the above changes persistent across reboot.
 - name: Set jumboframes permanently so it is valid after reboots for all networks except eth0 and lo
@@ -68,21 +58,21 @@
     name: network 
     state: restarted
 
-# following task checked for SAPTUNE profile on system and apply {{ SAP_SOLUTION }} profile if not applied. Also check for saptune rpm installation
+# following task checked for SAPTUNE profile on system and apply {{ sap_solution }} profile if not applied. Also check for saptune rpm installation
 - name: Checking for saptune package installation
   zypper:
     name: saptune
     state: present
 
-- name: Check if {{ SAP_SOLUTION | upper }} solution is applied or not 
+- name: Check if {{ sap_solution | upper }} solution is applied or not 
   shell: "saptune solution enabled"
   register: saptune_status
  
-- name: Tune SLES for SAP {{ SAP_SOLUTION | upper }}
-  shell: "saptune solution apply {{ SAP_SOLUTION | upper }}"
-  when: saptune_status.stdout.find("{{ SAP_SOLUTION | upper }}") == -1
+- name: Tune SLES for SAP {{ sap_solution | upper }}
+  shell: "saptune solution apply {{ sap_solution | upper }}"
+  when: saptune_status.stdout.find("{{ sap_solution | upper }}") == -1
 
-- name: Activate SLES tuning for SAP {{ SAP_SOLUTION | upper }}
+- name: Activate SLES tuning for SAP {{ sap_solution | upper }}
   shell: "saptune daemon start"
 
 # to Insure that NFS and rpcbind daemon are up. 
