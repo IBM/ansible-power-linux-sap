@@ -14,22 +14,8 @@
 # limitations under the License.
 # ------------------------------------------------------------------------
 ---
-
-galaxy_info:
-  role_name: power_linux_sap_prepare
-  author: Sahitya Jain, Suraj Bharadwaj
-  description: RHEL/SLES ansible automation to prepare LPARs for installing SAP on Power Systems.
-  company: IBM
-
-  license: GNU General Public License v3.0
-
-  min_ansible_version: 2.9
-       
-  galaxy_tags:
-    - power
-    - sap
-    - rhel
-    - sles
-    - ibm
-
-dependencies: []
+- hosts: all 
+  roles:
+  - { role: powervs_prepare_sles_sap, when: sap_solution is defined }
+  - { role: powervs_fs_creation,      when: disks_configuration is defined }
+  - { role: powervs_swap_creation,    when: swap_disk_wwn is defined }
