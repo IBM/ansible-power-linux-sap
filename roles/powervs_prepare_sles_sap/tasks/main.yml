@@ -27,7 +27,6 @@
    interfaces: "{{ interfaces | default({}) | combine( {item: hostvars[ inventory_hostname ] ['ansible_' + item ]} ) }}"
   with_items: "{{ ansible_interfaces | replace('-', '_') }}"
 
-
 # to make the above changes persistent across reboot.
 - name: Set jumboframes permanently so it is valid after reboots for all networks except eth0 and lo
   lineinfile:
