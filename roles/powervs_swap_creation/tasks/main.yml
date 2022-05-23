@@ -80,5 +80,3 @@
 # activating swap device 
 - name: Swapon the device  {{ swap_dm_device }} 
   shell: swapon {{ swap_dm_device }} 
-
-
