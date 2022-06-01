@@ -1,9 +1,9 @@
 ---
 ### this role preconfigures LPAR for SAP installation requirement. Based on sap_solution input, saptune configures the system for HANA or NETWEAVER.
 
-# subscribing to SuSE subscription
+# subscribing to SUSE subscription
 # Add repos for installing SLES packages required for SAP installation
-- name: Register SuSE and enable repos
+- name: Register SUSE and enable repos
   shell: |
    SUSEConnect -r {{ suse_subscription.key }}  -e {{ suse_subscription.username }}
    SUSEConnect -p sle-module-public-cloud/{{suse_subscription.release}}/ppc64le
@@ -15,7 +15,7 @@
    name: multipath-tools
    state: present
 
-# multipathd daemon is checked whether its up or not. If not, it is started. 
+# multipathd daemon is checked whether it's up or not. If not, it is started. 
 - name: Ensure multipathd daemon is running
   service:
    name: multipathd
@@ -28,7 +28,7 @@
   with_items: "{{ ansible_interfaces | replace('-', '_') }}"
 
 # to make the above changes persistent across reboot.
-- name: Set jumboframes permanently so it is valid after reboots for all networks except eth0 and lo
+- name: Set jumbo frames permanently so it is valid after reboots for all networks except eth0 and lo
   lineinfile:
    dest: "/etc/sysconfig/network/ifcfg-{{ item.key }}"
    regexp: "^MTU"

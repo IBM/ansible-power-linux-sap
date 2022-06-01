@@ -18,7 +18,7 @@ This role is followed by execution of following community roles
 All settings applied remain persistent across reboot.
 
 **Note:**
-Ansible playbook may report **Failure/Warning**, if scripts analyse reboot is required for settings applied by it. User should reboot thier LPAR, in that case.
+Ansible playbook may report **Failure/Warning**, if scripts analyse reboot is required for settings applied by it. User should reboot their LPAR, in that case.
 
 ## Dependencies
 

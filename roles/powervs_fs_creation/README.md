@@ -5,7 +5,7 @@
 This module is same for both SLES and RHEL.
 
 This role performs the following tasks:
-- **Creates filesystems** with user defined **stripe size** using ansible **builtin** LVM logical volumes modules.
+- **Creates filesystems** with user defined **stripe size** using ansible **built-in** LVM logical volumes modules.
 - **Mounts** the filesystems on provided **mount points**
 - **Adds an entry to /etc/fstab** for **automount** on reboot.
 - **Optional** :Converts the input data structure from **terraform to a general data structure** (Terraform output support)

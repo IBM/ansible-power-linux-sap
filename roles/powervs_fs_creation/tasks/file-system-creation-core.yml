@@ -1,8 +1,8 @@
 ---
 ### this role creates filesystem for SAP installations. 
 
-# Converting comma seperated wwn list passed as variable to a list of wwns
-- name: Convert a string seperated with commas into a list of elements
+# Converting comma separated wwn list passed as variable to a list of wwns
+- name: Convert a string separated with commas into a list of elements
   set_fact: wwn_list="{{ file_system.wwns.split(',') }}"
 
 # stopping multipathd daemon, will restart after rescan. Making sure, that it is ran only once per execution, by introducing multipathd_executed variable and defining it after multipathd is started 
@@ -17,7 +17,7 @@
   shell: /usr/bin/rescan-scsi-bus.sh -a -c -v
   when: multipathd_executed is not defined
 
-# restart multipathd after recan is completed.
+# restart multipathd after rescan is completed.
 - name: Ensure multipathd daemon is enabled 
   service:
    name: multipathd
