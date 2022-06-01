@@ -7,7 +7,7 @@ version: "0.1"
 readme: "README.md"
 
 authors:
-- "Sahitya Jain(@sahityajain123), Suraj Bharadwaj(@surajssb)"
+- "Sahitya Jain(@sahityajain123), Suraj Bharadwaj(@surajsbharadwaj)"
 
 description: RHEL/SLES ansible automation to prepare LPARs for installing SAP on Power Systems.
 
