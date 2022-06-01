@@ -205,7 +205,7 @@ Install [git repo](https://github.ibm.com/SAP-Automation/ansible-PowerVS-config)
    
 After git repo is available on LPAR, requirements.yml file present in repo, need to be used to get other roles which are not part of this git repository, but are needed for complete SAP solution. Below command should be used. 
 
-```ansible-galaxy collection install -r requirements.yml```
+```ansible-galaxy install -r requirements.yml```
 
 These community roles are needed, as they configure RHEL LPAR as required for SAP HANA or NetWeaver for Power Systems according to SAP Note [2772999](https://launchpad.support.sap.com/#/notes/2772999).
 
