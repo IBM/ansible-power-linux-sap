@@ -1,13 +1,13 @@
-namespace: "sahityajain123"
+namespace: "IBM"
 
-name: "ansible_power_linux_sap"
+name: "power_linux_sap"
 
 version: "0.1"
 
 readme: "README.md"
 
 authors:
-- "Sahitya Jain, Suraj Bharadwaj"
+- "Sahitya Jain(@sahityajain123), Suraj Bharadwaj(@surajssb)"
 
 description: RHEL/SLES ansible automation to prepare LPARs for installing SAP on Power Systems.
 
