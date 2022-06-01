@@ -50,7 +50,7 @@
    name: device-mapper-multipath
    state: present
 
-# multipathd daemon is checked whether its up or not. If not, it is started. 
+# multipathd daemon is checked whether it's up or not. If not, it is started. 
 - name: Ensure multipathd daemon is running
   service:
    name: multipathd
@@ -63,7 +63,7 @@
   with_items: "{{ ansible_interfaces | replace('-', '_') }}"
 
 # to make jumbo frame and TSO  persistent across reboot.
-- name: Set jumboframes permanently so it is valid after reboots for all networks except eth0 and lo
+- name: Set jumbo frames permanently so it is valid after reboots for all networks except eth0 and lo
   lineinfile:
    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item.key }}"
    regexp: "^MTU"

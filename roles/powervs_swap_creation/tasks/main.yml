@@ -33,7 +33,7 @@
 - name: Running rescan command
   shell: /usr/bin/rescan-scsi-bus.sh -a -c -v
 
-# validate swap_disk_wwn provided with multipath -ll command, for its presence. fail, if doesnot match.
+# validate swap_disk_wwn provided with multipath -ll command, for its presence. fail, if does not match.
 - name: Validating the wwn values passed
   shell: /sbin/multipath -ll | grep {{ swap_disk_wwn | lower }}
   register:  validation_check
@@ -45,7 +45,7 @@
   when: validation_check.rc==1
 
 # if above validation is successful, continue with core logic of removing the already present swap device and creating a new based on wwn passed
-# check for previous swap device, if any configired. If configured, remove it.
+# check for previous swap device, if any configured. If configured, remove it.
 - name: Check for any swap device, if present, need to be removed 
   shell: swapon -s | grep -v Filename | awk '{ print $1 }' 
   register: swapon_device_list

@@ -9,7 +9,7 @@ This role performs the following tasks:
 - Sets **MTU** value to **9000** for SAP network interfaces
 - **TSO** is enabled for SAP network interfaces
 - **SAPTUNE SOLUTION** for **HANA or NETWEAVER or NETWEAVER+HANA** is applied based on parameter passed.
-- **Activates SuSE subscription**
+- **Activates SUSE subscription**
 
 All settings applied remain persistent across reboot.
 

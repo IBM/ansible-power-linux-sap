@@ -4,7 +4,7 @@
 - name: Running rescan command 
   shell: /usr/bin/rescan-scsi-bus.sh -a -c -v
 
-# validate each wwn provided with multipath -ll command, for its presence. fail, if any 1 doesnot match. 
+# validate each wwn provided with multipath -ll command, for its presence. fail, if any 1 does not match. 
 - name: Validating the wwn values passed 
   shell: /sbin/multipath -ll | grep {{ item }} 
   register:  validation_check  
@@ -22,7 +22,7 @@
   set_fact:
    total_wwn: "{{ disks_configuration.wwns | unique |  length }}"
 
-# fail if total count of disks and sum of counts provided doesnot match. Also match wwn uniq values. Any duplicate, will lead to failure 
+# fail if total count of disks and sum of counts provided does not match. Also match wwn unique values. Any duplicate, will lead to failure 
 - set_fact: count_total=0
 - name: Get the total count as provided 
   set_fact: 
@@ -41,6 +41,6 @@
    paths_fields: "{{ disks_configuration.paths | length }}"
 
 - fail: 
-   msg: Number of inputs doesnot match, please verify INPUT
+   msg: Number of inputs does not match, please verify INPUT
   when: 
   - count_fields != names_fields or names_fields != paths_fields

@@ -3,7 +3,7 @@
 
 ## Introduction
 
-This ansible collection simplifies PowerVS LPAR configuration for installing SAP HANA and SAP Netweaver on SLES and RHEL environments. It doesn't install SAP HANA or NETWEAVER applications but, prepares the OS with correct configurations for HANA/Netweaver installations for best performance. They can be executed on same LPAR or different LPARs.
+This ansible collection simplifies IBM PowerVS LPAR configuration for installing SAP HANA and SAP NetWeaver on SLES and RHEL environments. It doesn't install SAP HANA or NETWEAVER applications but, prepares the OS with correct configurations for SAP HANA/NetWeaver installations for best performance. They can be executed on same LPAR or different LPARs.
 
 This collection has 3 modules, which are independent of each other and can be run individually.
 1)	**Preparing Operating System for SAP installations.**
@@ -104,7 +104,7 @@ This role performs the following tasks:
 - Sets **MTU** value to **9000** for SAP network interfaces
 - **TSO** is enabled for SAP network interfaces
 - **SAPTUNE SOLUTION** for **HANA or NETWEAVER or NETWEAVER+HANA** is applied based on parameter passed.
-- **Activates SuSE subscription**
+- **Activates SUSE subscription**
 
 All settings applied remain persistent across reboot.
 
@@ -126,7 +126,7 @@ This role is followed by execution of following community roles
 All settings applied remain persistent across reboot.
 
 **Note:** 
-Ansible playbook may report **Failure/Warning**, if scripts analyse reboot is required for settings applied by it. User should reboot thier LPAR, in that case. 
+Ansible playbook may report **Failure/Warning**, if scripts analyse reboot is required for settings applied by it. User should reboot their LPAR, in that case. 
 
 
 
@@ -137,7 +137,7 @@ This module is same for both SLES and RHEL.
 #### 2.1 powervs_fs_creation:
 
 This role performs the following tasks:
-- **Creates filesystems** with user defined **stripe size** using ansible **builtin** LVM logical volumes modules.
+- **Creates filesystems** with user defined **stripe size** using ansible **built-in** LVM logical volumes modules.
 - **Mounts** the filesystems on provided **mount points**
 - **Adds an entry to /etc/fstab** for **automount** on reboot.
 - **Optional** :Converts the input data structure from **terraform to a general data structure** (Terraform output support)
@@ -200,14 +200,14 @@ For RHEL, **swap disk of size >= 24GB** is required for community role **[sap-ne
 
 Install [git repo](https://github.ibm.com/SAP-Automation/ansible-PowerVS-config) from Ansible Galaxy using below command
 
-```ansible-galaxy install sahityajain123.powervsconfig```
+```ansible-galaxy collection install ibm.power_linux_sap```
    
    
 After git repo is available on LPAR, requirements.yml file present in repo, need to be used to get other roles which are not part of this git repository, but are needed for complete SAP solution. Below command should be used. 
 
 ```ansible-galaxy install -r requirements.yml```
 
-These community roles are needed, as they configure RHEL LPAR as required for SAP HANA or Netweaver for Power Systems according to SAP Note [2772999](https://launchpad.support.sap.com/#/notes/2772999).
+These community roles are needed, as they configure RHEL LPAR as required for SAP HANA or NetWeaver for Power Systems according to SAP Note [2772999](https://launchpad.support.sap.com/#/notes/2772999).
 
 
 ### Execution Details
@@ -226,7 +226,7 @@ Target Host Execution
 
 ### Execution examples
 
-1. To run only **powervs_prepare_sles_sap** role without SuSE subscription variable, 
+1. To run only **powervs_prepare_sles_sap** role without SUSE subscription variable, 
 
 ```
 ansible-playbook --connection=local -i "localhost," playbook-sles.yml -e '{sap_solution: "HANA", host_ip: "192.168.1.1" }'

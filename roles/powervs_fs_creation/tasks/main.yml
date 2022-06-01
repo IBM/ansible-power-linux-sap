@@ -42,11 +42,11 @@
 - name: Run rescan-scsi-bus.sh command to check for new devices 
   shell: /usr/bin/rescan-scsi-bus.sh -a -c -v
 
-- name: Run validaton for terraform variables if terraform_wrapper is true
+- name: Run validation for terraform variables if terraform_wrapper is true
   import_tasks: terraform-disks-validation.yml
   when: disks_configuration | type_debug == "dict"
 
-- name: Use Terraform Warpper and Create Filesystem if terraform_wrapper is true
+- name: Use Terraform wrapper and Create Filesystem if terraform_wrapper is true
   import_tasks: terraform-wrapper.yml
   when: disks_configuration | type_debug == "dict"
 
