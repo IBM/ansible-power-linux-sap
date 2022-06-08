@@ -51,7 +51,7 @@ This collection has 3 modules, which are independent of each other and can be ru
         </tr>
         <tr>
             <td><b>2. host_ip</b></td>
-    	    <td><b>Mandatory</b></td>
+    	    <td><b>Optional</b></td>
             <td>If this variable is included then mtu 9000 will not be set for this interface IP.</td>
             <td>e.g.: 192.168.1.1</td>
         </tr>
