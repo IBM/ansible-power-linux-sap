@@ -17,8 +17,8 @@
 - hosts: all 
   roles:
   - { role: powervs_prepare_rhel_sap, when: sap_solution is defined }
-  - { role: sap-preconfigure, sap_preconfigure_fail_if_reboot_required: no, when: sap_solution is defined }
-  - { role: sap-hana-preconfigure, sap_hana_preconfigure_fail_if_reboot_required: no, when: sap_solution is defined and sap_solution is match("HANA") }
+  - { role: community.sap_install.sap_general_preconfigure, sap_preconfigure_fail_if_reboot_required: no, when: sap_solution is defined }
+  - { role: community.sap_install.sap_hana_preconfigure, sap_hana_preconfigure_fail_if_reboot_required: no, when: sap_solution is defined and sap_solution is match("HANA") }
   - { role: powervs_swap_creation, when: swap_disk_wwn is defined }
-  - { role: sap-netweaver-preconfigure, when: sap_solution is defined  and  sap_solution is match("NETWEAVER") }
+  - { role: community.sap_install.sap_netweaver_preconfigure, when: sap_solution is defined  and  sap_solution is match("NETWEAVER") }
   - { role: powervs_fs_creation, when: disks_configuration is defined }
