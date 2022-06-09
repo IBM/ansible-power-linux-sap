@@ -1,4 +1,2 @@
-#From GitHub repository:
-- src: https://github.com/linux-system-roles/sap-preconfigure.git
-- src: https://github.com/linux-system-roles/sap-hana-preconfigure.git
-- src: https://github.com/linux-system-roles/sap-netweaver-preconfigure.git
+collections:
+   - community.sap_install

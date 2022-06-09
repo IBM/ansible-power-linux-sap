@@ -92,7 +92,19 @@
    name: NetworkManager 
    state: restarted
 
-# to Insure that NFS and rpcbind daemon are up. 
+# Installing irqbalance package
+- name: Installing irqbalance package
+  package:
+   name: irqbalance
+   state: present
+
+- name: Enabling and starting irqbalance
+  service:
+   name: irqbalance.service
+   state: restarted
+   enabled: yes
+
+# to Ensure that NFS and rpcbind daemon are up. 
 - name: Ensure NFS client is running
   service:
    name: nfs-client.target

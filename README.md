@@ -119,9 +119,11 @@ This role performs the following tasks:
 - **Activates RHEL subscription**
 
 This role is followed by execution of following community roles
-- **[sap-preconfigure](https://github.com/linux-system-roles/sap-preconfigure)** 
-- **[sap-hana-preconfigure](https://github.com/linux-system-roles/sap-hana-preconfigure)**
-- **[sap-netweaver-preconfigure](https://github.com/linux-system-roles/sap-netweaver-preconfigure)** 
+- **[sap_general_preconfigure](https://github.com/sap-linuxlab/community.sap_install/tree/main/roles/sap_general_preconfigure)** 
+- **[sap_hana_preconfigure](https://github.com/sap-linuxlab/community.sap_install/tree/main/roles/sap_hana_preconfigure)**
+- **[sap_netweaver_preconfigure](https://github.com/sap-linuxlab/community.sap_install/tree/main/roles/sap_netweaver_preconfigure)** 
+
+These roles are part of ansible galaxy collection **[community.sap_install](https://galaxy.ansible.com/community/sap_install)**
 
 All settings applied remain persistent across reboot.
 
@@ -198,14 +200,14 @@ For RHEL, **swap disk of size >= 24GB** is required for community role **[sap-ne
 
 ### 4. Installation Guide
 
-Install [git repo](https://github.ibm.com/SAP-Automation/ansible-PowerVS-config) from Ansible Galaxy using below command
+Install **[collection](https://galaxy.ansible.com/ibm/power_linux_sap)** from Ansible Galaxy using below command
 
 ```ansible-galaxy collection install ibm.power_linux_sap```
    
    
-After git repo is available on LPAR, requirements.yml file present in repo, need to be used to get other roles which are not part of this git repository, but are needed for complete SAP solution. Below command should be used. 
+After collection is installed on LPAR, requirements.yml file available in the repo, need to be used to get other roles/collections which are not part of this collection, but are needed for complete SAP solution. Below command should be used. 
 
-```ansible-galaxy install -r requirements.yml```
+```ansible-galaxy collection install -r requirements.yml```
 
 These community roles are needed, as they configure RHEL LPAR as required for SAP HANA or NetWeaver for Power Systems according to SAP Note [2772999](https://launchpad.support.sap.com/#/notes/2772999).
 
@@ -220,7 +222,7 @@ Local Host Execution
 
 Target Host Execution
 
-```ansible-playbook -i "<target-host>" playbook-sles.yml -e "<Variable>"```
+```ansible-playbook -i "<target-host>," playbook-sles.yml -e "<Variable>"```
 
 
 
