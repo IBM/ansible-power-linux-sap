@@ -54,7 +54,8 @@
 - name: Ensure multipathd daemon is running
   service:
    name: multipathd
-   state: started 
+   state: started
+   enabled: yes
 
 # For modification on network interfaces, create a dictionary of interfaces
 - name: Create interfaces dictionary
@@ -62,7 +63,7 @@
    interfaces: "{{ interfaces | default({}) | combine( {item: hostvars[ inventory_hostname ] ['ansible_' + item ]} ) }}"
   with_items: "{{ ansible_interfaces | replace('-', '_') }}"
 
-# to make jumbo frame and TSO  persistent across reboot.
+# to make jumbo frame persistent across reboot.
 - name: Set jumbo frames permanently so it is valid after reboots for all networks except eth0 and lo
   lineinfile:
    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item.key }}"
@@ -74,17 +75,6 @@
   - "host_ip is not defined or item.value.ipv4.address != host_ip" 
   - "item.key != 'lo'"
   - "item.value.mtu != 9000"
-
-- name: Set ETHTOOL_OPT On permanently so it is valid after reboots for all networks except eth0 and lo
-  lineinfile:
-   dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item.key }}"
-   regexp: "^ETHTOOL_OPT"
-   line: "ETHTOOL_OPT='-K {{ item.key }} tso on'"
-  with_dict: "{{ interfaces }}"
-  when:
-  - "item.value.ipv4.address is defined"
-  - "host_ip is not defined or item.value.ipv4.address != host_ip" 
-  - "item.key != 'lo'"
 
 # to reinforce changes in current boot 
 - name: Restart network 

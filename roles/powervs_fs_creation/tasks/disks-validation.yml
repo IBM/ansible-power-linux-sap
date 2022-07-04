@@ -17,7 +17,7 @@
   when: item.rc==1
   with_items: "{{ validation_check.results }}"
 
-# to get count of unique WWN
+# get count of unique WWN
 - name: Validate number of wwn present 
   set_fact:
    total_wwn: "{{ disks_configuration.wwns | unique |  length }}"

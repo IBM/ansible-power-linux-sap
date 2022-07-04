@@ -1,6 +1,6 @@
 ---
 # this task reads the variable passed to execute ansible roles, and manipulate them to be passed to fs_creation role, in a single dictionary for each name variable passed in variable list. 
-# this is an intermediate task, and is required for terraform execution. It is not required if running fs_creation role directly. 
+# this is an intermediate task, and is required for converting dictionary type disks_configuration to a list type for filesystem creation. It is not required if disks_configuration type is a list . 
 
 - name: For loop, to manipulate pv listing. #Use this loop to distribute pvs for names provided and use them later for filesystem creation.
   shell: i=0; while [[ $i -lt {{ item.1 }} ]]; do echo {{ item.0 }} ; let i=i+1; done
@@ -29,7 +29,7 @@
     wwn_list="{{ wwn_list | default([]) }} + {{ item.stdout_lines | list|flatten }}"
   loop: "{{ tmp_wwn_var.results }}"
 
-# to create stripes list dict
+# Create stripes list dict
 - set_fact:
      disks_config_mod: "{{ disks_config_mod | default([]) + [{ 'name': item.0, 'count' : item.1, 'path' : item.2, 'wwns' : item.3 }] }}"
   with_together:

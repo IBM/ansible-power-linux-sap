@@ -1,7 +1,14 @@
-# POWER LPAR Configuration for SAP HANA and SAP NetWeaver using Ansible
+# Power LPAR Configuration for SAP HANA and SAP NetWeaver using Ansible collection
 
 
-## Introduction
+# Sections
+ 1. [Introduction](README.md#1-introduction)
+ 2. [Roles Description](README.md#2-roles-description)
+ 3. [Installation Guide](README.md#3-installation-guide)
+ 4. [Execution Details](README.md#4-execution-details)
+ 5. [Requirements, Dependencies and Testing](README.md#5-requirements-dependencies-and-testing)
+
+# 1. Introduction
 
 This ansible collection simplifies IBM PowerVS LPAR configuration for installing SAP HANA and SAP NetWeaver on SLES and RHEL environments. It doesn't install SAP HANA or NETWEAVER applications but, prepares the OS with correct configurations for SAP HANA/NetWeaver installations for best performance. They can be executed on same LPAR or different LPARs.
 
@@ -15,7 +22,7 @@ This collection has 3 modules, which are independent of each other and can be ru
 <table>
     <thead>
         <tr>
-            <th>Name</th>
+            <th>Role Name</th>
             <th>Input Variable Name</th>
 		<th>Mandatory or Optional</th>
 			<th>Variable description</th>
@@ -24,7 +31,7 @@ This collection has 3 modules, which are independent of each other and can be ru
     </thead>
     <tbody>
         <tr>
-            <td rowspan=3><b>powervs_prepare_sles_sap</b><br /></td>
+		<td rowspan=3><b><a href="./roles/powervs_prepare_sles_sap">powervs_prepare_sles_sap</a></b><br /></td>
             <td rowspan=1><b>1. sap_solution</b></td>
 	    <td><b>Mandatory</b></td>
             <td rowspan=1>Saptune is executed based on this value</td>
@@ -37,13 +44,13 @@ This collection has 3 modules, which are independent of each other and can be ru
             <td>e.g.: 192.168.1.1</td>
         </tr>
 	<tr>
-            <td><b>3. suse_subscription : { <br />username:"",<br />key:"", <br />release:"" <br />}</td>
+            <td><b>3. suse_subscription : { <br />username: "",<br />key: "", <br />release: "" <br />}</td>
   	    <td><b>Optional</b></td>
             <td>SUSE subscription information. It is a dictionary. Should be set only if subscription is not already set or subscription has to be updated</td>
-            <td>e.g.: { <br />username:"XYZ",<br />key:"ABC" ,<br />release:"12"<br />}</td>
+            <td>e.g.: { <br />username: "XYZ",<br />key: "ABC" ,<br />release: "12"<br />}</td>
         </tr>
          <tr>
-            <td rowspan=4><b>powervs_prepare_rhel_sap</b><br /></td>
+		 <td rowspan=4><b><a href="./roles/powervs_prepare_rhel_sap">powervs_prepare_rhel_sap</a></b><br /></td>
             <td rowspan=1><b>1. sap_solution</b></td>
 	    <td><b>Mandatory</b></td>
             <td rowspan=1>RHEL community roles for HANA or NETWEAVER will be executed</td>
@@ -62,17 +69,17 @@ This collection has 3 modules, which are independent of each other and can be ru
             <td>e.g.: xyz.com</td>
         </tr>
 		 <tr>
-            <td><b>4. rhel_subscription : { <br />username:"",<br />password:"" ,<br />release:""<br />}</td>
+            <td><b>4. rhel_subscription : { <br />username: "",<br />password: "" ,<br />release: ""<br />}</td>
   	    <td><b>Optional</b></td>
             <td>RHEL subscription information. It is a dictionary. Should be set only if subscription is not already set or subscription has to be updated</td>
             <td>e.g.: { <br />username:"XYZ",<br />password:"ABC" ,<br />release:"8.2"<br />}</td>
         </tr>
 		<tr>
-         <td rowspan=2><b>powervs_fs_creation</b><br /></td>
+         <td rowspan=2><b><a href="./roles/powervs_fs_creation">powervs_fs_creation</a></b><br /></td>
             <td rowspan=1><b>1.a. disks_configuration: { counts: [ ], names: [ ],paths: [ ],wwns: [ ] }<br />1.b. disks_configuration: [ { name: "", path:"", wwns: }...]</b></td>
  	    <td><b>Mandatory</b></td>
             <td>Disks configuration value to create and mount filesystems. Supports 2 data structures. First data structure is a single dictionary. Second data structure is a list of dictionaries.</td>
-            <td rowspan=1>see <b>example A</b> and <b>example B</b> below</td>
+            <td rowspan=1>see <b><a href="README.md#example-a-data-structure-for-disks_configuration-variable-as-dictionary-value-example">example A </a></b> and <b><a href="README.md#example-b-data-structure-for-disks_configuration-variable-as-list-value-example">example B</a></b> below</td>
         </tr>
 	<tr>
             <td><b>2. stripe_size</b></td>
@@ -81,7 +88,7 @@ This collection has 3 modules, which are independent of each other and can be ru
             <td><b>Default is 64K</b></td>
         </tr>
 	<tr>
-            <td rowspan=1><b>powervs_swap_creation</b><br /></td>
+		<td rowspan=1><b><a href="./roles/powervs_swap_creation">powervs_swap_creation</a></b><br /></td>
             <td><b>swap_disk_wwn</b></td>
 	    <td><b>Mandatory</b></td>
             <td>wwn id of swap disk</td>
@@ -90,12 +97,14 @@ This collection has 3 modules, which are independent of each other and can be ru
     </tbody>
 </table>
 
-## Roles Description
-### 1. Preparing Operating System for SAP installations
+***
+
+# 2. Roles Description
+### 2.1. Preparing Operating System for SAP installations
 
 This module is different for **SLES and RHEL** and hence should be selected as per operating system in use.
  
-#### 1.1 powervs_prepare_sles_sap: 
+#### 2.1.1 powervs_prepare_sles_sap: 
 
 This role performs the following tasks:
 - Enables **multipathd** daemon
@@ -106,16 +115,15 @@ This role performs the following tasks:
 - **SAPTUNE SOLUTION** for **HANA or NETWEAVER or NETWEAVER+HANA** is applied based on parameter passed.
 - **Activates SUSE subscription**
 
-All settings applied remain persistent across reboot.
+   All settings applied remain persistent across reboot.
 
-#### 1.2 powervs_prepare_rhel_sap:
+#### 2.1.2 powervs_prepare_rhel_sap:
 
 This role performs the following tasks:
 - Enables **multipathd** daemon
 - Enables **NFS** Service
 - Enables **rpcbind** daemon
 - Sets **MTU** value to **9000** for SAP network interfaces
-- **TSO** is enabled for SAP network interfaces
 - **Activates RHEL subscription**
 
 This role is followed by execution of following community roles
@@ -132,23 +140,23 @@ Ansible playbook may report **Failure/Warning**, if scripts analyse reboot is re
 
 
 
-### 2. Creating Filesystems for SAP installations
+### 2.2. Creating Filesystems for SAP installations
 
 This module is same for both SLES and RHEL.
 
-#### 2.1 powervs_fs_creation:
+#### powervs_fs_creation
 
 This role performs the following tasks:
 - **Creates filesystems** with user defined **stripe size** using ansible **built-in** LVM logical volumes modules.
 - **Mounts** the filesystems on provided **mount points**
 - **Adds an entry to /etc/fstab** for **automount** on reboot.
-- **Optional** :Converts the input data structure from **terraform to a general data structure** (Terraform output support)
+- **Optional** :Converts the input data structure of disks_configuration variable from **dictionary to a general data structure**.
 
-A separate **task** called **terraform-wrapper.yml** is used to handle the variable values passed **from terraform output** to execute this role, via **terraform**.
+A separate **task** called **disks-dict2list.yml** is used to handle disks_configuration variable values passed **as dictionary** to execute this role.
 
-The input variable **disks_configuration** for this role supports 2 data structures. Only then terraform-wrapper.yml will convert the terraform data structure in **example A** to normal data structure in **example B** below. 
+The input variable **disks-configuration** for this role supports 2 data structures. Only then disks_configuration will convert the disks_configuration variable data structure in **example A** to general data structure in **example B** below.
 
-**Example A**.**Terraform** Data structure for **disks_configuration** variable value example:
+#### **Example A**. Data structure for **disks_configuration** variable as **dictionary** value example:
 ```
 disks_configuration: 
 {
@@ -159,7 +167,7 @@ wwns: [600507681082018bc8000000000057e4,600507681082018bc8000000000057e8,6005076
 }
 ```
 
-**Example B**. Data structure for **disks_configuration** variable value example:
+#### **Example B**. Data structure for **disks_configuration** variable as **list** value example:
 ```
 disks_configuration: [
 {
@@ -184,11 +192,11 @@ wwns: 600507681082018bc8000000000057f1
 ```
 
 
-### 3. Configuring SWAP spaces
+### 2.3. Configuring SWAP spaces
 
 This module configures swap space on LPAR, and is same for both RHEL and SLES.
 
-#### 3.1 powervs_swap_creation
+#### powervs_swap_creation
 
 This role performs the following tasks:
 - Removes previous swap device configured
@@ -197,22 +205,25 @@ This role performs the following tasks:
 #### Note:
 For RHEL, **swap disk of size >= 24GB** is required for community role **[sap-netweaver-preconfigure](https://github.com/linux-system-roles/sap-netweaver-preconfigure)** to succeed. 
 
+***
 
-### 4. Installation Guide
+# 3. Installation Guide
 
 Install **[collection](https://galaxy.ansible.com/ibm/power_linux_sap)** from Ansible Galaxy using below command
 
 ```ansible-galaxy collection install ibm.power_linux_sap```
+
+A folder will be created in root directory : ```/root/.ansible/collections/ansible_collections/ibm/power_linux_sap/```
    
-   
-After collection is installed on LPAR, requirements.yml file available in the repo, need to be used to get other roles/collections which are not part of this collection, but are needed for complete SAP solution. Below command should be used. 
+After collection is installed on LPAR, requirements.yml file will be available in location ```/root/.ansible/collections/ansible_collections/ibm/power_linux_sap/requirements.yml```, needs to be used to get other roles/collections which are not part of this collection, but are needed for complete SAP solution. Below command should be used. 
 
 ```ansible-galaxy collection install -r requirements.yml```
 
 These community roles are needed, as they configure RHEL LPAR as required for SAP HANA or NetWeaver for Power Systems according to SAP Note [2772999](https://launchpad.support.sap.com/#/notes/2772999).
 
+***
 
-### Execution Details
+# 4. Execution Details
 
 Sample Ansible Playbook Execution
 
@@ -225,8 +236,7 @@ Target Host Execution
 ```ansible-playbook -i "<target-host>," playbook-sles.yml -e "<Variable>"```
 
 
-
-### Execution examples
+### 4.1 Execution examples
 
 1. To run only **powervs_prepare_sles_sap** role without SUSE subscription variable, 
 
@@ -271,10 +281,11 @@ ansible-playbook --connection=local -i "localhost," playbook-sles.yml -e '{ sap_
 
 Similarly, only RHEL modules can be executed by changing playbook name to playbook-rhel.yml, which is part of this collection.
 
-### Requirements, Dependencies and Testing
+***
 
+# 5. Requirements, Dependencies and Testing
 
-### Operating System requirements
+### 5.1 Operating System requirements
 
 Designed for Linux operating systems, RHEL and SLES.
 
@@ -283,11 +294,11 @@ This role has not been tested and amended for SAP NetWeaver Application Server i
 Assumptions for executing this role include:
 - Registered OS license and OS package repositories are available (from the relevant content delivery network of the OS vendor)
 
-### Python requirements
+### 5.2 Python requirements
 
 Python 3 from the execution/controller host.
 
-### Testing on execution/controller host
+### 5.3 Testing on execution/controller host
 
 **Tests with Ansible Core release versions:**
 
