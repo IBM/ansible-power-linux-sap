@@ -10,3 +10,17 @@ Notes
        * Removing all reference to terraform_wrapper variable, as it is no more used. Updated Readme and also updated few file names
        * Created sample variable files inside playbooks/vars directory for SLES and RHEL
        * Updated README.md to reflect current modifications
+Availability
+       * GitHub v1.0.0(https://github.com/IBM/ansible-power-linux-sap)
+
+Version 1.0.1
+Notes
+       * Updated Ansible Galaxy Readme
+Availability
+       * GitHub v1.0.1(https://github.com/IBM/ansible-power-linux-sap)
+
+Version 1.0.2
+Notes
+       * Updated Ansible Galaxy Readme
+Availability
+       * GitHub v1.0.2(https://github.com/IBM/ansible-power-linux-sap)
