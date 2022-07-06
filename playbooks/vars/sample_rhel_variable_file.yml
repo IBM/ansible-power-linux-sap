@@ -1,0 +1,43 @@
+# ----------------------------- Mandatory parameters -----------------------------  #
+# Defining all mandatory variables, required to run complete automation suite. Please refer to README if inidividual modules are to be executed and for explianation for variables.
+
+sap_solution: HANA 
+sap_domain: 'poc.cloud'
+# As a dictionary 
+disks_configuration: {
+counts: [2,2,1], 
+names: [data,log,shared], 
+paths: [/hana/data,/hana/log,/hana/shared], 
+wwns: [600507681082018bc8000000000057e4,600507681082018bc8000000000057e8,600507681082018bc8000000000057e5,600507681082018bc8000000000057e6,600507681082018bc8000000000057e7]}
+}
+
+# As a list. Only one type should be present in variable file. Uncomment if you want to use disks_configuration as a list.
+#disks_configuration: [
+#{
+#name: data, 
+#path: /hana/data, 
+#wwns: 600507681082018bc8000000000057e4,600507681082018bc8000000000057e8
+#},
+#{
+#name: log, 
+#path: /hana/log, 
+#wwns: 600507681082018bc8000000000057d9,600507681082018bc8000000000057ed7
+#},
+#{
+#name: shared, 
+#path: /hana/shared, 
+#wwns: 600507681082018bc8000000000057f1
+#}
+#]
+
+swap_disk_wwn: "60050768108002DC6800000000029801"
+
+# ----------------------------- Optional parameters ------------------------------  #
+host_ip: "1.1.1.1"
+stripe_size: 64K
+# only for RHEL installations
+rhel_subscription : {
+username: "",
+password: "",
+release: ""
+}

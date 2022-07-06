@@ -8,13 +8,13 @@ This role performs the following tasks:
 - **Creates filesystems** with user defined **stripe size** using ansible **built-in** LVM logical volumes modules.
 - **Mounts** the filesystems on provided **mount points**
 - **Adds an entry to /etc/fstab** for **automount** on reboot.
-- **Optional** :Converts the input data structure from **terraform to a general data structure** (Terraform output support)
+- **Optional** :Converts the input data structure of disks_configuration variable from **dictionary to a general data structure**.
 
-A separate **task** called **terraform-wrapper.yml** is used to handle the variable values passed **from terraform output** to execute this role, via **terraform**.
+A separate **task** called **disks-dict2list.yml** is used to handle disks_configuration variable values passed **as dictionary** to execute this role.
 
-The input variable **disks_configuration** for this role supports 2 data structures. Only then terraform-wrapper.yml will convert the terraform data structure in **example A** to normal data structure in **example B** below.
+The input variable **disks_configuration** for this role supports 2 data structures. Only then disks_configuration will convert the disks_configuration variable data structure in **example A** to general data structure in **example B** below.
 
-**Example A**.**Terraform** Data structure for **disks_configuration** variable value example:
+**Example A**. Data structure for **disks_configuration** variable as **dictionary** value example:
 ```
 disks_configuration:
 {
@@ -25,7 +25,7 @@ wwns: [600507681082018bc8000000000057e4,600507681082018bc8000000000057e8,6005076
 }
 ```
 
-**Example B**. Data structure for **disks_configuration** variable value example:
+**Example B**. Data structure for **disks_configuration** variable as **list** value example:
 ```
 disks_configuration: [
 {

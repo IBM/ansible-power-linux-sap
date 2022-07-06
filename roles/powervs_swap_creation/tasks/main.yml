@@ -17,18 +17,25 @@
 ## this role check for previous swap device and delete it if present. Then configure the new swap device on the disk wwn value passed with swap_disk_wwn
 
 ## making sure that all requisite packages are present. If not, role will fail. 
-- name: Checking for multipath package
+- name: Ensure multipath package is installed on RHEL
   package: 
    name: device-mapper-multipath 
    state: present
   when:  ansible_distribution is match("RedHat*")
   
-- name: Checking for multipath package
+- name: Ensure multipath package is installed on SLES
   package:
    name: multipath-tools
    state: present
   when:  ansible_distribution is match ("SLES*") 
-  
+
+# multipathd daemon is checked whether it's up or not. If not, it is started. 
+- name: Ensure multipathd daemon is running
+  service:
+   name: multipathd
+   state: started
+   enabled: yes
+
 ## first validate the date passed with swap_disk_wwn variable
 - name: Running rescan command
   shell: /usr/bin/rescan-scsi-bus.sh -a -c -v
@@ -56,7 +63,7 @@
   when: swapon_device_list.stdout is defined
 
 # validate if multipath alias is enabled. If enabled, set field to check for dm-X name, as 3, else it remains at default 2. 
-- name: To check if multipath alias is enabled.
+- name: Check if multipath alias is enabled.
   shell: grep "user_friendly_names no" /etc/multipath.conf
   register: multipath_alias
   ignore_errors: yes
@@ -74,7 +81,7 @@
 
 # no create a new swap device, based on dm-X name of wwn disk.
 # enabling swap device  
-- name: Mkswap on  device  {{ swap_dm_device }} 
+- name: Mkswap on device  {{ swap_dm_device }} 
   shell: mkswap {{ swap_dm_device }} 
 
 # activating swap device 
