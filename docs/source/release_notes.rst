@@ -18,3 +18,9 @@ Notes
        * Updated Ansible Galaxy Readme
 Availability
        * GitHub v1.0.1(https://github.com/IBM/ansible-power-linux-sap)
+
+Version 1.0.2
+Notes
+       * Updated Ansible Galaxy Readme
+Availability
+       * GitHub v1.0.2(https://github.com/IBM/ansible-power-linux-sap)
