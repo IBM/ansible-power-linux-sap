@@ -4,7 +4,9 @@ Notes
 Availability
        * GitHub v0.0.1(https://github.com/IBM/ansible-power-linux-sap)
 
-Version 0.0.2
+Version 1.0.0 
 Notes
-       * Update related to TSO setting
-       * terraform_wrapper variable reference removed from all codes and filename updated accrodingly.   
+       * Change related to TSO
+       * Removing all reference to terraform_wrapper variable, as it is no more used. Updated Readme and also updated few file names
+       * Created sample variable files inside playbooks/vars directory for SLES and RHEL
+       * Updated README.md to reflect current modifications

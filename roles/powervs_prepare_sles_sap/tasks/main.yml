@@ -20,6 +20,7 @@
   service:
    name: multipathd
    state: started 
+   enabled: yes
 
 # For modification on network interfaces, create a dictionary of interfaces
 - name: Create interfaces dictionary
@@ -41,11 +42,11 @@
   - "item.value.mtu != 9000"
 
 # to set jumbo frame changes persistent across reboot.
-- name: Set ETHTOOL_OPT ON permanently so it is valid after reboots for all networks except eth0 and lo
+- name: Set ETHTOOL_OPTIONS TSO ON permanently so it is valid after reboot for all networks except eth0 and lo
   lineinfile:
    dest: "/etc/sysconfig/network/ifcfg-{{ item.key }}"
-   regexp: "^ETHTOOL_OPT"
-   line: "ETHTOOL_OPT='-K {{ item.key }} tso on'"
+   regexp: "^ETHTOOL_OPTIONS"
+   line: "ETHTOOL_OPTIONS='-K {{ item.key }} tso on'"
   with_dict: "{{ interfaces }}"
   when:
   - "item.value.ipv4.address is defined"
@@ -59,7 +60,7 @@
     state: restarted
 
 # following task checked for SAPTUNE profile on system and apply {{ sap_solution }} profile if not applied. Also check for saptune rpm installation
-- name: Checking for saptune package installation
+- name: Check saptune package installation
   zypper:
     name: saptune
     state: present
