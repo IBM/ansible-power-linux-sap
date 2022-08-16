@@ -1,0 +1,7 @@
+server_config: {
+squid: { enable: false },
+ntp: { enable: false },
+nfs: { enable: true, nfs_directory: "/NFS; /ABC; /XYZ; /hana/software" },
+dns: { enable: false, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" },
+awscli: { enable: false }
+}

@@ -1,0 +1,195 @@
+---
+######### SQUID Service #########
+- block:
+  - name: Install squid 
+    package:
+     name: squid
+     state: latest 
+
+  # Configure squid configuration file as required by full linux subscription
+  - name: Replace squid.conf file 
+    copy:
+     src: "{{ role_path }}/files/squid.conf"
+     dest: /etc/squid/squid.conf
+
+  # Start and Enable Squid Service
+  - name: Start squid service 
+    service:
+     name: squid
+     state: restarted 
+     enabled: yes
+
+  when: server_config.squid.enable|default(False)|bool == true 
+
+######### BIND Service ############
+- block:
+  # Installing bind.
+  - name: Install bind
+    package: 
+     name: bind
+     state: latest
+
+  # modify /etc/named.conf file
+  - name: Modify /etc/named.conf file
+    blockinfile:
+     marker_begin: 'BEGIN_ACL'
+     marker_end: 'END_ACL'
+     path: /etc/named.conf
+     block: | 
+       acl allowed_clients { 
+         localhost; 
+         any; 
+       };
+     insertbefore: ^options 
+
+  - name: Modify /etc/named.conf file
+    blockinfile:
+     path: /etc/named.conf
+     block: |
+      forwarders {
+          {{ server_config.dns.dns_servers }}
+      };
+     insertafter: ^options
+
+  - name: Modify /etc/named.conf file
+    replace:
+     path: /etc/named.conf
+     regexp: '^(.*)allow-query(.*)'
+     replace: allow-query { allowed_clients; };
+    when: ansible_distribution is match("RedHat*") 
+
+  - name: Modify /etc/named.conf file
+    replace:
+     path: /etc/named.conf
+     regexp: '^(.*)#allow-query(.*)'
+     replace: allow-query { allowed_clients; };
+    when: ansible_distribution is match("SLES*")
+
+  - name: Modify /etc/named.conf file
+    lineinfile: 
+     path: /etc/named.conf
+     line: forward only;  
+     insertafter: '^(.*)allow-query(.*)'
+  
+  - name: Modify /etc/named.conf file
+    lineinfile:
+     path: /etc/named.conf
+     line: recursion yes;
+     insertafter: '^(.*)allow-query(.*)'
+    when: ansible_distribution is match("SLES*") 
+
+  # Enable named 
+  - name: Enable named service 
+    service: 
+     name: named
+     state: restarted 
+     enabled: yes 
+  
+  when: server_config.dns.enable|default(False)|bool == true 
+
+######## Chrony or NTP Service ######## 
+- block: 
+  # Install chrony 
+  - name: Installing chrony 
+    package: 
+     name: chrony
+     state: latest 
+
+  # modify /etc/chronyd file
+  - name: Replace iburst line in /etc/chronyd file
+    replace:
+     path: /etc/chrony.conf
+     regexp: '^(.*)local stratum 10$'
+     replace: '#local stratum 10'
+
+  - name : Edit allowed subnet in /etc/chronyd file 
+    replace: 
+     path: /etc/chrony.conf
+     regexp: '^#allow'
+     replace: 'allow'
+
+  - name: Add Manual at EOF in /etc/chronyd
+    lineinfile:
+     path: /etc/chrony.conf
+     line: manual
+     insertbefore: EOF
+
+  # Start chronyd service
+  - name: Start chronyd service 
+    service:
+     name: chronyd
+     state: restarted
+     enabled: yes
+ 
+  when: server_config.ntp.enable|default(False)|bool == true
+
+######## NFS Service ######## 
+- block:
+  # Install NFS 
+  - name: Install nfs package 
+    package:
+     name: nfs-utils
+     state: latest 
+    ignore_errors: true
+
+  # Create directory which will be exported for NFS 
+  - name: Create a directory 
+    file:
+     path: "{{ item | trim }}"
+     state: directory
+     mode: 0755
+    with_items: "{{ server_config.nfs.nfs_directory.split(';')  }}" 
+
+  # Check for /etc/export file, if non-existing, create one.
+  - name: Create /etc/exports file. if not present
+    file:
+     path: /etc/exports
+     state: touch
+
+  # export /NFS directory as NFS directory
+  - name: Export directory as NFS 
+    lineinfile:
+     path: /etc/exports
+     state: present
+     line: "{{ item | trim  }} *(rw,no_root_squash,no_subtree_check,insecure)"
+    with_items: "{{ server_config.nfs.nfs_directory.split(';')  }}"
+
+  # Start NFS service
+  - name: Start nfs service
+    service: 
+     name: nfs-server.service 
+     state: restarted
+     enabled: yes
+
+  # Verify if NFS device is correctly exported 
+  - name: Run showmount command to list nfs exported directory 
+    shell: showmount -e localhost  | grep  {{ item| trim }}
+    register: showmount_log
+    ignore_errors: true
+    with_items: "{{ server_config.nfs.nfs_directory.split(';') }}"
+
+  - name: Fail if return code is not 0
+    ansible.builtin.debug:
+     msg: "INFO: The command {{ item.cmd }} returned error.  Please ensure all NFS exports had been successful"
+    when: item.rc != 1
+    loop: "{{ showmount_log.results }}"
+      
+  when: server_config.nfs.enable|default(False)|bool == true
+
+######## AWSCLI Service ########
+- block:
+  # Install dependency for awscli installation
+  - name: Check for pip package 
+    package:
+      name: python3-pip
+      state: latest
+
+  # Install AWSCLI
+  - name: Installing awscli using pip
+    pip:
+     name: awscli
+     state: latest
+  - debug:
+     msg: Please configure awscli to download required files manually.
+  
+  when: server_config.awscli.enable|default(False)|bool == true
