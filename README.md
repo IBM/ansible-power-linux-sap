@@ -16,7 +16,7 @@ This collection has 3 modules, which are independent of each other and can be ru
 1)	**Preparing Operating System for SAP installations.**
 2)	**Creating Filesystems for SAP installations.**
 3)	**Configuring SWAP spaces.**
-4)      **Configuring Services**
+4)	**Configuring Services**
 
 ### Ansible Roles Summary
 
@@ -206,15 +206,14 @@ This role performs the following tasks:
 #### Note:
 For RHEL, **swap disk of size >= 24GB** is required for community role **[sap-netweaver-preconfigure](https://github.com/linux-system-roles/sap-netweaver-preconfigure)** to succeed. 
 
-***
 
 ### 2.4. Configuring Services
 
 This module is same for both SLES and RHEL.
 
 This role performs the following tasks:
-- Installs **SQUID** package, and configures squid.conf file as described in this link https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-set-full-Linux
-- Installs **DNS** packages and configure DNS server based on the **dns_servers** input provided
+- Installs **SQUID** package, and configures squid.conf file as described in this link https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-set-full-Linux.
+- Installs **DNS** packages and configure DNS server based on the **dns_servers** input provided.
 - Installs **NTP** packages and updates named.conf file as per the requirement.
 - Installs **NFS** server packages, creates NFS directories as provided in input and also exports them as mountable directories.
 
@@ -222,7 +221,7 @@ This role will **start and enable** all above mentioned services.
 
 Additionally it will also install **awscli** package. awscli should be configured manually later.
 
-The input variable **server_config** is needed to be provided for this role to be executed. The variable file looks like below
+The input variable **server_config** is needed to be provided for this role to be executed. The variable file is defined as below
 ```
 server_config: {
 squid: { enable: false },
@@ -233,12 +232,13 @@ awscli: { enable: false }
 }
 ```
 
-Each services can be choosen to be enabled or not. Disabling is not supported. This variable file enables users, to enable one or many services on one or multiple servers, as desired.
+Each service can be choosen to be enabled or not. Disabling is not supported. This variable file enables users, to enable one or many services on one or multiple servers, as desired.
 
 For NFS services, additional variable nfs_directory need to be provided. Directories name provided will be created, if not already present and are exported as a mountable directory.
 
 For DNS services, additional variable dns_server is required. These are user-defined DNS servers IPs. Please note, **;** as a seperator, in example.
 
+***
 
 # 3. Installation Guide
 
@@ -369,9 +369,7 @@ ansible-playbook --connection=local -i "localhost," powervs-rhel.yml -e @vars/sa
 ### 4.3. Configuring services. 
 
 
-1. To run **powervs_install_services** role, to configure all services on one server, using **variable file sample_services_variable_file.yml** inside directory playbooks/vars.
-
-Variable file should be modified like below:
+1. To run **powervs_install_services** role, to configure all services on one server, using **variable file sample_services_variable_file.yml** inside directory playbooks/vars. Variable file should be modified like below:
 ```
 server_config: {
 squid: { enable: true },
@@ -386,8 +384,7 @@ ansible-playbook --connection=local -i "localhost," powervs-services.yml -e @var
 
 ```
 
-2. To run **powervs_install_services** role, to configure only squid service, using **variable file sample_services_variable_file.yml** inside directory playbooks/vars.
-Variable file should be modified like below:
+2. To run **powervs_install_services** role, to configure only squid service, using **variable file sample_services_variable_file.yml** inside directory playbooks/vars. Variable file should be modified like below:
 ```
 server_config: {
 squid: { enable: true },
