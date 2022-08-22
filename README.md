@@ -95,6 +95,25 @@ This collection has 3 modules, which are independent of each other and can be ru
             <td>wwn id of swap disk</td>
 	    <td><b>wwn value</b></td>
         </tr>
+	<tr>
+		<td rowspan=3><b><a href="./roles/powervs_install_services">powervs_install_services</a></b><br /></td>
+            <td rowspan=1><b>1. dns_servers</b></td>
+	    <td><b>Optional</b></td>
+            <td rowspan=1>dns servers IPs to be configured, ;(semicolon) seperated. Please note values should end with a semicolon too.</td>
+            <td rowspan=1><b>e.g.: "161.26.0.7; 161.26.0.8; 9.9.9.9;"</b></td>
+        </tr>
+        <tr>
+            <td><b>2. nfs_directory</b></td>
+	    <td><b>Optional</b></td>
+            <td>One or more directories name to be exported as mountable, ;(semicolon) seperated</td>
+            <td>e.g.: "/NFS; /hana/software"</td>
+        </tr>
+	<tr>
+            <td><b>3. enable</b></td>
+	    <td><b>Mandatory</b></td>
+            <td>For each service to be enabled. Default is False</td>
+            <td>True or False</td>
+	    </tr>
     </tbody>
 </table>
 
