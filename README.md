@@ -103,17 +103,6 @@ This collection has 4 modules, which are independent of each other and can be ru
             <td rowspan=1>e.g.: { <br /> squid: { enable: false },<br />ntp: { enable: false },<br /> nfs: { enable: true, nfs_directory: "/NFS; /hana/software" },<br /> dns: { enable: false, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" },<br /> awscli: { enable: false } <br />}<b></b></td>
         </tr>
         <tr>
-            <td><b>2. nfs_directory</b></td>
-	    <td><b>Optional</b></td>
-            <td>One or more directories name to be exported as mountable, ;(semicolon) separated</td>
-            <td>e.g.: "/NFS; /hana/software"</td>
-        </tr>
-	<tr>
-            <td><b>3. enable</b></td>
-	    <td><b>Mandatory</b></td>
-            <td>For each service to be enabled. Default is False</td>
-            <td>True or False</td>
-	    </tr>
     </tbody>
 </table>
 
