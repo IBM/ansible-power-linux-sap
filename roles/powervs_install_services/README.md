@@ -24,11 +24,11 @@ dns: { enable: false, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" },
 awscli: { enable: false }
 }
 ```
-Each services can be choosen to be enabled or not. Disabling is not supported. This variable file enables users, to enable one or many services on one or multiple servers, as desired.
+Each services can be chosen to be enabled or not. Disabling is not supported. This variable file enables users, to enable one or many services on one or multiple servers, as desired.
 
 For NFS services, additional variable **nfs_directory** need to be provided. Directories name provided will be created, if not already present and are exported as a mountable directory.
 
-For DNS services, additional variable **dns_servers** is required. These are user-defined DNS servers IPs. Please note, **;** as a **seperator**, in example.
+For DNS services, additional variable **dns_servers** is required. These are user-defined DNS servers IPs. Please note, **;** as a **separator**, in example.
 
 
 ## Dependencies
