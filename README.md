@@ -97,10 +97,10 @@ This collection has 4 modules, which are independent of each other and can be ru
         </tr>
 	<tr>
 		<td rowspan=3><b><a href="./roles/powervs_install_services">powervs_install_services</a></b><br /></td>
-            <td rowspan=1><b>1. dns_servers</b></td>
-	    <td><b>Optional</b></td>
-            <td rowspan=1>dns servers IPs to be configured, ;(semicolon) separated. Please note values should end with a semicolon too.</td>
-            <td rowspan=1><b>e.g.: "161.26.0.7; 161.26.0.8; 9.9.9.9;"</b></td>
+            <td rowspan=1><b>1. server_config: { <br />squid: { enable: “”},<br /> ntp: { enable: “” },<br /> nfs: { enable: “”,<br /> nfs_directory: "" },<br /> dns: { enable: “”, dns_servers: "" },<br /> awscli: { enable: “” }<br />}</b></td>
+	    <td><b>Mandatory</b></td>
+            <td rowspan=1>server_config is a dictionary. Services are installed and enabled based on value passed for each service.</td>
+            <td rowspan=1>e.g.: { <br /> squid: { enable: false },<br />ntp: { enable: false },<br /> nfs: { enable: true, nfs_directory: "/NFS; /hana/software" },<br /> dns: { enable: false, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" },<br /> awscli: { enable: false } <br />}<b></b></td>
         </tr>
         <tr>
             <td><b>2. nfs_directory</b></td>
@@ -232,9 +232,9 @@ This module is same for both SLES and RHEL.
 
 This role performs the following tasks:
 - Installs **SQUID** package, and configures squid.conf file as described in this link https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-set-full-Linux.
-- Installs **DNS** packages and configure DNS server based on the **dns_servers** input provided.
-- Installs **NTP** packages and updates named.conf file as per the requirement.
-- Installs **NFS** server packages, creates NFS directories as provided in input and also exports them as mountable directories.
+- Installs **DNS** packages and configure **DNS server forwarders** based on the **dns_servers** input provided.
+- Installs **NTP** packages and configure **ntp forwarder**.
+- Installs **NFS** server packages, creates **NFS mountable directories** as provided with **nfs_directory** variable.
 
 This role will **start and enable** all above mentioned services.
 
@@ -251,11 +251,11 @@ awscli: { enable: false }
 }
 ```
 
-Each service can be chosen to be enabled or not. Disabling is not supported. This variable file enables users, to enable one or many services on one or multiple servers, as desired.
+Each service can be enabled separately. Disabling service is not supported. With the variable file, users can enable one or many services on one or multiple hosts, as desired.
 
-For NFS services, additional variable **nfs_directory** need to be provided. Directories name provided will be created, if not already present and are exported as a mountable directory.
+For NFS services, additional variable **nfs_directory** is required. If not already present, directories will be created and exported as mountable directories.
 
-For DNS services, additional variable **dns_servers** is required. These are user-defined DNS servers IPs. Please note, **;** as a separator, in example.
+For DNS services, additional variable **dns_servers** is required. These are user-defined DNS servers IPs. In example, **161.26.0.7 and 161.26.0.8** are default **IBM Cloud** DNS servers and **9.9.9.9** is default **IBM Public** DNS server. Please note, **;(semicolon)** as a separator, in example.
 
 ***
 
@@ -388,7 +388,7 @@ ansible-playbook --connection=local -i "localhost," powervs-rhel.yml -e @vars/sa
 ### 4.3. Installing services. 
 
 
-1. To run **powervs_install_services** role, to configure all services on one server, using **variable file sample_services_variable_file.yml** inside directory playbooks/vars. Variable file should be modified like below:
+1. To run **powervs_install_services** role, to configure all services on one host, using **variable file sample_services_variable_file.yml** inside directory playbooks/vars. Variable file should be modified like below:
 ```
 server_config: {
 squid: { enable: true },
@@ -407,10 +407,6 @@ ansible-playbook --connection=local -i "localhost," powervs-services.yml -e @var
 ```
 server_config: {
 squid: { enable: true },
-ntp: { enable: false },
-nfs: { enable: false, nfs_directory: "/NFS; /hana/software" },
-dns: { enable: false, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" },
-awscli: { enable: false }
 }
 ```
 For localhost execution:
