@@ -16,7 +16,7 @@ This collection has 4 modules, which are independent of each other and can be ru
 1)	**Preparing Operating System for SAP installations.**
 2)	**Creating Filesystems for SAP installations.**
 3)	**Configuring SWAP spaces.**
-4)	**Configuring Services**
+4)	**Installing Services**
 
 ### Ansible Roles Summary
 
@@ -226,7 +226,7 @@ This role performs the following tasks:
 For RHEL, **swap disk of size >= 24GB** is required for community role **[sap-netweaver-preconfigure](https://github.com/linux-system-roles/sap-netweaver-preconfigure)** to succeed. 
 
 
-### 2.4. Configuring Services
+### 2.4. Installing Services
 
 This module is same for both SLES and RHEL.
 
@@ -385,7 +385,7 @@ ansible-playbook --connection=local -i "localhost," powervs-rhel.yml -e '{sap_so
 ansible-playbook --connection=local -i "localhost," powervs-rhel.yml -e @vars/sample_rhel_variable_file.yml
 ```
 
-### 4.3. Configuring services. 
+### 4.3. Installing services. 
 
 
 1. To run **powervs_install_services** role, to configure all services on one server, using **variable file sample_services_variable_file.yml** inside directory playbooks/vars. Variable file should be modified like below:
