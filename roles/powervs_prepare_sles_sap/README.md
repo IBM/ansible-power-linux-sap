@@ -8,7 +8,7 @@ This role performs the following tasks:
 - Enables **rpcbind** daemon
 - Sets **MTU** value to **9000** for SAP network interfaces
 - **TSO** is enabled for SAP network interfaces
-- **SAPTUNE SOLUTION** for **HANA or NETWEAVER or NETWEAVER+HANA** is applied based on parameter passed.
+- **SAPTUNE SOLUTION** for **HANA or NETWEAVER or NETWEAVER+HANA** is applied based on parameter passed. **Only Saptune v3 is supported.** 
 - **Activates SUSE subscription**
 
 All settings applied remain persistent across reboot.

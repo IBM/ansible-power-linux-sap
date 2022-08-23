@@ -66,15 +66,30 @@
     state: present
 
 - name: Check if {{ sap_solution | upper }} solution is applied or not 
-  shell: "saptune solution enabled"
+  shell: "saptune solution enabled | grep -xi {{ sap_solution }}"
   register: saptune_status
- 
+  ignore_errors: true
+
+# Revert is any other solution is already applied, and apply {{ sap_solution | upper }} 
 - name: Tune SLES for SAP {{ sap_solution | upper }}
-  shell: "saptune solution apply {{ sap_solution | upper }}"
-  when: saptune_status.stdout.find("{{ sap_solution | upper }}") == -1
+  shell: |
+         saptune revert all
+         saptune solution apply {{ sap_solution | upper }}
+         saptune service enablestart
+  when: saptune_status.rc != 0 
 
 - name: Activate SLES tuning for SAP {{ sap_solution | upper }}
-  shell: "saptune daemon start"
+  shell: "saptune service takeover"
+
+- name: Check for saptune installation and enablement
+  shell: saptune_check
+  register: saptune_check_log
+  ignore_errors: true
+
+# Fail if saptune is not setup correctly
+- debug:
+   msg: "Saptune may not be setup correctly, please verify and perform corrective action"
+  when: saptune_check_log.rc != 0
 
 # Installing irqbalance package
 - name: Installing irqbalance package
