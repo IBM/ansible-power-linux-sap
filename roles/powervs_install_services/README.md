@@ -26,9 +26,9 @@ awscli: { enable: false }
 ```
 Each services can be choosen to be enabled or not. Disabling is not supported. This variable file enables users, to enable one or many services on one or multiple servers, as desired.
 
-For NFS services, additional variable nfs_directory need to be provided. Directories name provided will be created, if not already present and are exported as a mountable directory.
+For NFS services, additional variable **nfs_directory** need to be provided. Directories name provided will be created, if not already present and are exported as a mountable directory.
 
-For DNS services, additional variable dns_server is required. These are user-defined DNS servers IPs. Please note, **;** as a seperator, in example.
+For DNS services, additional variable **dns_servers** is required. These are user-defined DNS servers IPs. Please note, **;** as a **seperator**, in example.
 
 
 ## Dependencies
