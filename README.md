@@ -12,7 +12,7 @@
 
 This ansible collection simplifies IBM PowerVS LPAR configuration for installing SAP HANA and SAP NetWeaver on SLES and RHEL environments. It doesn't install SAP HANA or NETWEAVER applications but, prepares the OS with correct configurations for SAP HANA/NetWeaver installations for best performance. They can be executed on same LPAR or different LPARs.
 
-This collection has 3 modules, which are independent of each other and can be run individually.
+This collection has 4 modules, which are independent of each other and can be run individually.
 1)	**Preparing Operating System for SAP installations.**
 2)	**Creating Filesystems for SAP installations.**
 3)	**Configuring SWAP spaces.**
@@ -99,13 +99,13 @@ This collection has 3 modules, which are independent of each other and can be ru
 		<td rowspan=3><b><a href="./roles/powervs_install_services">powervs_install_services</a></b><br /></td>
             <td rowspan=1><b>1. dns_servers</b></td>
 	    <td><b>Optional</b></td>
-            <td rowspan=1>dns servers IPs to be configured, ;(semicolon) seperated. Please note values should end with a semicolon too.</td>
+            <td rowspan=1>dns servers IPs to be configured, ;(semicolon) separated. Please note values should end with a semicolon too.</td>
             <td rowspan=1><b>e.g.: "161.26.0.7; 161.26.0.8; 9.9.9.9;"</b></td>
         </tr>
         <tr>
             <td><b>2. nfs_directory</b></td>
 	    <td><b>Optional</b></td>
-            <td>One or more directories name to be exported as mountable, ;(semicolon) seperated</td>
+            <td>One or more directories name to be exported as mountable, ;(semicolon) separated</td>
             <td>e.g.: "/NFS; /hana/software"</td>
         </tr>
 	<tr>
@@ -183,7 +183,7 @@ disks_configuration:
 counts: [2,2,1], 
 names: [data,log,shared], 
 paths: [/hana/data,/hana/log,/hana/shared], 
-wwns: [600507681082018bc8000000000057e4,600507681082018bc8000000000057e8,600507681082018bc8000000000057e5,600507681082018bc8000000000057e6,600507681082018bc8000000000057e7]}
+wwns: [600507681082018bc8000000000057e4,600507681082018bc8000000000057e8,600507681082018bc8000000000057e5,600507681082018bc8000000000057e6,600507681082018bc8000000000057e7]
 }
 ```
 
@@ -253,9 +253,9 @@ awscli: { enable: false }
 
 Each service can be choosen to be enabled or not. Disabling is not supported. This variable file enables users, to enable one or many services on one or multiple servers, as desired.
 
-For NFS services, additional variable nfs_directory need to be provided. Directories name provided will be created, if not already present and are exported as a mountable directory.
+For NFS services, additional variable **nfs_directory** need to be provided. Directories name provided will be created, if not already present and are exported as a mountable directory.
 
-For DNS services, additional variable dns_server is required. These are user-defined DNS servers IPs. Please note, **;** as a seperator, in example.
+For DNS services, additional variable **dns_servers** is required. These are user-defined DNS servers IPs. Please note, **;** as a separator, in example.
 
 ***
 
@@ -403,7 +403,7 @@ ansible-playbook --connection=local -i "localhost," powervs-services.yml -e @var
 
 ```
 
-2. To run **powervs_install_services** role, to configure only squid service, using **variable file sample_services_variable_file.yml** inside directory playbooks/vars. Variable file should be modified like below:
+2. To run **powervs_install_services** role, to configure squid service only, using **variable file sample_services_variable_file.yml** inside directory playbooks/vars. Variable file should be modified like below:
 ```
 server_config: {
 squid: { enable: true },
@@ -413,11 +413,17 @@ dns: { enable: false, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" },
 awscli: { enable: false }
 }
 ```
+For localhost execution:
 ```
 ansible-playbook --connection=local -i "localhost," powervs-services.yml -e @vars/sample_services_variable_file.yml
 
 ```
 
+For remote host ( host on which service has to be enabled ) execution:
+```
+ansible-playbook -i "remote_host_name," powervs-services.yml -e @vars/sample_services_variable_file.yml
+
+```
 ***
 
 # 5. Requirements, Dependencies and Testing
