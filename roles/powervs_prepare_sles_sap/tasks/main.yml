@@ -1,6 +1,80 @@
 ---
 ### this role preconfigures LPAR for SAP installation requirement. Based on sap_solution input, saptune configures the system for HANA or NETWEAVER.
 
+# Setting up proxy based on private_proxy_ip_port. If this variable is defined, proxy will be added to /etc/bashrc file.
+- name: Edit /etc/bash.bashrc file, to add http_proxy
+  blockinfile:
+   path: /etc/bash.bashrc
+   block: |
+    http_proxy=http://{{ private_proxy_ip_port }}
+    https_proxy=http://{{ private_proxy_ip_port }}
+    HTTP_PROXY=http://{{ private_proxy_ip_port }}
+    HTPPS_PROXY=http://{{ private_proxy_ip_port }}
+  when: private_proxy_ip_port is defined
+
+# Subscribing to Full Linux® subscription for Power Systems Virtual Servers
+- block:
+  
+  # Creating backup of readme file, to be restored later
+  - name: Copy /usr/share/powervs-fls/powervs-fls-readme.md file
+    copy:
+     src: /usr/share/powervs-fls/powervs-fls-readme.md
+     dest: /usr/share/powervs-fls/powervs-fls-readme.md_copy
+
+  # Modifying readme file, to update proxy server and port
+  - name: Update cloud-init command with proxy server details
+    replace:
+      path: /usr/share/powervs-fls/powervs-fls-readme.md
+      regexp: private_ip_of_proxy_vm:3128
+      replace: "{{ full_linux_subscription.private_proxy_ip}}:{{ full_linux_subscription.proxy_port }}"
+
+  # Get the cloud-init command from readme
+  - name: Get the cloud-init command from /usr/share/powervs-fls/powervs-fls-readme.md
+    shell: grep {{ full_linux_subscription.private_proxy_ip}} /usr/share/powervs-fls/powervs-fls-readme.md
+    register: cloud_init_command
+
+  # Backing up the log file and removing it for latest use
+  - name: Remove previous log file
+    copy:
+      src: /var/log/powervs-fls.log
+      dest: /var/log/powervs-fls.log.backup
+    ignore_errors: true
+  - file:
+     path: /var/log/powervs-fls.log
+     state: absent
+
+  # Excute the cloud-init command as in readme
+  - name: Execute cloud-init command
+    shell: "{{ cloud_init_command.stdout }}"
+
+  # Wait for successful completion of registration. It will timeout in 300 seconds, if search text is not found
+  - name: Wait until the string "Successfully completed SLES subscription registration process"" is in the file /var/log/powervs-fls.log before continuing
+    ansible.builtin.wait_for:
+      path: /var/log/powervs-fls.log
+      search_regex: "Successfull completed SLES subscription registration process"
+    register: check_for_subscription_success
+    ignore_errors: true
+  
+  # Restoring Readme
+  - name: Restoring /usr/share/powervs-fls/powervs-fls-readme.md file
+    copy:
+     src: /usr/share/powervs-fls/powervs-fls-readme.md_copy
+     dest: /usr/share/powervs-fls/powervs-fls-readme.md
+  - file:
+     path: /usr/share/powervs-fls/powervs-fls-readme.md_copy
+     state: absent
+  
+  - debug: var=check_for_subscription_success
+  
+  # Fail if registration fails.
+  - fail:
+     msg: "Full Linux Subscription failed, Please debug manually and take corrective action. Logs available at /var/log/powervs-fls.log"
+    when: check_for_subscription_success.failed | bool
+
+  when: full_linux_subscription is defined
+
+## END of full_linux_subscription block
+
 # subscribing to SUSE subscription
 # Add repos for installing SLES packages required for SAP installation
 - name: Register SUSE and enable repos
@@ -28,7 +102,7 @@
    interfaces: "{{ interfaces | default({}) | combine( {item: hostvars[ inventory_hostname ] ['ansible_' + item ]} ) }}"
   with_items: "{{ ansible_interfaces | replace('-', '_') }}"
 
-# to make the above changes persistent across reboot.
+# Make the above changes persistent across reboot.
 - name: Set jumbo frames permanently so it is valid after reboots for all networks except eth0 and lo
   lineinfile:
    dest: "/etc/sysconfig/network/ifcfg-{{ item.key }}"
@@ -41,7 +115,7 @@
   - "item.key != 'lo'"
   - "item.value.mtu != 9000"
 
-# to set jumbo frame changes persistent across reboot.
+# Set jumbo frame changes persistent across reboot.
 - name: Set ETHTOOL_OPTIONS TSO ON permanently so it is valid after reboot for all networks except eth0 and lo
   lineinfile:
    dest: "/etc/sysconfig/network/ifcfg-{{ item.key }}"
@@ -53,7 +127,7 @@
   - "host_ip is not defined or item.value.ipv4.address != host_ip"
   - "item.key != 'lo'"
 
-# to reinforce changes in current boot 
+# Reinforce changes in current boot 
 - name: Restart network 
   service:
     name: network 
@@ -66,15 +140,30 @@
     state: present
 
 - name: Check if {{ sap_solution | upper }} solution is applied or not 
-  shell: "saptune solution enabled"
+  shell: "saptune solution enabled | grep -xi {{ sap_solution }}"
   register: saptune_status
- 
+  ignore_errors: true
+
+# Revert is any other solution is already applied, and apply {{ sap_solution | upper }} 
 - name: Tune SLES for SAP {{ sap_solution | upper }}
-  shell: "saptune solution apply {{ sap_solution | upper }}"
-  when: saptune_status.stdout.find("{{ sap_solution | upper }}") == -1
+  shell: |
+         saptune revert all
+         saptune solution apply {{ sap_solution | upper }}
+         saptune service enablestart
+  when: saptune_status.rc != 0 
 
 - name: Activate SLES tuning for SAP {{ sap_solution | upper }}
-  shell: "saptune daemon start"
+  shell: "saptune service takeover"
+
+- name: Check for saptune installation and enablement
+  shell: saptune_check
+  register: saptune_check_log
+  ignore_errors: true
+
+# Fail if saptune is not setup correctly
+- debug:
+   msg: "Saptune may not be setup correctly, please verify and perform corrective action"
+  when: saptune_check_log.rc != 0
 
 # Installing irqbalance package
 - name: Installing irqbalance package

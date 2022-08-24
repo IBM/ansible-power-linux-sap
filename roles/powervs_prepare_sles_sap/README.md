@@ -8,8 +8,9 @@ This role performs the following tasks:
 - Enables **rpcbind** daemon
 - Sets **MTU** value to **9000** for SAP network interfaces
 - **TSO** is enabled for SAP network interfaces
-- **SAPTUNE SOLUTION** for **HANA or NETWEAVER or NETWEAVER+HANA** is applied based on parameter passed.
-- **Activates SUSE subscription**
+- **SAPTUNE SOLUTION** for **HANA or NETWEAVER or NETWEAVER+HANA** is applied based on parameter passed. **Only Saptune v3 is supported.** 
+- Activates **SUSE subscription** or **[Full Linux Subscription](https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-set-full-Linux)**
+- Set up **network proxy** on client. Modifies **/etc/bash.bashrc** file**
 
 All settings applied remain persistent across reboot.
 

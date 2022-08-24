@@ -2,7 +2,7 @@
 
 ### Configuring SWAP spaces
 
-This module configures swap space on LPAR, and is same for both RHEL and SLES.
+This module configures swap space on LPAR, and is same for both RHEL and SLES. This role is applicable for **only for SAP Netweaver**
 
 This role performs the following tasks:
 - Removes previous swap device configured
