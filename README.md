@@ -32,7 +32,7 @@ This collection has 4 modules, which are independent of each other and can be ru
     </thead>
     <tbody>
         <tr>
-		<td rowspan=3><b><a href="./roles/powervs_prepare_sles_sap">powervs_prepare_sles_sap</a></b><br /></td>
+		<td rowspan=5><b><a href="./roles/powervs_prepare_sles_sap">powervs_prepare_sles_sap</a></b><br /></td>
             <td rowspan=1><b>1. sap_solution</b></td>
 	    <td><b>Mandatory</b></td>
             <td rowspan=1>Saptune is executed based on this value</td>
@@ -50,8 +50,20 @@ This collection has 4 modules, which are independent of each other and can be ru
             <td>SUSE subscription information. It is a dictionary. Should be set only if subscription is not already set or subscription has to be updated</td>
             <td>e.g.: { <br />username: "XYZ",<br />key: "ABC" ,<br />release: "12"<br />}</td>
         </tr>
+	<tr>
+            <td><b>4. full_linux_subscription</b></td>
+	    <td><b>Optional</b></td>
+            <td>If this variable is set to True, full linux subscription is done. Applying, Full Linux subscription is also depended on another variable private_proxy_ip_port</td>
+            <td>True or False ( default )</td>
+        </tr>
+	<tr>
+            <td><b>5. private_proxy_ip_port </b></td>
+	    <td><b>Optional</b></td>
+            <td>If this variable is passed, proxy server entries are made in /etc/bashrc.bash file. This variable should also be passed if full linux subscription is desired</td>
+            <td>e.g.: 172.23.0.12:3128</td>
+        </tr>
          <tr>
-		 <td rowspan=4><b><a href="./roles/powervs_prepare_rhel_sap">powervs_prepare_rhel_sap</a></b><br /></td>
+		 <td rowspan=6><b><a href="./roles/powervs_prepare_rhel_sap">powervs_prepare_rhel_sap</a></b><br /></td>
             <td rowspan=1><b>1. sap_solution</b></td>
 	    <td><b>Mandatory</b></td>
             <td rowspan=1>RHEL community roles for HANA or NETWEAVER will be executed</td>
@@ -75,6 +87,18 @@ This collection has 4 modules, which are independent of each other and can be ru
             <td>RHEL subscription information. It is a dictionary. Should be set only if subscription is not already set or subscription has to be updated</td>
             <td>e.g.: { <br />username: "XYZ",<br />password: "ABC" ,<br />release: "8.2"<br />}</td>
         </tr>
+	<tr>
+            <td><b>5. full_linux_subscription</b></td>
+	    <td><b>Optional</b></td>
+            <td>If this variable is set to True, full linux subscription is done. Applying, Full Linux subscription is also depended on another variable private_proxy_ip_port</td>
+            <td>True or False ( default )</td>
+        </tr>
+	<tr>
+            <td><b>6. private_proxy_ip_port </b></td>
+	    <td><b>Optional</b></td>
+            <td>If this variable is passed, network proxy server entries are made in /etc/bashrc file. This variable should also be passed if full linux subscription is desired</td>
+            <td>e.g.: 172.23.0.12:3128</td>
+        </tr>
 		<tr>
          <td rowspan=2><b><a href="./roles/powervs_fs_creation">powervs_fs_creation</a></b><br /></td>
             <td rowspan=1><b>1.a. disks_configuration: { counts: [ ], names: [ ], paths: [ ], wwns: [ ] }<br />1.b. disks_configuration: [ { name: "", path: "", wwns: ""}...]</b></td>
@@ -91,8 +115,8 @@ This collection has 4 modules, which are independent of each other and can be ru
 	<tr>
 		<td rowspan=1><b><a href="./roles/powervs_swap_creation">powervs_swap_creation</a></b><br /></td>
             <td><b>swap_disk_wwn</b></td>
-	    <td><b>Mandatory</b></td>
-            <td>wwn id of swap disk</td>
+	    <td><b>Optional</b></td>
+            <td>wwn id of swap disk. Required only for SAP Netweaver configuration</td>
 	    <td><b>wwn value</b></td>
         </tr>
 	<tr>
@@ -122,9 +146,10 @@ This role performs the following tasks:
 - Sets **MTU** value to **9000** for SAP network interfaces
 - **TSO** is enabled for SAP network interfaces
 - **SAPTUNE SOLUTION** for **HANA or NETWEAVER or NETWEAVER+HANA** is applied based on parameter passed. **Only Saptune v3 is supported**.
-- **Activates SUSE subscription**
+- Activates **SUSE subscription** or **[Full Linux Subscription](https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-set-full-Linux)**
+- Set up **network proxy** on client. Modifies **/etc/bash.bashrc** file**
 
-   All settings applied remain persistent across reboot.
+All settings applied remain persistent across reboot.
 
 #### 2.1.2 powervs_prepare_rhel_sap:
 
@@ -133,7 +158,8 @@ This role performs the following tasks:
 - Enables **NFS** Service
 - Enables **rpcbind** daemon
 - Sets **MTU** value to **9000** for SAP network interfaces
-- **Activates RHEL subscription**
+- Activates **RHEL subscription** or **[Full Linux Subscription](https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-set-full-Linux)**
+- Set up network proxy on client. Modifies **/etc/bashrc** and **/etc/dnf/dnf.conf** files
 
 This role is followed by execution of following community roles
 - **[sap_general_preconfigure](https://github.com/sap-linuxlab/community.sap_install/tree/main/roles/sap_general_preconfigure)** 
@@ -203,7 +229,7 @@ wwns: 600507681082018bc8000000000057f1
 
 ### 2.3. Configuring SWAP spaces
 
-This module configures swap space on LPAR, and is same for both RHEL and SLES.
+This module configures swap space on LPAR, and is same for both RHEL and SLES. This role is applicable for **only for SAP Netweaver**.
 
 #### powervs_swap_creation
 
