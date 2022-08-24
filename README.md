@@ -59,7 +59,7 @@ This collection has 4 modules, which are independent of each other and can be ru
 	<tr>
             <td><b>5. private_proxy_ip_port </b></td>
 	    <td><b>Optional</b></td>
-            <td>If this variable is passed, proxy server entries are made in /etc/bashrc.bash file. This variable should also be passed if full linux subscription is desired</td>
+            <td>If this variable is passed, proxy server entries are made in /etc/bash.bashrc file. This variable should also be passed if full linux subscription is desired</td>
             <td>e.g.: 172.23.0.12:3128</td>
         </tr>
          <tr>

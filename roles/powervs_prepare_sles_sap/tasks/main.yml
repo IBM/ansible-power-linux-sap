@@ -1,9 +1,9 @@
 ---
 ### this role preconfigures LPAR for SAP installation requirement. Based on sap_solution input, saptune configures the system for HANA or NETWEAVER.
 # Setting up proxy based on private_proxy_ip_port. If this variable is defined, proxy will be added to /etc/bashrc file.
-- name: Edit /etc/bashrc file, to add http_proxy
+- name: Edit /etc/bash.bashrc file, to add http_proxy
   blockinfile:
-   path: /etc/bashrc
+   path: /etc/bash.bashrc
    block: |
     http_proxy=http://{{ private_proxy_ip_port }}
     https_proxy=http://{{ private_proxy_ip_port }}
@@ -65,6 +65,7 @@
 
   when: full_linux_subscription is defined
 # END of full_linux_subscription block
+
 # subscribing to SUSE subscription
 # Add repos for installing SLES packages required for SAP installation
 - name: Register SUSE and enable repos
