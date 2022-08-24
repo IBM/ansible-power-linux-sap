@@ -35,22 +35,25 @@
 
 # Subscribing to Full Linux® subscription for Power Systems Virtual Servers
 - block:
-# Creating backup of readme file, to be restored later
+  # Creating backup of readme file, to be restored later
   - name: Copy /usr/share/powervs-fls/powervs-fls-readme.md file 
     copy:
      src: /usr/share/powervs-fls/powervs-fls-readme.md
      dest: /usr/share/powervs-fls/powervs-fls-readme.md_copy
-# Modifying readme file, to update proxy server and port
+
+  # Modifying readme file, to update proxy server and port
   - name: Update cloud-init command with proxy server details 
     replace: 
       path: /usr/share/powervs-fls/powervs-fls-readme.md
       regexp: Private.proxy.IP.address:3128
       replace: "{{ private_proxy_ip_port }}"
-# Get the cloud-init command from readme
+  
+  # Get the cloud-init command from readme
   - name: Get the cloud-init command from /usr/share/powervs-fls/powervs-fls-readme.md 
     shell: grep {{ private_proxy_ip_port }} /usr/share/powervs-fls/powervs-fls-readme.md 
     register: cloud_init_command
-# Backing up the log file and removing it for latest use 
+  
+  # Backing up the log file and removing it for latest use 
   - name: Remove previous log file
     copy:
       src: /var/log/powervs-fls.log
@@ -69,15 +72,18 @@
       search_regex: "Exiting RHEL subscription registration process"    
     ignore_errors: true
     register: check_for_subscription_success  
+  
   - name: Getting RedHat registering server name
     shell: grep sap_hana /usr/share/powervs-fls/powervs-fls-readme.md | awk -F"\-u" '{ print $NF }' | awk '{ print $1 }'
     register: rhsm_host 
-# Check for successful Registration 
+  
+  # Check for successful Registration 
   - name: Check for successful registration
     shell:  subscription-manager config | grep {{ rhsm_host.stdout }}
     register: check_with_subscription_manager
     ignore_errors: true
-# Restoring Readme
+  
+  # Restoring Readme
   - name: Restoring /usr/share/powervs-fls/powervs-fls-readme.md file
     copy:
      src: /usr/share/powervs-fls/powervs-fls-readme.md_copy
@@ -85,7 +91,8 @@
   - file:
      path: /usr/share/powervs-fls/powervs-fls-readme.md_copy
      state: absent
-# Fail if registration fails.
+  
+  # Fail if registration fails.
   - fail:
      msg: "Full Linux Subscription failed, Please debug manually and take corrective action. Logs available at /var/log/powervs-fls.log"
     when: 
@@ -108,11 +115,11 @@
       auto_attach: true
       force_register: yes 
 
-# setting fact for major release. This will be used to setup repos for particular release.
+  # setting fact for major release. This will be used to setup repos for particular release.
   - set_fact:
      rhel_major_release={{ rhel_subscription.release | int }}
 
-# Add repos for installing RHEL packages required for SAP installation
+  # Add repos for installing RHEL packages required for SAP installation
   - name: Adding RHEL repos
     rhsm_repository:
      name: "{{ item }}"
@@ -125,6 +132,7 @@
     - rhel-{{ rhel_major_release }}-for-ppc64le-highavailability-e4s-rpms
 
   when: rhel_subscription is defined
+
 ##END of rhel_subscription block
 
 # making sure all requisite filesets are installed. 
