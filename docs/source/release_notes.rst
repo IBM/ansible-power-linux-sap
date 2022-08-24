@@ -24,3 +24,13 @@ Notes
        * Updated Ansible Galaxy Readme
 Availability
        * GitHub v1.0.2(https://github.com/IBM/ansible-power-linux-sap)
+
+Version 1.0.3
+Notes
+       * Full Linux subscription automation
+       * Install services like Squid, DNS, NTP, and NFS.
+       * Install awscli packgaes
+       * Setup proxy on clients
+       * Bug fixing.
+Availability
+       * GitHub v1.0.3(https://github.com/IBM/ansible-power-linux-sap)
