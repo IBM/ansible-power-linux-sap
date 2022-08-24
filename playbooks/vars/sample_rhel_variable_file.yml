@@ -30,14 +30,23 @@ wwns: [600507681082018bc8000000000057e4,600507681082018bc8000000000057e8,6005076
 #}
 #]
 
-swap_disk_wwn: "60050768108002DC6800000000029801"
 
 # ----------------------------- Optional parameters ------------------------------  #
-host_ip: "1.1.1.1"
-stripe_size: 64K
+#Uncomment # if you want to use any of there Optional parameters
+#host_ip: "1.1.1.1"
+#stripe_size: 64K
 # only for RHEL installations
-rhel_subscription : {
-username: "",
-password: "",
-release: ""
-}
+#rhel_subscription : {
+#username: "",
+#password: "",
+#release: ""
+#}
+
+# For SAP Netweaver swap disk requirement 
+#swap_disk_wwn: "60050768108002DC6800000000029801"
+
+# for Full Linux Subscription
+#full_linux_subscription: true
+
+# to set proxy on client VM  and also for Full Linux Subscription
+# private_proxy_ip_port: 172.23.0.12:3128
