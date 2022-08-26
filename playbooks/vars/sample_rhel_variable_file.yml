@@ -30,6 +30,8 @@ wwns: [600507681082018bc8000000000057e4,600507681082018bc8000000000057e8,6005076
 #}
 #]
 
+# For SAP Netweaver swap disk requirement 
+#swap_disk_wwn: "60050768108002DC6800000000029801"
 
 # ----------------------------- Optional parameters ------------------------------  #
 #Uncomment # if you want to use any of there Optional parameters
@@ -42,8 +44,6 @@ wwns: [600507681082018bc8000000000057e4,600507681082018bc8000000000057e8,6005076
 #release: ""
 #}
 
-# For SAP Netweaver swap disk requirement 
-#swap_disk_wwn: "60050768108002DC6800000000029801"
 
 # for Full Linux Subscription
 #full_linux_subscription: true

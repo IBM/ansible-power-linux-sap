@@ -115,7 +115,7 @@ This collection has 4 modules, which are independent of each other and can be ru
 	<tr>
 		<td rowspan=1><b><a href="./roles/powervs_swap_creation">powervs_swap_creation</a></b><br /></td>
             <td><b>swap_disk_wwn</b></td>
-	    <td><b>Optional</b></td>
+	    <td><b>Mandatory</b></td>
             <td>wwn id of swap disk. Required only for SAP Netweaver configuration</td>
 	    <td><b>wwn value</b></td>
         </tr>
