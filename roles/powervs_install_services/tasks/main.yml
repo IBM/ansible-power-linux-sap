@@ -100,13 +100,13 @@
     replace:
      path: /etc/chrony.conf
      regexp: '^(.*)local stratum 10$'
-     replace: '#local stratum 10'
+     replace: 'local stratum 10'
 
   - name : Edit allowed subnet in /etc/chronyd file 
     replace: 
      path: /etc/chrony.conf
-     regexp: '^#allow'
-     replace: 'allow'
+     regexp: '^#allow(.*)'
+     replace: 'allow 10.0.0.0/8'
 
   - name: Add Manual at EOF in /etc/chronyd
     lineinfile:
