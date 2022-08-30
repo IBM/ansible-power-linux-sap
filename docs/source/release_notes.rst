@@ -41,3 +41,9 @@ Notes
        * Updated Readme
 Availability
        * GitHub v1.0.4(https://github.com/IBM/ansible-power-linux-sap)
+
+Version 1.0.5
+Notes
+       * Bug Fixing 
+Availability
+       * GitHub v1.0.5(https://github.com/IBM/ansible-power-linux-sap)

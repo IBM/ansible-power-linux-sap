@@ -121,7 +121,7 @@ This collection has 4 modules, which are independent of each other and can be ru
         </tr>
 	<tr>
 		<td rowspan=3><b><a href="./roles/powervs_install_services">powervs_install_services</a></b><br /></td>
-            <td rowspan=1><b>1. server_config: { <br />squid: { enable:"" },<br /> ntp: { enable:"" },<br /> nfs: { enable:"" <br /> nfs_directory: "" },<br /> dns: { enable: ", dns_servers: "" },<br /> awscli: { enable: "" }<br />}</b></td>
+            <td rowspan=1><b>1. server_config: { <br />squid: { enable:"" },<br /> ntp: { enable:"" },<br /> nfs: { enable:"" <br /> nfs_directory: "" },<br /> dns: { enable: "", dns_servers: "" },<br /> awscli: { enable: "" }<br />}</b></td>
 	    <td><b>Mandatory</b></td>
             <td rowspan=1>server_config is a dictionary. Services are installed and enabled based on value passed for each service.</td>
             <td rowspan=1>e.g.: { <br /> squid: { enable: false },<br />ntp: { enable: false },<br /> nfs: { enable: true, nfs_directory: "/NFS; /hana/software" },<br /> dns: { enable: false, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" },<br /> awscli: { enable: false } <br />}<b></b></td>
