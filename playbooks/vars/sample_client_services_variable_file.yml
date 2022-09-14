@@ -1,6 +1,6 @@
 client_config: {
-squid: { enable: true, squid_server_ip_port:"127.0.0.1:3128"" },
-ntp: { enable: true, ntp_server_ip: "127.0.0.1" },
-nfs: { enable: true, nfs_server_path: ["127.0.0.1:/USER", "127.0.0.1:/EXAMPLE"], nfs_client_path: ["/MNT", "/HANA"] },
-dns: { enable: true, dns_server_ip: "127.0.0.1" },
+squid: { enable: false, squid_server_ip_port: "127.0.0.1:3128" },
+ntp: { enable: false, ntp_server_ip: "127.0.0.1" },
+nfs: { enable: false, nfs_server_path: "127.0.0.1:/NFS;127.0.0.1:/hana/software", nfs_client_path: "/MNT;/HANA" },
+dns: { enable: false, dns_server_ip: "127.0.0.1" }
 }

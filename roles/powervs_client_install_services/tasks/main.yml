@@ -12,10 +12,10 @@
       path: "{{ bash_file }}" 
       block: | 
         # adding HTTP HTTPS proxy
-        export http_proxy=http://{{ client_config.squid.squid_server_ip }}:3128
-        export https_proxy=https://{{ client_config.squid.squid_server_ip }}:3128
-        export HTTP_PROXY=http://{{ client_config.squid.squid_server_ip }}:3128
-        export HTTPS_PROXY=https://{{ client_config.squid.squid_server_ip }}:3128
+        export http_proxy=http://{{ client_config.squid.squid_server_ip_port }}
+        export https_proxy=https://{{ client_config.squid.squid_server_ip_port }}
+        export HTTP_PROXY=http://{{ client_config.squid.squid_server_ip_port }}
+        export HTTPS_PROXY=https://{{ client_config.squid.squid_server_ip_port }}
         #
       backup: yes
   when: client_config.squid.enable | default(false) | bool
@@ -66,7 +66,7 @@
       path: "{{ item }}"
       state: directory
       mode: '0755'
-    with_items: "{{ client_config.nfs.nfs_client_path }}"
+    with_items: "{{ client_config.nfs.nfs_client_path.split(';') }}"
    
 # Mounting NFS directory. server_path, should be "server_name":"source_path"
   - name: Mount NFS directory
@@ -77,6 +77,6 @@
       boot: yes
       fstype: nfs
     with_together:
-    - "{{ client_config.nfs.nfs_client_path  }}"
-    - "{{ client_config.nfs.nfs_server_path  }}"
+    - "{{ client_config.nfs.nfs_client_path.split(';')  }}"
+    - "{{ client_config.nfs.nfs_server_path.split(';')  }}"
   when: client_config.nfs.enable | default(false) | bool
