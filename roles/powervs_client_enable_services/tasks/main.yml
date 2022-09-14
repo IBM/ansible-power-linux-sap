@@ -1,0 +1,86 @@
+---
+## To modify bashrc file to add squid proxy 
+- block:
+  - set_fact:
+      bash_file: /etc/bashrc
+    when: ansible_distribution is match("RedHat*") 
+  - set_fact:
+      bash_file: /etc/bash.bashrc
+    when: ansible_distribution is match("SLES*") 
+  - name: Modify /etc/bashrc file 
+    blockinfile:
+      path: "{{ bash_file }}" 
+      block: | 
+        # adding HTTP HTTPS proxy
+        export http_proxy=http://{{ client_config.squid.squid_server_ip_port }}
+        export https_proxy=https://{{ client_config.squid.squid_server_ip_port }}
+        export HTTP_PROXY=http://{{ client_config.squid.squid_server_ip_port }}
+        export HTTPS_PROXY=https://{{ client_config.squid.squid_server_ip_port }}
+        #
+      backup: yes
+  when: client_config.squid.enable | default(false) | bool
+
+# This block will update DNS 
+- block:
+  - name: Modifying /etc/resolv.conf file to add nameserver
+    lineinfile: 
+     path: /etc/resolv.conf
+     line: nameserver {{ client_config.dns.dns_server_ip }}
+  when: client_config.dns.enable | default(false) | bool
+
+# This block will configure NTP 
+- block:
+## Installing chrony 
+  - name: Installing chrony 
+    package: 
+     name: chrony
+     state: present
+
+## modifying /etc/chronyd file
+  - name: Replace iburst line in /etc/chronyd file
+    replace:
+     path: /etc/chrony.conf
+     regexp: '^(.*)iburst$'
+     replace: 'server {{ client_config.ntp.ntp_server_ip }} iburst'
+
+## Starting chronyd service
+  - name: Start chronyd service 
+    service:
+     name: chronyd
+     state: restarted
+     enabled: yes 
+  when: client_config.ntp.enable | default(false) | bool
+
+
+# This block will Install NFS client and mount NFS exported directories locally
+- block:
+  - name: Install NFS client package
+    package:
+     name: nfs-utils
+     state: latest
+
+  - name: Start and enable NFS client service 
+    service:
+     name: nfs-client.target
+     state: restarted 
+     enabled: yes
+
+  - name: Create a directory if it does not exist
+    file:
+      path: "{{ item }}"
+      state: directory
+      mode: '0755'
+    with_items: "{{ client_config.nfs.nfs_client_path.split(';') }}"
+   
+# Mounting NFS directory. server_path, should be "server_name":"source_path"
+  - name: Mount NFS directory
+    mount:
+      path: "{{ item.0 }}"
+      src: "{{ item.1 }}" 
+      state: mounted
+      boot: yes
+      fstype: nfs
+    with_together:
+    - "{{ client_config.nfs.nfs_client_path.split(';')  }}"
+    - "{{ client_config.nfs.nfs_server_path.split(';')  }}"
+  when: client_config.nfs.enable | default(false) | bool

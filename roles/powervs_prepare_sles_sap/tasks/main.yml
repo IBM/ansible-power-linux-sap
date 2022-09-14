@@ -21,16 +21,9 @@
      src: /usr/share/powervs-fls/powervs-fls-readme.md
      dest: /usr/share/powervs-fls/powervs-fls-readme.md_copy
 
-  # Modifying readme file, to update proxy server and port
+  # Getting cloud-init, to update proxy server and port
   - name: Update cloud-init command with proxy server details
-    replace:
-      path: /usr/share/powervs-fls/powervs-fls-readme.md
-      regexp: private_ip_of_proxy_vm:3128
-      replace: "{{ full_linux_subscription.private_proxy_ip}}:{{ full_linux_subscription.proxy_port }}"
-
-  # Get the cloud-init command from readme
-  - name: Get the cloud-init command from /usr/share/powervs-fls/powervs-fls-readme.md
-    shell: grep {{ full_linux_subscription.private_proxy_ip}} /usr/share/powervs-fls/powervs-fls-readme.md
+    shell: grep cloud-init /usr/share/powervs-fls/powervs-fls-readme.md | grep -vi private 
     register: cloud_init_command
 
   # Backing up the log file and removing it for latest use
@@ -45,7 +38,7 @@
 
   # Excute the cloud-init command as in readme
   - name: Execute cloud-init command
-    shell: "{{ cloud_init_command.stdout }}"
+    shell: "{{ cloud_init_command.stdout }} {{ private_proxy_ip_port }}"
 
   # Wait for successful completion of registration. It will timeout in 300 seconds, if search text is not found
   - name: Wait until the string "Successfully completed SLES subscription registration process"" is in the file /var/log/powervs-fls.log before continuing
@@ -64,7 +57,6 @@
      path: /usr/share/powervs-fls/powervs-fls-readme.md_copy
      state: absent
   
-  - debug: var=check_for_subscription_success
   
   # Fail if registration fails.
   - fail:

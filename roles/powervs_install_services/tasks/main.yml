@@ -171,7 +171,7 @@
   - name: Warning message if directory was not exported successfully 
     debug:
      msg: "INFO: The command {{ item.cmd }} returned error.  Please ensure all NFS exports had been successful"
-    when: item.rc != 1
+    when: item.rc != 0
     loop: "{{ showmount_log.results }}"
       
   when: server_config.nfs.enable|default(False)|bool == true
