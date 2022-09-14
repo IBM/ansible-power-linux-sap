@@ -47,3 +47,11 @@ Notes
        * Bug Fixing 
 Availability
        * GitHub v1.0.5(https://github.com/IBM/ansible-power-linux-sap)
+
+Version 1.0.6
+Notes
+        * Added new role powervs_client_enable_services
+	* Updated Readme
+	* Bug Fixing
+Availability
+       * GitHub v1.0.6(https://github.com/IBM/ansible-power-linux-sap)

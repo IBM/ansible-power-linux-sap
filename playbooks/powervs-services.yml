@@ -17,4 +17,4 @@
 - hosts: all 
   roles:
   - { role: powervs_install_services, when: server_config is defined }
-  - { role: powervs_client_install_services, when: client_config is defined }
+  - { role: powervs_client_enable_services, when: client_config is defined }

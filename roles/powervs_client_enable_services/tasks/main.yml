@@ -1,5 +1,5 @@
 ---
-## To modify /etc/bash.bashrc file to add proxy 
+## To modify bashrc file to add squid proxy 
 - block:
   - set_fact:
       bash_file: /etc/bashrc
@@ -19,6 +19,8 @@
         #
       backup: yes
   when: client_config.squid.enable | default(false) | bool
+
+# This block will update DNS 
 - block:
   - name: Modifying /etc/resolv.conf file to add nameserver
     lineinfile: 
@@ -26,6 +28,7 @@
      line: nameserver {{ client_config.dns.dns_server_ip }}
   when: client_config.dns.enable | default(false) | bool
 
+# This block will configure NTP 
 - block:
 ## Installing chrony 
   - name: Installing chrony 
@@ -48,7 +51,8 @@
      enabled: yes 
   when: client_config.ntp.enable | default(false) | bool
 
-# Install NFS client 
+
+# This block will Install NFS client and mount NFS exported directories locally
 - block:
   - name: Install NFS client package
     package:

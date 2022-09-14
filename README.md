@@ -127,7 +127,7 @@ This collection has 4 modules, which are independent of each other and can be ru
             <td rowspan=1>e.g.: { <br /> squid: { enable: false },<br />ntp: { enable: false },<br /> nfs: { enable: true, nfs_directory: "/NFS; /hana/software" },<br /> dns: { enable: false, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" },<br /> awscli: { enable: false } <br />}<b></b></td>
         </tr>
 	<tr>
-		<td rowspan=1><b><a href="./roles/powervs_client_install_services">powervs_client_install_services</a></b><br /></td>
+		<td rowspan=1><b><a href="./roles/powervs_client_enable_services">powervs_client_enable_services</a></b><br /></td>
             <td rowspan=1><b>1. client_config: { <br />squid: { enable: "", squid_server_ip_port: "" },<br /> ntp: { enable: "", ntp_server_ip: "" },<br /> nfs: { enable:"", nfs_server_path: "", nfs_client_path: "" },<br /> dns: { enable: "", dns_servers_ip: "" }<br /> }</b></td>
 	    <td><b>Mandatory</b></td>
             <td rowspan=1>client_config is a dictionary. Services are installed and enabled based on value passed for each service.</td>
@@ -287,7 +287,7 @@ For DNS services, additional variable **dns_servers** is required. These are use
 
 This module is same for both SLES and RHEL.
 
-#### Role: powervs_client_install_services 
+#### Role: powervs_client_enable_services 
 
 This role performs the following tasks:
 - Configures **SQUID** proxy.
@@ -477,7 +477,7 @@ ansible-playbook -i "remote_host_name," powervs-services.yml -e @vars/sample_ser
 
 ### 4.4. Enabling services. 
 
-1. To run **powervs_client_install_services** role, to enable services on client, using **variable file sample_client_services_variable_file.yml** inside directory playbooks/vars. Variable file should be modified like below:
+1. To run **powervs_client_enable_services** role, to enable services on client, using **variable file sample_client_services_variable_file.yml** inside directory playbooks/vars. Variable file should be modified like below:
 ```
 client_config: {
 squid: { enable: true, squid_server_ip_port: "172.23.0.12:3128" },
@@ -491,7 +491,7 @@ ansible-playbook --connection=local -i "localhost," powervs-services.yml -e @var
 
 ```
 
-2. To run **powervs_client_install_services** role, to enable squid service only, using **variable file sample_client_services_variable_file.yml** inside directory playbooks/vars. Variable file should be modified like below:
+2. To run **powervs_client_enable_services** role, to enable squid service only, using **variable file sample_client_services_variable_file.yml** inside directory playbooks/vars. Variable file should be modified like below:
 ```
 client_config: {
 squid: { enable: true, squid_server_ip_port: "172.23.0.12:3128" }
