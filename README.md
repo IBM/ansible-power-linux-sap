@@ -120,12 +120,19 @@ This collection has 4 modules, which are independent of each other and can be ru
 	    <td><b>wwn value</b></td>
         </tr>
 	<tr>
-		<td rowspan=3><b><a href="./roles/powervs_install_services">powervs_install_services</a></b><br /></td>
+		<td rowspan=1><b><a href="./roles/powervs_install_services">powervs_install_services</a></b><br /></td>
             <td rowspan=1><b>1. server_config: { <br />squid: { enable:"" },<br /> ntp: { enable:"" },<br /> nfs: { enable:"" <br /> nfs_directory: "" },<br /> dns: { enable: "", dns_servers: "" },<br /> awscli: { enable: "" }<br />}</b></td>
 	    <td><b>Mandatory</b></td>
             <td rowspan=1>server_config is a dictionary. Services are installed and enabled based on value passed for each service.</td>
             <td rowspan=1>e.g.: { <br /> squid: { enable: false },<br />ntp: { enable: false },<br /> nfs: { enable: true, nfs_directory: "/NFS; /hana/software" },<br /> dns: { enable: false, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" },<br /> awscli: { enable: false } <br />}<b></b></td>
         </tr>
+	<tr>
+		<td rowspan=1><b><a href="./roles/powervs_client_install_services">powervs_client_install_services</a></b><br /></td>
+            <td rowspan=1><b>1. client_config: { <br />squid: { enable: "", squid_server_ip_port: "" },<br /> ntp: { enable: "", ntp_server_ip: "" },<br /> nfs: { enable:"", nfs_server_path: "", nfs_client_path: "" },<br /> dns: { enable: "", dns_servers_ip: "" }<br /> }</b></td>
+	    <td><b>Mandatory</b></td>
+            <td rowspan=1>client_config is a dictionary. Services are installed and enabled based on value passed for each service.</td>
+            <td rowspan=1>e.g.: { <br />squid: { enable: true, squid_server_ip_port: "172.23.0.12:3128" }, <br />ntp: { enable: true, ntp_server_ip: "172.23.0.12" }, <br />nfs: { enable: true, nfs_server_path: "172.23.0.12:/NFS;172.23.0.12:/hana/software", nfs_client_path: "/mnt;/hana" }, <br />dns: { enable: true, dns_server_ip: "172.23.0.12" } <br />}<b></b></td>
+        </tr>	    
         <tr>
     </tbody>
 </table>
@@ -245,6 +252,8 @@ For RHEL, **swap disk of size >= 24GB** is required for community role **[sap-ne
 
 This module is same for both SLES and RHEL.
 
+#### powervs_install_services
+
 This role performs the following tasks:
 - Installs **SQUID** package, and configures squid.conf file as described in this link https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-set-full-Linux.
 - Installs **DNS** packages and configure **DNS server forwarders** based on the **dns_servers** input provided.
@@ -271,6 +280,36 @@ Each service can be enabled separately. Disabling service is not supported. With
 For NFS services, additional variable **nfs_directory** is required. If not already present, directories will be created and exported as mountable directories.
 
 For DNS services, additional variable **dns_servers** is required. These are user-defined DNS servers IPs. In example, **161.26.0.7 and 161.26.0.8** are default **IBM Cloud** DNS servers and **9.9.9.9** is default **IBM Public** DNS server. Please note, **;(semicolon)** as a separator, in example.
+
+
+
+### 2.5. Enabling Services on SAP instances
+
+This module is same for both SLES and RHEL.
+
+#### Role: powervs_client_install_services 
+
+This role performs the following tasks:
+- Configures **SQUID** proxy.
+- Configures **DNS** server.
+- Installs **NTP** packages and updates named.conf file with ntp server to configure ntp services.
+- Installs **NFS** client packages, and mounts nfs exported directories as mentioned in variable file.
+
+This role will also **start and enable** all above mentioned services.
+
+The input variable **client_config** is needed to be provided for this role to be executed. The variable file looks like below
+```
+client_config: {
+squid: { enable: false, squid_server_ip_port: "172.23.0.12:3128" },
+ntp: { enable: false, ntp_server_ip: "172.23.0.12" },
+nfs: { enable: false, nfs_server_path: "172.23.0.12:/USER;172.23.0.12:/EXAMPLE", nfs_client_path: "/MNT;/HANA" },
+dns: { enable: false, dns_server_ip: "172.23.0.12" }
+}
+```
+
+Each services can be chosen to be enabled or not. Disabling is not supported. This variable file enables users, to enable one or many services on one or multiple SAP instances, as desired.
+
+For **NFS** services, **nfs_server_path**, which are already network shared, and can be mounted on client should be provided. **nfs_client_path** are directories where NFS shared directory will be locally mounted. 
 
 ***
 
@@ -435,7 +474,42 @@ For remote host ( host on which service has to be enabled ) execution:
 ansible-playbook -i "remote_host_name," powervs-services.yml -e @vars/sample_services_variable_file.yml
 
 ```
+
+### 4.4. Enabling services. 
+
+1. To run **powervs_client_install_services** role, to enable services on client, using **variable file sample_client_services_variable_file.yml** inside directory playbooks/vars. Variable file should be modified like below:
+```
+client_config: {
+squid: { enable: true, squid_server_ip_port: "172.23.0.12:3128" },
+ntp: { enable: true, ntp_server_ip: "172.23.0.12" },
+nfs: { enable: true, nfs_server_path: "172.23.0.12:/NFS;172.23.0.12:/hana/software", nfs_client_path: "/mnt;/hana" },
+dns: { enable: true, dns_server_ip: "172.23.0.12" }
+}
+```
+```
+ansible-playbook --connection=local -i "localhost," powervs-services.yml -e @vars/sample_client_services_variable_file.yml
+
+```
+
+2. To run **powervs_client_install_services** role, to enable squid service only, using **variable file sample_client_services_variable_file.yml** inside directory playbooks/vars. Variable file should be modified like below:
+```
+client_config: {
+squid: { enable: true, squid_server_ip_port: "172.23.0.12:3128" }
+}
+```
+For localhost execution:
+```
+ansible-playbook --connection=local -i "localhost," powervs-services.yml -e @vars/sample_client_services_variable_file.yml
+
+```
+
+For remote host ( host on which service has to be enabled ) execution:
+```
+ansible-playbook -i "remote_host_name," powervs-services.yml -e @vars/sample_client_services_variable_file.yml
+
+```
 ***
+
 
 # 5. Requirements, Dependencies and Testing
 
