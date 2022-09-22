@@ -20,6 +20,7 @@
     - HTTP_PROXY
     - HTTPS_PROXY
     register: replace_log
+    when: client_config.squid.squid_server_ip_port is defined
   #In case no entries were present, next task, will add the first time entries. 
   - name: Check for http proxy entries in {{ bash_file }}
     lineinfile:
@@ -31,7 +32,9 @@
     - https_proxy
     - HTTP_PROXY
     - HTTPS_PROXY
-    when: not replace_log.changed 
+    when: 
+    - client_config.squid.squid_server_ip_port is defined 
+    - not replace_log.changed
   # Check if no_proxy entries are already present. If yes, dont add new entries. If no, it should be added.
   - name: Check for http proxy entries in {{ bash_file }}
     replace:
@@ -39,13 +42,16 @@
      regexp: "^(.*)no_proxy(.*)$"
      replace: "export no_proxy={{ client_config.squid.no_proxy_hosts }}"
     register: replace_noproxy_log
+    when: client_config.squid.no_proxy_hosts is defined
   #In case no no_proxy entries were present, next task, will add the first time entries.
   - name: Check for http proxy entries in {{ bash_file }}
     lineinfile:
      path: "{{ bash_file }}"
      regexp: "^(.*)no_proxy(.*)$"
      line: "export no_proxy={{ client_config.squid.no_proxy_hosts }}"
-    when: not replace_noproxy_log.changed
+    when: 
+    - client_config.squid.no_proxy_hosts is defined
+    - not replace_noproxy_log.changed
   when: client_config.squid.enable | default(false) | bool
 
 # This block will update DNS 

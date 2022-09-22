@@ -128,10 +128,10 @@ This collection has 4 modules, which are independent of each other and can be ru
         </tr>
 	<tr>
 		<td rowspan=1><b><a href="./roles/powervs_client_enable_services">powervs_client_enable_services</a></b><br /></td>
-            <td rowspan=1><b>1. client_config: { <br />squid: { enable: "", squid_server_ip_port: "" },<br /> ntp: { enable: "", ntp_server_ip: "" },<br /> nfs: { enable:"", nfs_server_path: "", nfs_client_path: "" },<br /> dns: { enable: "", dns_servers_ip: "" }<br /> }</b></td>
+            <td rowspan=1><b>1. client_config: { <br />squid: { enable: "", squid_server_ip_port: "", no_proxy_hosts: "" },<br /> ntp: { enable: "", ntp_server_ip: "" },<br /> nfs: { enable:"", nfs_server_path: "", nfs_client_path: "" },<br /> dns: { enable: "", dns_servers_ip: "" }<br /> }</b></td>
 	    <td><b>Mandatory</b></td>
             <td rowspan=1>client_config is a dictionary. Services are installed and enabled based on value passed for each service.</td>
-            <td rowspan=1>e.g.: { <br />squid: { enable: true, squid_server_ip_port: "172.23.0.12:3128" }, <br />ntp: { enable: true, ntp_server_ip: "172.23.0.12" }, <br />nfs: { enable: true, nfs_server_path: "172.23.0.12:/NFS;172.23.0.12:/hana/software", nfs_client_path: "/mnt;/hana" }, <br />dns: { enable: true, dns_server_ip: "172.23.0.12" } <br />}<b></b></td>
+            <td rowspan=1>e.g.: { <br />squid: { enable: true, squid_server_ip_port: "172.23.0.12:3128", no_proxy_hosts: "161.0.0.0/8" }, <br />ntp: { enable: true, ntp_server_ip: "172.23.0.12" }, <br />nfs: { enable: true, nfs_server_path: "172.23.0.12:/NFS;172.23.0.12:/hana/software", nfs_client_path: "/mnt;/hana" }, <br />dns: { enable: true, dns_server_ip: "172.23.0.12" } <br />}<b></b></td>
         </tr>	    
         <tr>
     </tbody>
@@ -300,7 +300,7 @@ This role will also **start and enable** all above mentioned services.
 The input variable **client_config** is needed to be provided for this role to be executed. The variable file looks like below
 ```
 client_config: {
-squid: { enable: false, squid_server_ip_port: "172.23.0.12:3128" },
+squid: { enable: false, squid_server_ip_port: "172.23.0.12:3128", no_proxy_hosts: "161.0.0.0/8" },
 ntp: { enable: false, ntp_server_ip: "172.23.0.12" },
 nfs: { enable: false, nfs_server_path: "172.23.0.12:/USER;172.23.0.12:/EXAMPLE", nfs_client_path: "/MNT;/HANA" },
 dns: { enable: false, dns_server_ip: "172.23.0.12" }
@@ -480,7 +480,7 @@ ansible-playbook -i "remote_host_name," powervs-services.yml -e @vars/sample_ser
 1. To run **powervs_client_enable_services** role, to enable services on client, using **variable file sample_client_services_variable_file.yml** inside directory playbooks/vars. Variable file should be modified like below:
 ```
 client_config: {
-squid: { enable: true, squid_server_ip_port: "172.23.0.12:3128" },
+squid: { enable: true, squid_server_ip_port: "172.23.0.12:3128", no_proxy_hosts: "161.0.0.0/8" },
 ntp: { enable: true, ntp_server_ip: "172.23.0.12" },
 nfs: { enable: true, nfs_server_path: "172.23.0.12:/NFS;172.23.0.12:/hana/software", nfs_client_path: "/mnt;/hana" },
 dns: { enable: true, dns_server_ip: "172.23.0.12" }
@@ -494,7 +494,7 @@ ansible-playbook --connection=local -i "localhost," powervs-services.yml -e @var
 2. To run **powervs_client_enable_services** role, to enable squid service only, using **variable file sample_client_services_variable_file.yml** inside directory playbooks/vars. Variable file should be modified like below:
 ```
 client_config: {
-squid: { enable: true, squid_server_ip_port: "172.23.0.12:3128" }
+squid: { enable: true, squid_server_ip_port: "172.23.0.12:3128", no_proxy_hosts: "161.0.0.0/8" }
 }
 ```
 For localhost execution:

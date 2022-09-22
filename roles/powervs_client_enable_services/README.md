@@ -15,7 +15,7 @@ This role will also **start and enable** all above mentioned services.
 The input variable **client_config** is needed to be provided for this role to be executed. The variable file looks like below
 ```
 client_config: {
-squid: { enable: false, squid_server_ip_port: "127.0.0.1:3128" },
+squid: { enable: false, squid_server_ip_port: "127.0.0.1:3128", no_proxy_hosts: "161.0.0.0/8" },
 ntp: { enable: false, ntp_server_ip: "127.0.0.1" },
 nfs: { enable: false, nfs_server_path: "127.0.0.1:/USER;127.0.0.1:/EXAMPLE", nfs_client_path: "/MNT;/HANA" },
 dns: { enable: false, dns_server_ip: "127.0.0.1" }
