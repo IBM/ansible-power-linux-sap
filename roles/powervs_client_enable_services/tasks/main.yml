@@ -7,17 +7,45 @@
   - set_fact:
       bash_file: /etc/bash.bashrc
     when: ansible_distribution is match("SLES*") 
-  - name: Modify /etc/bashrc file 
-    blockinfile:
-      path: "{{ bash_file }}" 
-      block: | 
-        # adding HTTP HTTPS proxy
-        export http_proxy=http://{{ client_config.squid.squid_server_ip_port }}
-        export https_proxy=https://{{ client_config.squid.squid_server_ip_port }}
-        export HTTP_PROXY=http://{{ client_config.squid.squid_server_ip_port }}
-        export HTTPS_PROXY=https://{{ client_config.squid.squid_server_ip_port }}
-        #
-      backup: yes
+  # Check if http_proxy entries are already present. If yes, dont add new entries. If no, it should be added.
+  - name: Check for http proxy entries in {{ bash_file }} 
+    replace:
+     path: "{{ bash_file }}"
+     regexp: "^(.*){{item}}(.*)$"
+     replace: "export {{item}}=http://{{ client_config.squid.squid_server_ip_port }}"
+     force: yes
+    with_items: 
+    - http_proxy
+    - https_proxy
+    - HTTP_PROXY
+    - HTTPS_PROXY
+    register: replace_log
+  #In case no entries were present, next task, will add the first time entries. 
+  - name: Check for http proxy entries in {{ bash_file }}
+    lineinfile:
+     path: "{{ bash_file }}"
+     regexp: "^(.*){{item}}(.*)$"
+     line: "export {{item}}=http://{{ client_config.squid.squid_server_ip_port }}"
+    with_items:
+    - http_proxy
+    - https_proxy
+    - HTTP_PROXY
+    - HTTPS_PROXY
+    when: not replace_log.changed 
+  # Check if no_proxy entries are already present. If yes, dont add new entries. If no, it should be added.
+  - name: Check for http proxy entries in {{ bash_file }}
+    replace:
+     path: "{{ bash_file }}"
+     regexp: "^(.*)no_proxy(.*)$"
+     replace: "export no_proxy={{ client_config.squid.no_proxy_hosts }}"
+    register: replace_noproxy_log
+  #In case no no_proxy entries were present, next task, will add the first time entries.
+  - name: Check for http proxy entries in {{ bash_file }}
+    lineinfile:
+     path: "{{ bash_file }}"
+     regexp: "^(.*)no_proxy(.*)$"
+     line: "export no_proxy={{ client_config.squid.no_proxy_hosts }}"
+    when: not replace_noproxy_log.changed
   when: client_config.squid.enable | default(false) | bool
 
 # This block will update DNS 
