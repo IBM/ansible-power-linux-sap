@@ -61,4 +61,11 @@ Notes
         * Updated Readme
         * Bug Fixing
 Availability
-       * GitHub v1.0.6(https://github.com/IBM/ansible-power-linux-sap)
+       * GitHub v1.0.7(https://github.com/IBM/ansible-power-linux-sap)
+
+Version 1.0.8
+Notes
+        * squid.conf updated 
+        * pip installation removed 
+Availability
+       * GitHub v1.0.8(https://github.com/IBM/ansible-power-linux-sap)
