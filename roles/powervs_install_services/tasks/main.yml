@@ -175,21 +175,28 @@
     loop: "{{ showmount_log.results }}"
       
   when: server_config.nfs.enable|default(False)|bool == true
-
 ######## AWSCLI Service ########
 - block:
-  # Install dependency for awscli installation
-  - name: Check for pip package 
-    package:
-      name: python3-pip
-      state: latest
+  # enable repos for awscli installation
+    - name: Enable repos for RHEL installation
+      rhsm_repository:
+        name: "rhel-{{ ansible_distribution_major_version }}-for-{{ ansible_architecture }}-highavailability-rpms"
+        state: enabled
+    - name: Check for awscli package
+      package:
+        name: awscli
+        state: latest
+  when:
+  - ansible_distribution is match("RedHat*")
+  - server_config.awscli.enable|default(False)|bool == true
 
-  # Install AWSCLI
-  - name: Installing awscli using pip
-    pip:
-     name: awscli
-     state: latest
-  - debug:
-     msg: Please configure awscli to download required files manually.
-  
-  when: server_config.awscli.enable|default(False)|bool == true
+- block:
+    - name: Enable repos for SLES installation
+      shell: SUSEConnect -p sle-module-public-cloud/{{ ansible_distribution_version }}/{{ ansible_architecture  }}
+    - name: Check for awscli package
+      package:
+        name: aws-cli
+        state: latest
+  when:
+  - ansible_distribution is match("SLES*")
+  - server_config.awscli.enable|default(False)|bool == true
