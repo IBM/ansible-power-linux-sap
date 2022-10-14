@@ -2,7 +2,7 @@ namespace: "ibm"
 
 name: "power_linux_sap"
 
-version: "1.0.7"
+version: "1.0.8"
 
 readme: "README.md"
 
