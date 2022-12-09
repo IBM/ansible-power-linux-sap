@@ -164,7 +164,7 @@
 
   # Verify if NFS device is correctly exported 
   - name: Run showmount command to list nfs exported directory 
-    shell: showmount -e localhost  | grep  {{ item.path | trim }}
+    shell: showmount -e localhost  | grep  {{ item.mount_path | trim }}
     register: showmount_log
     ignore_errors: true
     with_items: "{{ server_config.nfs.nfs_file_system }}"
