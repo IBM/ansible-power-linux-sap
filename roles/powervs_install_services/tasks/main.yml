@@ -129,7 +129,11 @@
   - name: include task to create NFS filesystem  
     include_tasks: vpc_fs_creation.yml
     with_items: "{{ server_config.nfs.nfs_file_system }}"
-
+    when: ansible_architecture is match("x86*") 
+#  - name: include task to create NFS filesystem
+#    include_tasks: ppc_fs_creation.yml
+#    with_items: "{{ server_config.nfs.nfs_file_system }}"
+#    when: ansible_architecture is match("x86*")
   # Install NFS 
   - name: Install nfs package 
     package:
