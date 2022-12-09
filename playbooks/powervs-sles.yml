@@ -16,6 +16,6 @@
 ---
 - hosts: all 
   roles:
-  - { role: powervs_prepare_sles_sap, when: sap_solution is defined }
-  - { role: powervs_fs_creation,      when: disks_configuration is defined }
-  - { role: powervs_swap_creation,    when: swap_disk_wwn is defined }
+  - { role: ../roles/powervs_fs_creation,      when: disks_configuration is defined }
+  - { role: ../roles/powervs_swap_creation,    when: swap_disk_wwn is defined }
+  - { role: ../roles/powervs_prepare_sles_sap, when: sap_solution is defined }
