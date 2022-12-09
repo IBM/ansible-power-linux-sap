@@ -2,7 +2,7 @@
 # setting variable values, to be used later for filesystem creation and disk discovery
 - set_fact:
    file_system_name: "{{ item.name }}" 
-   file_system_path: "{{ item.path }}"
+   file_system_path: "{{ item.mount_path }}"
    file_system_size: "{{ item.size }}"
 # install lvm package is not already installed
 - name: Install lvm package if not already installed

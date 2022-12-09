@@ -128,7 +128,7 @@
   # Including a task to create a filesystem which will be NFS exported
   - name: include task to create NFS filesystem  
     include_tasks: vpc_fs_creation.yml
-    with_items: "{{ server_config.nfs.nfs_directory }}"
+    with_items: "{{ server_config.nfs.nfs_file_system }}"
 
   # Install NFS 
   - name: Install nfs package 
@@ -148,8 +148,8 @@
     lineinfile:
      path: /etc/exports
      state: present
-     line: "{{ item.path | trim  }} *(rw,no_root_squash,no_subtree_check,insecure)"
-    with_items: "{{ server_config.nfs.nfs_directory  }}"
+     line: "{{ item.mount_path | trim  }} *(rw,no_root_squash,no_subtree_check,insecure)"
+    with_items: "{{ server_config.nfs.nfs_file_system  }}"
 
   # Start NFS service
   - name: Start nfs service
@@ -163,7 +163,7 @@
     shell: showmount -e localhost  | grep  {{ item.path | trim }}
     register: showmount_log
     ignore_errors: true
-    with_items: "{{ server_config.nfs.nfs_directory }}"
+    with_items: "{{ server_config.nfs.nfs_file_system }}"
 
   - name: Warning message if directory was not exported successfully 
     debug:
