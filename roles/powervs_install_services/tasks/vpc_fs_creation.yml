@@ -9,6 +9,10 @@
   package:
    name: lvm2
    state: present
+- name: Install lvm package if not already installed
+  package:
+   name: sg3_utils
+   state: present
 
 - name: Rescanning for new disks
   command: /usr/bin/rescan-scsi-bus.sh
