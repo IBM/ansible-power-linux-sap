@@ -125,20 +125,21 @@
 
 ######## NFS Service ######## 
 - block:
+  # Including a task to create a filesystem which will be NFS exported
+  - name: include task to create NFS filesystem  
+    include_tasks: vpc_fs_creation.yml
+    with_items: "{{ server_config.nfs.nfs_file_system }}"
+    when: ansible_architecture is match("x86*") 
+#  - name: include task to create NFS filesystem
+#    include_tasks: ppc_fs_creation.yml
+#    with_items: "{{ server_config.nfs.nfs_file_system }}"
+#    when: ansible_architecture is match("x86*")
   # Install NFS 
   - name: Install nfs package 
     package:
      name: nfs-utils
      state: latest 
     ignore_errors: true
-
-  # Create directory which will be exported for NFS 
-  - name: Create a directory 
-    file:
-     path: "{{ item | trim }}"
-     state: directory
-     mode: 0755
-    with_items: "{{ server_config.nfs.nfs_directory.split(';')  }}" 
 
   # Check for /etc/export file, if non-existing, create one.
   - name: Create /etc/exports file. if not present
@@ -151,8 +152,8 @@
     lineinfile:
      path: /etc/exports
      state: present
-     line: "{{ item | trim  }} *(rw,no_root_squash,no_subtree_check,insecure)"
-    with_items: "{{ server_config.nfs.nfs_directory.split(';')  }}"
+     line: "{{ item.mount_path | trim  }} *(rw,no_root_squash,no_subtree_check,insecure)"
+    with_items: "{{ server_config.nfs.nfs_file_system  }}"
 
   # Start NFS service
   - name: Start nfs service
@@ -163,10 +164,10 @@
 
   # Verify if NFS device is correctly exported 
   - name: Run showmount command to list nfs exported directory 
-    shell: showmount -e localhost  | grep  {{ item| trim }}
+    shell: showmount -e localhost  | grep  {{ item.mount_path | trim }}
     register: showmount_log
     ignore_errors: true
-    with_items: "{{ server_config.nfs.nfs_directory.split(';') }}"
+    with_items: "{{ server_config.nfs.nfs_file_system }}"
 
   - name: Warning message if directory was not exported successfully 
     debug:

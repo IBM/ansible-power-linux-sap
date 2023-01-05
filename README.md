@@ -128,7 +128,7 @@ This collection has 4 modules, which are independent of each other and can be ru
         </tr>
 	<tr>
 		<td rowspan=1><b><a href="./roles/powervs_client_enable_services">powervs_client_enable_services</a></b><br /></td>
-            <td rowspan=1><b>1. client_config: { <br />squid: { enable: "", squid_server_ip_port: "", no_proxy_hosts: "" },<br /> ntp: { enable: "", ntp_server_ip: "" },<br /> nfs: { enable:"", nfs_server_path: "", nfs_client_path: "" },<br /> dns: { enable: "", dns_servers_ip: "" }<br /> }</b></td>
+            <td rowspan=1><b>1. client_config: { <br />squid: { enable: "", squid_server_ip_port: "", no_proxy_hosts: "" },<br /> ntp: { enable: "", ntp_server_ip: "" },<br /> nfs: { nfs: { enable: false, nfs_file_system: [ { name: nfs, mount_path: "/nfs", size: 300 } ] },<br /> dns: { enable: "", dns_servers_ip: "" }<br /> }</b></td>
 	    <td><b>Mandatory</b></td>
             <td rowspan=1>client_config is a dictionary. Services are installed and enabled based on value passed for each service.</td>
             <td rowspan=1>e.g.: { <br />squid: { enable: true, squid_server_ip_port: "172.23.0.12:3128", no_proxy_hosts: "161.0.0.0/8" }, <br />ntp: { enable: true, ntp_server_ip: "172.23.0.12" }, <br />nfs: { enable: true, nfs_server_path: "172.23.0.12:/NFS;172.23.0.12:/hana/software", nfs_client_path: "/mnt;/hana" }, <br />dns: { enable: true, dns_server_ip: "172.23.0.12" } <br />}<b></b></td>
@@ -269,7 +269,7 @@ The input variable **server_config** is needed to be provided for this role to b
 server_config: {
 squid: { enable: false },
 ntp: { enable: false },
-nfs: { enable: true, nfs_directory: "/NFS; /hana/software" },
+nfs: { enable: false, nfs_file_system: [ { name: nfs, mount_path: "/nfs", size: 300 } ] },
 dns: { enable: false, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" },
 awscli: { enable: false }
 }
@@ -277,7 +277,7 @@ awscli: { enable: false }
 
 Each service can be enabled separately. Disabling service is not supported. With the variable file, users can enable one or many services on one or multiple hosts, as desired.
 
-For NFS services, additional variable **nfs_directory** is required. If not already present, directories will be created and exported as mountable directories.
+For NFS services, additional variable **nfs_file_system** is required. **nfs_file_system** is a list of dictionaries, which is used to create a NFS mountable filesystem named as per **name** variable, of provided **size* and mounted on **mount_path**. 
 
 For DNS services, additional variable **dns_servers** is required. These are user-defined DNS servers IPs. In example, **161.26.0.7 and 161.26.0.8** are default **IBM Cloud** DNS servers and **9.9.9.9** is default **IBM Public** DNS server. Please note, **;(semicolon)** as a separator, in example.
 
@@ -302,7 +302,7 @@ The input variable **client_config** is needed to be provided for this role to b
 client_config: {
 squid: { enable: false, squid_server_ip_port: "172.23.0.12:3128", no_proxy_hosts: "161.0.0.0/8" },
 ntp: { enable: false, ntp_server_ip: "172.23.0.12" },
-nfs: { enable: false, nfs_server_path: "172.23.0.12:/USER;172.23.0.12:/EXAMPLE", nfs_client_path: "/MNT;/HANA" },
+nfs: { enable: false, nfs_server_path: "172.23.0.12:/USER;172.23.0.12:/EXAMPLE", nfs_client_path: "/nfs;/HANA" },
 dns: { enable: false, dns_server_ip: "172.23.0.12" }
 }
 ```
@@ -447,7 +447,7 @@ ansible-playbook --connection=local -i "localhost," powervs-rhel.yml -e @vars/sa
 server_config: {
 squid: { enable: true },
 ntp: { enable: true },
-nfs: { enable: true, nfs_directory: "/NFS; /hana/software" },
+nfs: { enable: false, nfs_file_system: [ { name: nfs, mount_path: "/nfs", size: 300 } ] },
 dns: { enable: true, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" },
 awscli: { enable: true }
 }
@@ -482,7 +482,7 @@ ansible-playbook -i "remote_host_name," powervs-services.yml -e @vars/sample_ser
 client_config: {
 squid: { enable: true, squid_server_ip_port: "172.23.0.12:3128", no_proxy_hosts: "161.0.0.0/8" },
 ntp: { enable: true, ntp_server_ip: "172.23.0.12" },
-nfs: { enable: true, nfs_server_path: "172.23.0.12:/NFS;172.23.0.12:/hana/software", nfs_client_path: "/mnt;/hana" },
+nfs: { enable: true, nfs_server_path: "172.23.0.12:/NFS;172.23.0.12:/hana/software", nfs_client_path: "/nfs;/hana" },
 dns: { enable: true, dns_server_ip: "172.23.0.12" }
 }
 ```
