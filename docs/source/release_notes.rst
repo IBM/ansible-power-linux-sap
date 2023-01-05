@@ -69,3 +69,10 @@ Notes
         * pip installation removed 
 Availability
        * GitHub v1.0.8(https://github.com/IBM/ansible-power-linux-sap)
+
+Version 1.0.9
+Notes
+        * updated NFS setting on server side, to create new filesystem for mountable NFS directories
+        * updated playbooks to run filesystem creation first
+Availability
+       * GitHub v1.0.9(https://github.com/IBM/ansible-power-linux-sap)
