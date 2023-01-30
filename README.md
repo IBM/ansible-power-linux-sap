@@ -319,12 +319,8 @@ Install **[collection](https://galaxy.ansible.com/ibm/power_linux_sap)** from An
 ```ansible-galaxy collection install ibm.power_linux_sap```
 
 A folder will be created in root directory : ```/root/.ansible/collections/ansible_collections/ibm/power_linux_sap/```
-   
-After collection is installed on LPAR, requirements.yml file will be available in location ```/root/.ansible/collections/ansible_collections/ibm/power_linux_sap/requirements.yml```, needs to be used to get other roles/collections which are not part of this collection, but are needed for complete SAP solution. Below command should be used. 
 
-```ansible-galaxy collection install -r requirements.yml```
-
-These RHEL system roles are needed, as they configure RHEL LPAR as required for SAP HANA or NetWeaver for Power Systems according to SAP Note [2772999](https://launchpad.support.sap.com/#/notes/2772999).
+To install RHEL system roles, follow the steps provided [here](https://access.redhat.com/articles/6857351#installation)
 
 ***
 
