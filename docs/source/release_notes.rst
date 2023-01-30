@@ -76,3 +76,9 @@ Notes
         * updated playbooks to run filesystem creation first
 Availability
        * GitHub v1.0.9(https://github.com/IBM/ansible-power-linux-sap)
+
+Version 1.0.10
+Notes
+        * Updated playbooks to use RHEl system calls, instead of community roles for SAP configurations 
+Availability
+       * GitHub v1.0.10(https://github.com/IBM/ansible-power-linux-sap)
