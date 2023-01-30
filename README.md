@@ -66,7 +66,7 @@ This collection has 4 modules, which are independent of each other and can be ru
 		 <td rowspan=6><b><a href="./roles/powervs_prepare_rhel_sap">powervs_prepare_rhel_sap</a></b><br /></td>
             <td rowspan=1><b>1. sap_solution</b></td>
 	    <td><b>Mandatory</b></td>
-            <td rowspan=1>RHEL community roles for HANA or NETWEAVER will be executed</td>
+            <td rowspan=1>RHEL system roles for HANA or NETWEAVER will be executed</td>
             <td rowspan=1><b>HANA or NETWEAVER</b></td>
         </tr>
         <tr>
@@ -168,12 +168,11 @@ This role performs the following tasks:
 - Activates **RHEL subscription** or **[Full Linux Subscription](https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-set-full-Linux)**
 - Set up network proxy on client. Modifies **/etc/bashrc** and **/etc/dnf/dnf.conf** files
 
-This role is followed by execution of following community roles
-- **[sap_general_preconfigure](https://github.com/sap-linuxlab/community.sap_install/tree/main/roles/sap_general_preconfigure)** 
-- **[sap_hana_preconfigure](https://github.com/sap-linuxlab/community.sap_install/tree/main/roles/sap_hana_preconfigure)**
-- **[sap_netweaver_preconfigure](https://github.com/sap-linuxlab/community.sap_install/tree/main/roles/sap_netweaver_preconfigure)** 
+This role is followed by execution of following [Red Hat Enterprise Linux System Roles](https://access.redhat.com/articles/3050101)
+- **[sap_general_preconfigure](https://access.redhat.com/articles/6857351)** 
+- **[sap_hana_preconfigure](https://access.redhat.com/articles/6857351)**
+- **[sap_netweaver_preconfigure](https://access.redhat.com/articles/6857351)** 
 
-These roles are part of ansible galaxy collection **[community.sap_install](https://galaxy.ansible.com/community/sap_install)**
 
 All settings applied remain persistent across reboot.
 
@@ -245,7 +244,7 @@ This role performs the following tasks:
 - Creates a new swap device on disk provided with swap_disk_wwn variable. 
 
 #### Note:
-For RHEL, **swap disk of size >= 24GB** is required for community role **[sap-netweaver-preconfigure](https://github.com/linux-system-roles/sap-netweaver-preconfigure)** to succeed. 
+For RHEL, **swap disk of size >= 24GB** is required for RHEL system role **[sap-netweaver-preconfigure](https://github.com/linux-system-roles/sap-netweaver-preconfigure)** to succeed. 
 
 
 ### 2.4. Installing Services
@@ -325,7 +324,7 @@ After collection is installed on LPAR, requirements.yml file will be available i
 
 ```ansible-galaxy collection install -r requirements.yml```
 
-These community roles are needed, as they configure RHEL LPAR as required for SAP HANA or NetWeaver for Power Systems according to SAP Note [2772999](https://launchpad.support.sap.com/#/notes/2772999).
+These RHEL system roles are needed, as they configure RHEL LPAR as required for SAP HANA or NetWeaver for Power Systems according to SAP Note [2772999](https://launchpad.support.sap.com/#/notes/2772999).
 
 ***
 
