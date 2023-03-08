@@ -1,0 +1,10 @@
+---
+- hosts: all 
+  roles:
+  - { role: ../roles/powervs_install_services, when: server_config is defined }
+  - { role: ../roles/powervs_client_enable_services, when: client_config is defined }
+  - { role: ../roles/powervs_fs_creation, when: disks_configuration is defined }
+  - { role: ../roles/powervs_swap_creation, when: swap_disk_wwn is defined }
+  - { role: ../roles/powervs_prepare_rhel_sap, when: sap_solution is defined }
+  - { role: ../roles/powervs_install_services, when: server_config is defined }
+  - { role: ../roles/powervs_client_enable_services, when: client_config is defined }

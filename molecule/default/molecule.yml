@@ -1,0 +1,15 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: delegated
+platforms:
+ - name: 127.0.0.1
+provisioner:
+  name: ansible
+  inventory:
+    links:
+      hosts: ../../hosts
+      host_vars: ../../host_vars/
+verifier:
+  name: ansible

@@ -1,0 +1,3 @@
+collections:
+   - community.sap_install
+   - ibm.power_linux_sap
