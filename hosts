@@ -1,0 +1,10 @@
+[nodes]
+10.20.10.6
+10.51.0.85
+[server]
+10.20.10.6
+[client]
+10.51.0.85
+[nodes:vars]
+ansible_ssh_common_args='-o  ProxyCommand="ssh -W %h:%p root@159.23.91.234"'
+ansible_user=root

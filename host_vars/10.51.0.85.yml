@@ -1,0 +1,28 @@
+client_config : {
+    squid : {
+      enable : true,
+      squid_server_ip_port : '10.30.10.4:3128',
+      no_proxy_hosts : '161.0.0.0/8,10.0.0.0/8'
+    },
+    ntp : {
+      enable : true,
+      ntp_server_ip : '10.20.10.4'
+    },
+    nfs : {
+      enable : true,
+      nfs_server_path : '10.20.10.4:/new',
+      nfs_client_path : '/new'
+    },
+    dns : {
+      enable : true,
+      dns_server_ip : '10.20.10.4'
+    }
+  }
+sap_solution: HANA
+sap_domain: sap.com
+risks_configuration: {
+counts: [1,1,1],
+names: [data,log,shared],
+paths: [/hana/data,/hana/log,/hana/shared],
+wwns: ["6005076810810198800000000000D4a5","6005076810810198800000000000D4a6","6005076810810198800000000000D4a7"]
+}

@@ -84,7 +84,7 @@
      name: named
      state: restarted 
      enabled: yes 
-  
+    changed_when: false 
   when: server_config.dns.enable|default(False)|bool == true 
 
 ######## Chrony or NTP Service ######## 
@@ -120,7 +120,7 @@
      name: chronyd
      state: restarted
      enabled: yes
- 
+    changed_when: false 
   when: server_config.ntp.enable|default(False)|bool == true
 
 ######## NFS Service ######## 
@@ -146,7 +146,7 @@
     file:
      path: /etc/exports
      state: touch
-
+    changed_when: false
   # export /NFS directory as NFS directory
   - name: Export directory as NFS 
     lineinfile:
@@ -161,14 +161,14 @@
      name: nfs-server.service 
      state: restarted
      enabled: yes
-
+    changed_when: false
   # Verify if NFS device is correctly exported 
   - name: Run showmount command to list nfs exported directory 
     shell: showmount -e localhost  | grep  {{ item.mount_path | trim }}
     register: showmount_log
     ignore_errors: true
     with_items: "{{ server_config.nfs.nfs_file_system }}"
-
+    changed_when: false
   - name: Warning message if directory was not exported successfully 
     debug:
      msg: "INFO: The command {{ item.cmd }} returned error.  Please ensure all NFS exports had been successful"
