@@ -82,7 +82,7 @@
      name: chronyd
      state: restarted
      enabled: yes
-    changed_when; false
+    changed_when: false
   when: client_config.ntp.enable | default(false) | bool
 
 
