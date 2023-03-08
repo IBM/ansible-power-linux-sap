@@ -13,7 +13,6 @@
      path: "{{ bash_file }}"
      regexp: "^(.*){{item}}(.*)$"
      replace: "export {{item}}=http://{{ client_config.squid.squid_server_ip_port }}"
-     force: yes
     with_items: 
     - http_proxy
     - https_proxy
@@ -82,7 +81,8 @@
     service:
      name: chronyd
      state: restarted
-     enabled: yes 
+     enabled: yes
+    changed_when; false
   when: client_config.ntp.enable | default(false) | bool
 
 
@@ -98,7 +98,7 @@
      name: nfs-client.target
      state: restarted 
      enabled: yes
-
+    changed_when: false
   - name: Create a directory if it does not exist
     file:
       path: "{{ item }}"
