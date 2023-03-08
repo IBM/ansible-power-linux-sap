@@ -31,7 +31,8 @@ jobs:
           echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
           eval `ssh-agent -s`
           ssh-add ~/.ssh/private.key
-          cd ./sahityajain123/test_ansible_molecule/
+          find . -name molecule
+          cd ./IBM/ansible-power-linux-sap/
           molecule test
         shell: bash
         env:
