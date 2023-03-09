@@ -4,25 +4,25 @@
 # Converting comma separated wwn list passed as variable to a list of wwns
 - name: Convert a string separated with commas into a list of elements
   set_fact: wwn_list="{{ file_system.wwns.split(',') }}"
-
 # stopping multipathd daemon, will restart after rescan. Making sure, that it is ran only once per execution, by introducing multipathd_executed variable and defining it after multipathd is started 
 - name: Ensure multipathd daemon is stopped 
   service:
    name: multipathd
    state: stopped
   when: multipathd_executed is not defined  
-
+  changed_when: false
 # before starting with filesystem creation, lets scan the for any new disk that may have been added to LPAR 
 - name: Run rescan-scsi-bus.sh command to check for new devices 
   shell: /usr/bin/rescan-scsi-bus.sh -a -c -v
   when: multipathd_executed is not defined
-
+  changed_when: false 
 # restart multipathd after rescan is completed.
 - name: Ensure multipathd daemon is enabled 
   service:
    name: multipathd
    state: started 
   when: multipathd_executed is not defined
+  changed_when: false
 - set_fact: 
    multipathd_executed: 1 
 
@@ -31,7 +31,7 @@
   shell: grep "user_friendly_names no" /etc/multipath.conf
   register: multipath_alias
   ignore_errors: yes
-  
+  changed_when: false  
 - name: Setting count variable based on multipath aliasing is enabled or not
   set_fact:
    count: 3
@@ -41,23 +41,18 @@
   shell: "multipath -ll | grep -B 1 {{ item }} | grep dm- | awk '{print \"/dev/\"${{ count | default(2) }}}' "
   register: wwn_dm_list
   with_items: "{{ wwn_list | lower }}"
-
+  changed_when: false
 # Create a list based on multipath output.
 - set_fact: empty_list="{{ empty_list | default([]) }}"
 - set_fact: wwn_to_dm_list="{{ empty_list | default([])  }}"
 - set_fact:
-   wwn_to_dm_list="{{ wwn_to_dm_list | default([]) }} + {{ item.stdout_lines | list|flatten }}"
+   wwn_to_dm_list="{{ wwn_to_dm_list | default([]) +  item.stdout_lines  }}"
   loop: "{{ wwn_dm_list.results }}"
-
-- set_fact: pv_create_list="{{ empty_list | default([])  }}"
-- set_fact: pv_create_list="{{ pv_create_list |  default([]) }}  + ['{{ item }}']"
-  with_items: "{{ wwn_to_dm_list |  list|flatten  }}"
-
 # Creating volume group. 
-- name: Create LVM volume group {{ file_system.name }}vg on {{pv_create_list}}
+- name: Create LVM volume group {{ file_system.name }}vg on {{wwn_to_dm_list}}
   lvg:
     vg: "{{file_system.name}}vg"
-    pvs: "{{pv_create_list}}"
+    pvs: "{{wwn_to_dm_list}}"
     state: present   
 
 # Making use of --stripesize as 64K as default, unless passed explicitly in extra vars 

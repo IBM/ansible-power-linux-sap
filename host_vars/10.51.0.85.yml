@@ -20,9 +20,9 @@ client_config : {
   }
 sap_solution: HANA
 sap_domain: sap.com
-#disks_configuration: {
-#counts: [1,1,1],
-#names: [data,log,shared],
-#paths: [/hana/data,/hana/log,/hana/shared],
-#wwns: ["6005076810810198800000000000D4a5","6005076810810198800000000000D4a6","6005076810810198800000000000D4a7"]
-#}
+disks_configuration: {
+counts: [1,1,1],
+names: [usrsap,usrtrans,hana],
+paths: [/usr/sap,/usr/sap/trans,/hana],
+wwns: ["6005076810810256E800000000009129","6005076810810256E80000000000912A","6005076810810256E800000000009158"]
+}
