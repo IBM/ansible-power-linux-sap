@@ -38,4 +38,5 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{secrets.SAH_PRIVATE_KEY}}
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
+          PUBLIC_IP: ${{secrets.PUBLIC_IP}}
           
