@@ -1,0 +1,24 @@
+client_config : {
+    squid : {
+      enable : true,
+      squid_server_ip_port : '10.30.10.4:3128',
+      no_proxy_hosts : '161.0.0.0/8,10.0.0.0/8'
+    },
+    ntp : {
+      enable : true,
+      ntp_server_ip : '10.20.10.4'
+    },
+    nfs : {
+      enable : true,
+      nfs_server_path : '10.20.10.4:/nfs',
+      nfs_client_path : '/nfs'
+    },
+    dns : {
+      enable : true,
+      dns_server_ip : '10.20.10.4'
+    }
+  }
+disks_configuration : {"counts":["4","4","1","1"],"disks_size":["36","17","128","50"],"names":["data","log","shared","usrsap"],"paths":["/hana/data","/hana/log","/hana/shared","/usr/sap"],"tiers":["tier1","tier1","tier1","tier3"],"wwns":["60050768108181C5F00000000000F299","60050768108181C5F00000000000F294","60050768108181C5F00000000000F29C","60050768108181C5F00000000000F297","60050768108181C5F00000000000F29A","60050768108181C5F00000000000F298","60050768108181C5F00000000000F29B","60050768108181C5F00000000000F296","60050768108181C5F00000000000F295","60050768108201D8380000000000750F"]}
+sap_solution : 'HANA'
+sap_domain : 'sap.com'
+}
