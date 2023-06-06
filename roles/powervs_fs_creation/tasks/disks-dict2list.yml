@@ -41,7 +41,7 @@
   with_together:
   - "{{ disks_configuration.names | map('trim') | list }}"
   - "{{ disks_configuration.counts | map('trim') | list }}"
-  - "{{ disks_configuration.paths | map('trim') | list }}"
+  - "{{ disks_configuration.mount | map('trim') | list }}"
   - "{{ wwn_list }}"
 - debug: var=disks_config_mod
 

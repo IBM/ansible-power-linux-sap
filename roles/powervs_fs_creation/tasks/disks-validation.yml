@@ -37,7 +37,7 @@
   set_fact:
    count_fields: "{{ disks_configuration.counts | length }}"
    names_fields: "{{ disks_configuration.names | length }}"
-   paths_fields: "{{ disks_configuration.paths | length }}"
+   paths_fields: "{{ disks_configuration.mounts | length }}"
 
 - fail: 
    msg: Number of inputs does not match, please verify INPUT
