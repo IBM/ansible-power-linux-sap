@@ -201,4 +201,4 @@
 # To ensure transparent_hugepage is set to never
 - name: Set transparent_hugepage to never 
   shell: echo never > /sys/kernel/mm/transparent_hugepage/enabled
- 
+  changed_when: false 
