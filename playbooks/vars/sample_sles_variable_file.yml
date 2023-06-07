@@ -6,7 +6,7 @@ sap_solution: HANA
 disks_configuration: {
 counts: [2,2,1], 
 names: [data,log,shared], 
-paths: [/hana/data,/hana/log,/hana/shared], 
+mounts: [/hana/data,/hana/log,/hana/shared], 
 wwns: [600507681082018bc8000000000057e4,600507681082018bc8000000000057e8,600507681082018bc8000000000057e5,600507681082018bc8000000000057e6,600507681082018bc8000000000057e7]
 }
 
@@ -14,17 +14,17 @@ wwns: [600507681082018bc8000000000057e4,600507681082018bc8000000000057e8,6005076
 #disks_configuration: [
 #{
 #name: data, 
-#path: /hana/data, 
+#mount: /hana/data, 
 #wwns: 600507681082018bc8000000000057e4,600507681082018bc8000000000057e8
 #},
 #{
 #name: log, 
-#path: /hana/log, 
+#mount: /hana/log, 
 #wwns: 600507681082018bc8000000000057d9,600507681082018bc8000000000057ed7
 #},
 #{
 #name: shared, 
-#path: /hana/shared, 
+#mount: /hana/shared, 
 #wwns: 600507681082018bc8000000000057f1
 #}
 #]
