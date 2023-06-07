@@ -121,10 +121,10 @@ This collection has 4 modules, which are independent of each other and can be ru
         </tr>
 	<tr>
 		<td rowspan=1><b><a href="./roles/powervs_install_services">powervs_install_services</a></b><br /></td>
-            <td rowspan=1><b>1. server_config: { <br />squid: { enable:"" },<br /> ntp: { enable:"" },<br /> nfs: { enable:"" <br /> nfs_directory: "" },<br /> dns: { enable: "", dns_servers: "" },<br /> awscli: { enable: "" }<br />}</b></td>
+            <td rowspan=1><b>1. server_config: { <br />squid: { enable:"" },<br /> ntp: { enable:"" },<br /> nfs: { enable:"" <br /> nfs_directory: "" },<br /> dns: { enable: "", dns_servers: "" } }</b></td>
 	    <td><b>Mandatory</b></td>
             <td rowspan=1>server_config is a dictionary. Services are installed and enabled based on value passed for each service.</td>
-            <td rowspan=1>e.g.: { <br /> squid: { enable: false },<br />ntp: { enable: false },<br /> nfs: { enable: true, nfs_directory: "/NFS; /hana/software" },<br /> dns: { enable: false, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" },<br /> awscli: { enable: false } <br />}<b></b></td>
+            <td rowspan=1>e.g.: { <br /> squid: { enable: false },<br />ntp: { enable: false },<br /> nfs: { enable: true, nfs_directory: "/NFS; /hana/software" },<br /> dns: { enable: false, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" } }<b></b></td>
         </tr>
 	<tr>
 		<td rowspan=1><b><a href="./roles/powervs_client_enable_services">powervs_client_enable_services</a></b><br /></td>
@@ -262,16 +262,13 @@ This role performs the following tasks:
 
 This role will **start and enable** all above mentioned services.
 
-Additionally it will also install **awscli** package. awscli should be configured manually later.
-
 The input variable **server_config** is needed to be provided for this role to be executed. The variable file is defined as below
 ```
 server_config: {
 squid: { enable: false },
 ntp: { enable: false },
 nfs: { enable: false, nfs_file_system: [ { name: nfs, mount_path: "/nfs", size: 300 } ] },
-dns: { enable: false, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" },
-awscli: { enable: false }
+dns: { enable: false, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" }
 }
 ```
 
@@ -444,8 +441,7 @@ server_config: {
 squid: { enable: true },
 ntp: { enable: true },
 nfs: { enable: false, nfs_file_system: [ { name: nfs, mount_path: "/nfs", size: 300 } ] },
-dns: { enable: true, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" },
-awscli: { enable: true }
+dns: { enable: true, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" }
 }
 ```
 ```
