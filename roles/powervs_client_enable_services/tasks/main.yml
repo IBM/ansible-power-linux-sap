@@ -1,120 +1,119 @@
 ---
-## To modify bashrc file to add squid proxy 
+## To modify bashrc file to add squid proxy
 - block:
-  - set_fact:
-      bash_file: /etc/bashrc
-    when: ansible_distribution is match("RedHat*") 
-  - set_fact:
-      bash_file: /etc/bash.bashrc
-    when: ansible_distribution is match("SLES*") 
-  # Check if http_proxy entries are already present. If yes, dont add new entries. If no, it should be added.
-  - name: Check for http proxy entries in {{ bash_file }} 
-    replace:
-     path: "{{ bash_file }}"
-     regexp: "^(.*){{item}}(.*)$"
-     replace: "export {{item}}=http://{{ client_config.squid.squid_server_ip_port }}"
-    with_items: 
-    - http_proxy
-    - https_proxy
-    - HTTP_PROXY
-    - HTTPS_PROXY
-    register: replace_log
-    when: client_config.squid.squid_server_ip_port is defined
-  #In case no entries were present, next task, will add the first time entries. 
-  - name: Check for http proxy entries in {{ bash_file }}
-    lineinfile:
-     path: "{{ bash_file }}"
-     regexp: "^(.*){{item}}(.*)$"
-     line: "export {{item}}=http://{{ client_config.squid.squid_server_ip_port }}"
-    with_items:
-    - http_proxy
-    - https_proxy
-    - HTTP_PROXY
-    - HTTPS_PROXY
-    when: 
-    - client_config.squid.squid_server_ip_port is defined 
-    - not replace_log.changed
-  # Check if no_proxy entries are already present. If yes, dont add new entries. If no, it should be added.
-  - name: Check for http proxy entries in {{ bash_file }}
-    replace:
-     path: "{{ bash_file }}"
-     regexp: "^(.*)no_proxy(.*)$"
-     replace: "export no_proxy={{ client_config.squid.no_proxy_hosts }}"
-    register: replace_noproxy_log
-    when: client_config.squid.no_proxy_hosts is defined
-  #In case no no_proxy entries were present, next task, will add the first time entries.
-  - name: Check for http proxy entries in {{ bash_file }}
-    lineinfile:
-     path: "{{ bash_file }}"
-     regexp: "^(.*)no_proxy(.*)$"
-     line: "export no_proxy={{ client_config.squid.no_proxy_hosts }}"
-    when: 
-    - client_config.squid.no_proxy_hosts is defined
-    - not replace_noproxy_log.changed
+    - set_fact:
+        bash_file: /etc/bashrc
+      when: ansible_distribution is match("RedHat*")
+    - set_fact:
+        bash_file: /etc/bash.bashrc
+      when: ansible_distribution is match("SLES*")
+    # Check if http_proxy entries are already present. If yes, don't add new entries. If no, it should be added.
+    - name: Check for http proxy entries in {{ bash_file }}
+      replace:
+        path: "{{ bash_file }}"
+        regexp: "^(.*){{item}}(.*)$"
+        replace: "export {{item}}=http://{{ client_config.squid.squid_server_ip_port }}"
+      with_items:
+        - http_proxy
+        - https_proxy
+        - HTTP_PROXY
+        - HTTPS_PROXY
+      register: replace_log
+      when: client_config.squid.squid_server_ip_port is defined
+    #In case no entries were present, next task, will add the first time entries.
+    - name: Check for http proxy entries in {{ bash_file }}
+      lineinfile:
+        path: "{{ bash_file }}"
+        regexp: "^(.*){{item}}(.*)$"
+        line: "export {{item}}=http://{{ client_config.squid.squid_server_ip_port }}"
+      with_items:
+        - http_proxy
+        - https_proxy
+        - HTTP_PROXY
+        - HTTPS_PROXY
+      when:
+        - client_config.squid.squid_server_ip_port is defined
+        - not replace_log.changed
+    # Check if no_proxy entries are already present. If yes, don't add new entries. If no, it should be added.
+    - name: Check for http proxy entries in {{ bash_file }}
+      replace:
+        path: "{{ bash_file }}"
+        regexp: "^(.*)no_proxy(.*)$"
+        replace: "export no_proxy={{ client_config.squid.no_proxy_hosts }}"
+      register: replace_noproxy_log
+      when: client_config.squid.no_proxy_hosts is defined
+    #In case no no_proxy entries were present, next task, will add the first time entries.
+    - name: Check for http proxy entries in {{ bash_file }}
+      lineinfile:
+        path: "{{ bash_file }}"
+        regexp: "^(.*)no_proxy(.*)$"
+        line: "export no_proxy={{ client_config.squid.no_proxy_hosts }}"
+      when:
+        - client_config.squid.no_proxy_hosts is defined
+        - not replace_noproxy_log.changed
   when: client_config.squid.enable | default(false) | bool
 
-# This block will update DNS 
+# This block will update DNS
 - block:
-  - name: Modifying /etc/resolv.conf file to add nameserver
-    lineinfile: 
-     path: /etc/resolv.conf
-     line: nameserver {{ client_config.dns.dns_server_ip }}
+    - name: Modifying /etc/resolv.conf file to add nameserver
+      lineinfile:
+        path: /etc/resolv.conf
+        line: nameserver {{ client_config.dns.dns_server_ip }}
   when: client_config.dns.enable | default(false) | bool
 
-# This block will configure NTP 
+# This block will configure NTP
 - block:
-## Installing chrony 
-  - name: Installing chrony 
-    package: 
-     name: chrony
-     state: present
+    ## Installing chrony
+    - name: Installing chrony
+      package:
+        name: chrony
+        state: present
 
-## modifying /etc/chronyd file
-  - name: Replace iburst line in /etc/chronyd file
-    replace:
-     path: /etc/chrony.conf
-     regexp: '^(.*)iburst$'
-     replace: 'server {{ client_config.ntp.ntp_server_ip }} iburst'
+    ## modifying /etc/chronyd file
+    - name: Replace iburst line in /etc/chronyd file
+      replace:
+        path: /etc/chrony.conf
+        regexp: "^(.*)iburst$"
+        replace: "server {{ client_config.ntp.ntp_server_ip }} iburst"
 
-## Starting chronyd service
-  - name: Start chronyd service 
-    service:
-     name: chronyd
-     state: restarted
-     enabled: yes
-    changed_when: false
+    ## Starting chronyd service
+    - name: Start chronyd service
+      service:
+        name: chronyd
+        state: restarted
+        enabled: yes
+      changed_when: false
   when: client_config.ntp.enable | default(false) | bool
-
 
 # This block will Install NFS client and mount NFS exported directories locally
 - block:
-  - name: Install NFS client package
-    package:
-     name: nfs-utils
-     state: latest
+    - name: Install NFS client package
+      package:
+        name: nfs-utils
+        state: latest
 
-  - name: Start and enable NFS client service 
-    service:
-     name: nfs-client.target
-     state: restarted 
-     enabled: yes
-    changed_when: false
-  - name: Create a directory if it does not exist
-    file:
-      path: "{{ item }}"
-      state: directory
-      mode: '0755'
-    with_items: "{{ client_config.nfs.nfs_client_path.split(';') }}"
-   
-# Mounting NFS directory. server_path, should be "server_name":"source_path"
-  - name: Mount NFS directory
-    mount:
-      path: "{{ item.0 }}"
-      src: "{{ item.1 }}" 
-      state: mounted
-      boot: yes
-      fstype: nfs
-    with_together:
-    - "{{ client_config.nfs.nfs_client_path.split(';')  }}"
-    - "{{ client_config.nfs.nfs_server_path.split(';')  }}"
+    - name: Start and enable NFS client service
+      service:
+        name: nfs-client.target
+        state: restarted
+        enabled: yes
+      changed_when: false
+    - name: Create a directory if it does not exist
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      with_items: "{{ client_config.nfs.nfs_client_path.split(';') }}"
+
+    # Mounting NFS directory. server_path, should be "server_name":"source_path"
+    - name: Mount NFS directory
+      mount:
+        path: "{{ item.0 }}"
+        src: "{{ item.1 }}"
+        state: mounted
+        boot: yes
+        fstype: nfs
+      with_together:
+        - "{{ client_config.nfs.nfs_client_path.split(';')  }}"
+        - "{{ client_config.nfs.nfs_server_path.split(';')  }}"
   when: client_config.nfs.enable | default(false) | bool

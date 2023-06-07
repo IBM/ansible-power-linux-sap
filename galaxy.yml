@@ -7,18 +7,18 @@ version: "1.0.10"
 readme: "README.md"
 
 authors:
-- "Sahitya Jain(@sahityajain123), Suraj Bharadwaj(@surajsbharadwaj)"
+  - "Sahitya Jain(@sahityajain123), Suraj Bharadwaj(@surajsbharadwaj)"
 
 description: RHEL/SLES ansible automation to prepare LPARs for installing SAP on Power Systems.
 
 license_file: "LICENSE"
 
 tags:
-- power
-- sap
-- rhel
-- sles
-- ibm
+  - power
+  - sap
+  - rhel
+  - sles
+  - ibm
 
 dependencies: {}
 

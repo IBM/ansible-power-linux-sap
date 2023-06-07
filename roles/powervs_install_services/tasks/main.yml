@@ -1,178 +1,178 @@
 ---
 ######### SQUID Service #########
 - block:
-  - name: Install squid 
-    package:
-     name: squid
-     state: latest 
+    - name: Install squid
+      package:
+        name: squid
+        state: latest
 
-  # Configure squid configuration file as required by full linux subscription
-  - name: Replace squid.conf file 
-    copy:
-     src: "{{ role_path }}/files/squid.conf"
-     dest: /etc/squid/squid.conf
+    # Configure squid configuration file as required by full linux subscription
+    - name: Replace squid.conf file
+      copy:
+        src: "{{ role_path }}/files/squid.conf"
+        dest: /etc/squid/squid.conf
 
-  # Start and Enable Squid Service
-  - name: Start squid service 
-    service:
-     name: squid
-     state: restarted 
-     enabled: yes
+    # Start and Enable Squid Service
+    - name: Start squid service
+      service:
+        name: squid
+        state: restarted
+        enabled: yes
 
-  when: server_config.squid.enable|default(False)|bool == true 
+  when: server_config.squid.enable|default(False)|bool == true
 
 ######### BIND Service ############
 - block:
-  # Installing bind.
-  - name: Install bind
-    package: 
-     name: bind
-     state: latest
+    # Installing bind.
+    - name: Install bind
+      package:
+        name: bind
+        state: latest
 
-  # modify /etc/named.conf file
-  - name: Modify /etc/named.conf file
-    blockinfile:
-     marker_begin: 'BEGIN_ACL'
-     marker_end: 'END_ACL'
-     path: /etc/named.conf
-     block: | 
-       acl allowed_clients { 
-         localhost; 
-         any; 
-       };
-     insertbefore: ^options 
+    # modify /etc/named.conf file
+    - name: Modify /etc/named.conf file
+      blockinfile:
+        marker_begin: "BEGIN_ACL"
+        marker_end: "END_ACL"
+        path: /etc/named.conf
+        block: |
+          acl allowed_clients { 
+            localhost; 
+            any; 
+          };
+        insertbefore: ^options
 
-  - name: Modify /etc/named.conf file
-    blockinfile:
-     path: /etc/named.conf
-     block: |
-      forwarders {
-          {{ server_config.dns.dns_servers }}
-      };
-     insertafter: ^options
+    - name: Modify /etc/named.conf file
+      blockinfile:
+        path: /etc/named.conf
+        block: |
+          forwarders {
+              {{ server_config.dns.dns_servers }}
+          };
+        insertafter: ^options
 
-  - name: Modify /etc/named.conf file
-    replace:
-     path: /etc/named.conf
-     regexp: '^(.*)allow-query(.*)'
-     replace: allow-query { allowed_clients; };
-    when: ansible_distribution is match("RedHat*") 
+    - name: Modify /etc/named.conf file
+      replace:
+        path: /etc/named.conf
+        regexp: "^(.*)allow-query(.*)"
+        replace: allow-query { allowed_clients; };
+      when: ansible_distribution is match("RedHat*")
 
-  - name: Modify /etc/named.conf file
-    replace:
-     path: /etc/named.conf
-     regexp: '^(.*)#allow-query(.*)'
-     replace: allow-query { allowed_clients; };
-    when: ansible_distribution is match("SLES*")
+    - name: Modify /etc/named.conf file
+      replace:
+        path: /etc/named.conf
+        regexp: "^(.*)#allow-query(.*)"
+        replace: allow-query { allowed_clients; };
+      when: ansible_distribution is match("SLES*")
 
-  - name: Modify /etc/named.conf file
-    lineinfile: 
-     path: /etc/named.conf
-     line: forward only;  
-     insertafter: '^(.*)allow-query(.*)'
-  
-  - name: Modify /etc/named.conf file
-    lineinfile:
-     path: /etc/named.conf
-     line: recursion yes;
-     insertafter: '^(.*)allow-query(.*)'
-    when: ansible_distribution is match("SLES*") 
+    - name: Modify /etc/named.conf file
+      lineinfile:
+        path: /etc/named.conf
+        line: forward only;
+        insertafter: "^(.*)allow-query(.*)"
 
-  # Enable named 
-  - name: Enable named service 
-    service: 
-     name: named
-     state: restarted 
-     enabled: yes 
-    changed_when: false 
-  when: server_config.dns.enable|default(False)|bool == true 
+    - name: Modify /etc/named.conf file
+      lineinfile:
+        path: /etc/named.conf
+        line: recursion yes;
+        insertafter: "^(.*)allow-query(.*)"
+      when: ansible_distribution is match("SLES*")
 
-######## Chrony or NTP Service ######## 
-- block: 
-  # Install chrony 
-  - name: Installing chrony 
-    package: 
-     name: chrony
-     state: latest 
+    # Enable named
+    - name: Enable named service
+      service:
+        name: named
+        state: restarted
+        enabled: yes
+      changed_when: false
+  when: server_config.dns.enable|default(False)|bool == true
 
-  # modify /etc/chronyd file
-  - name: Replace iburst line in /etc/chronyd file
-    replace:
-     path: /etc/chrony.conf
-     regexp: '^(.*)local stratum 10$'
-     replace: 'local stratum 10'
+######## Chrony or NTP Service ########
+- block:
+    # Install chrony
+    - name: Installing chrony
+      package:
+        name: chrony
+        state: latest
 
-  - name : Edit allowed subnet in /etc/chronyd file 
-    replace: 
-     path: /etc/chrony.conf
-     regexp: '^#allow(.*)'
-     replace: 'allow 10.0.0.0/8'
+    # modify /etc/chronyd file
+    - name: Replace iburst line in /etc/chronyd file
+      replace:
+        path: /etc/chrony.conf
+        regexp: "^(.*)local stratum 10$"
+        replace: "local stratum 10"
 
-  - name: Add Manual at EOF in /etc/chronyd
-    lineinfile:
-     path: /etc/chrony.conf
-     line: manual
-     insertbefore: EOF
+    - name: Edit allowed subnet in /etc/chronyd file
+      replace:
+        path: /etc/chrony.conf
+        regexp: "^#allow(.*)"
+        replace: "allow 10.0.0.0/8"
 
-  # Start chronyd service
-  - name: Start chronyd service 
-    service:
-     name: chronyd
-     state: restarted
-     enabled: yes
-    changed_when: false 
+    - name: Add Manual at EOF in /etc/chronyd
+      lineinfile:
+        path: /etc/chrony.conf
+        line: manual
+        insertbefore: EOF
+
+    # Start chronyd service
+    - name: Start chronyd service
+      service:
+        name: chronyd
+        state: restarted
+        enabled: yes
+      changed_when: false
   when: server_config.ntp.enable|default(False)|bool == true
 
-######## NFS Service ######## 
+######## NFS Service ########
 - block:
-  # Including a task to create a filesystem which will be NFS exported
-  - name: include task to create NFS filesystem  
-    include_tasks: vpc_fs_creation.yml
-    with_items: "{{ server_config.nfs.nfs_file_system }}"
-    when: ansible_architecture is match("x86*") 
-#  - name: include task to create NFS filesystem
-#    include_tasks: ppc_fs_creation.yml
-#    with_items: "{{ server_config.nfs.nfs_file_system }}"
-#    when: ansible_architecture is match("x86*")
-  # Install NFS 
-  - name: Install nfs package 
-    package:
-     name: nfs-utils
-     state: latest 
-    ignore_errors: true
+    # Including a task to create a filesystem which will be NFS exported
+    - name: include task to create NFS filesystem
+      include_tasks: vpc_fs_creation.yml
+      with_items: "{{ server_config.nfs.nfs_file_system }}"
+      when: ansible_architecture is match("x86*")
+    #  - name: include task to create NFS filesystem
+    #    include_tasks: ppc_fs_creation.yml
+    #    with_items: "{{ server_config.nfs.nfs_file_system }}"
+    #    when: ansible_architecture is match("x86*")
+    # Install NFS
+    - name: Install nfs package
+      package:
+        name: nfs-utils
+        state: latest
+      ignore_errors: true
 
-  # Check for /etc/export file, if non-existing, create one.
-  - name: Create /etc/exports file. if not present
-    file:
-     path: /etc/exports
-     state: touch
-    changed_when: false
-  # export /NFS directory as NFS directory
-  - name: Export directory as NFS 
-    lineinfile:
-     path: /etc/exports
-     state: present
-     line: "{{ item.mount_path | trim  }} *(rw,no_root_squash,no_subtree_check,insecure)"
-    with_items: "{{ server_config.nfs.nfs_file_system  }}"
+    # Check for /etc/export file, if non-existing, create one.
+    - name: Create /etc/exports file. if not present
+      file:
+        path: /etc/exports
+        state: touch
+      changed_when: false
+    # export /NFS directory as NFS directory
+    - name: Export directory as NFS
+      lineinfile:
+        path: /etc/exports
+        state: present
+        line: "{{ item.mount_path | trim  }} *(rw,no_root_squash,no_subtree_check,insecure)"
+      with_items: "{{ server_config.nfs.nfs_file_system  }}"
 
-  # Start NFS service
-  - name: Start nfs service
-    service: 
-     name: nfs-server.service 
-     state: restarted
-     enabled: yes
-    changed_when: false
-  # Verify if NFS device is correctly exported 
-  - name: Run showmount command to list nfs exported directory 
-    shell: showmount -e localhost  | grep  {{ item.mount_path | trim }}
-    register: showmount_log
-    ignore_errors: true
-    with_items: "{{ server_config.nfs.nfs_file_system }}"
-    changed_when: false
-  - name: Warning message if directory was not exported successfully 
-    debug:
-     msg: "INFO: The command {{ item.cmd }} returned error.  Please ensure all NFS exports had been successful"
-    when: item.rc != 0
-    loop: "{{ showmount_log.results }}"
-      
+    # Start NFS service
+    - name: Start nfs service
+      service:
+        name: nfs-server.service
+        state: restarted
+        enabled: yes
+      changed_when: false
+    # Verify if NFS device is correctly exported
+    - name: Run showmount command to list nfs exported directory
+      shell: showmount -e localhost  | grep  {{ item.mount_path | trim }}
+      register: showmount_log
+      ignore_errors: true
+      with_items: "{{ server_config.nfs.nfs_file_system }}"
+      changed_when: false
+    - name: Warning message if directory was not exported successfully
+      debug:
+        msg: "INFO: The command {{ item.cmd }} returned error.  Please ensure all NFS exports had been successful"
+      when: item.rc != 0
+      loop: "{{ showmount_log.results }}"
+
   when: server_config.nfs.enable|default(False)|bool == true
