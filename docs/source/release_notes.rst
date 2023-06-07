@@ -82,3 +82,12 @@ Notes
         * Updated playbooks to use RHEl system calls, instead of community roles for SAP configurations 
 Availability
        * GitHub v1.0.10(https://github.com/IBM/ansible-power-linux-sap)
+
+Version 1.0.11
+Notes
+        * Updated roles to work with new variable names. 
+	* Removed awscli usage
+	* Removed specific OS related playbooks, to have one universal for any OS.
+	* Updated README
+Availability
+       * GitHub v1.0.11(https://github.com/IBM/ansible-power-linux-sap)
