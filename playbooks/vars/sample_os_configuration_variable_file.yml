@@ -44,6 +44,13 @@ wwns: [600507681082018bc8000000000057e4,600507681082018bc8000000000057e8,6005076
 #release: ""
 #}
 
+# only for SuSE installations
+#suse_subscription : {
+#username: "",
+#key: "",
+#release: ""
+#}
+
 
 # for Full Linux Subscription
 #full_linux_subscription: true
