@@ -32,14 +32,14 @@
    msg: "Number of unique  WWN provided = {{ total_wwn }} is not equal to total count {{ count_total }} "
   when:  count_total !=  total_wwn 
 
-# fail if count value and number of items in count, name and paths are different. 
-- name: Check for number of fields for counts, names and paths 
+# fail if count value and number of items in count, name and mounts are different. 
+- name: Check for number of fields for counts, names and  mounts 
   set_fact:
    count_fields: "{{ disks_configuration.counts | length }}"
    names_fields: "{{ disks_configuration.names | length }}"
-   paths_fields: "{{ disks_configuration.mounts | length }}"
+   mounts_fields: "{{ disks_configuration.mounts | length }}"
 
 - fail: 
    msg: Number of inputs does not match, please verify INPUT
   when: 
-  - count_fields != names_fields or names_fields != paths_fields
+  - count_fields != names_fields or names_fields != mounts_fields

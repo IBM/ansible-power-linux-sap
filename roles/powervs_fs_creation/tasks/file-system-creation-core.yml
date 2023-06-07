@@ -64,9 +64,9 @@
     opts: --stripes {{ wwn_list|length }} --stripesize {{ stripe_size | default('64K') }}
     state: present
 
-- name: Create directory {{ file_system.path }} if doesn't exist
+- name: Create directory {{ file_system.mount }} if doesn't exist
   file:
-    path: "{{ file_system.path }}" 
+    path: "{{ file_system.mount }}" 
     state: directory
     mode: '0755'
 
@@ -76,9 +76,9 @@
     dev: "/dev/mapper/{{file_system.name}}vg-{{ file_system.name}}lv" 
     opts: -K  
 
-- name: Mount lv {{ file_system.name }}lv on {{ file_system.path }}
+- name: Mount lv {{ file_system.name }}lv on {{ file_system.mount }}
   mount:
-    path: "{{ file_system.path }}" 
+    path: "{{ file_system.mount }}" 
     src: "/dev/mapper/{{file_system.name}}vg-{{file_system.name}}lv" 
     fstype: xfs 
     state: mounted

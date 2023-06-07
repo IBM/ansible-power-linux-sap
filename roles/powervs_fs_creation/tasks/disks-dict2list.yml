@@ -37,7 +37,7 @@
 - debug: var=wwn_list
 # Create stripes list dict
 - set_fact:
-     disks_config_mod: "{{ disks_config_mod | default([]) + [{ 'name': item.0, 'count' : item.1, 'path' : item.2, 'wwns' : item.3 }] }}"
+     disks_config_mod: "{{ disks_config_mod | default([]) + [{ 'name': item.0, 'count' : item.1, 'mount' : item.2, 'wwns' : item.3 }] }}"
   with_together:
   - "{{ disks_configuration.names | map('trim') | list }}"
   - "{{ disks_configuration.counts | map('trim') | list }}"
