@@ -6,7 +6,7 @@ This module is same for both SLES and RHEL.
 
 This role performs the following tasks:
 - Configures **SQUID** proxy.
-- Confgures **DNS** server.
+- Configures **DNS** server.
 - Installs **NTP** packages and updates named.conf file with ntp server.
 - Installs **NFS** client packages, and mounts nfs exported directories as mentioned in variable file..
 

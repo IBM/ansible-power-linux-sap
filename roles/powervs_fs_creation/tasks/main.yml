@@ -15,44 +15,44 @@
 # ------------------------------------------------------------------------
 ---
 ### this role creates filesystem for SAP installations.
-# make sure all requisite filesets are installed. 
+# make sure all requisite filesets are installed.
 - name: Ensure multipath package on RHEL is installed
   package:
-   name: device-mapper-multipath
-   state: present
-  when: 
-  - disks_configuration is defined
-  - ansible_distribution is match("RedHat*")
+    name: device-mapper-multipath
+    state: present
+  when:
+    - disks_configuration is defined
+    - ansible_distribution is match("RedHat*")
 
 - name: Ensure multipath package on SLES is installed
   package:
-   name: multipath-tools
-   state: present
-  when: 
-  - disks_configuration is defined
-  - ansible_distribution is match("SLES*")
- 
+    name: multipath-tools
+    state: present
+  when:
+    - disks_configuration is defined
+    - ansible_distribution is match("SLES*")
+
 - name: Ensure lvm packages are installed
   package:
-   name: lvm2
-   state: present
+    name: lvm2
+    state: present
   when: disks_configuration is defined
 
-- name: Run rescan-scsi-bus.sh command to check for new devices 
+- name: Run rescan-scsi-bus.sh command to check for new devices
   shell: /usr/bin/rescan-scsi-bus.sh -a -c -v
-
+  changed_when: false
 - name: Validate Disk ids passed when disks_configuration variables is of dictionary type
   import_tasks: disks-validation.yml
   when: disks_configuration | type_debug == "dict"
 
-- name: Create filesystem when disks_configuration variables is a dictionary 
+- name: Create filesystem when disks_configuration variables is a dictionary
   import_tasks: disks-dict2list.yml
   when: disks_configuration | type_debug == "dict"
 
-- name: Create Filesystem when disks_configuration variables is a list  
+- name: Create Filesystem when disks_configuration variables is a list
   include_tasks: file-system-creation-core.yml
   with_items:
-  - "{{ disks_configuration }}"
+    - "{{ disks_configuration }}"
   loop_control:
     loop_var: file_system
   when: disks_configuration | type_debug == "list"

@@ -10,6 +10,7 @@ This role performs the following tasks:
 - **TSO** is enabled for SAP network interfaces
 - Activates **RHEL subscription** or **[Full Linux Subscription](https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-set-full-Linux)**
 - Set up **network proxy** on client. Modifies **/etc/bashrc** and **/etc/dnf/dnf.conf** file**
+- Setting **transparent_hugepage** to never.
 
 This role is followed by execution of following community roles
 - **[sap-preconfigure](https://github.com/linux-system-roles/sap-preconfigure)**

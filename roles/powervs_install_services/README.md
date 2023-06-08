@@ -12,7 +12,6 @@ This role performs the following tasks:
 
 This role will also **start and enable** all above mentioned services.
 
-Additionally it will also install **awscli** package. awscli should be configured manually later.
 
 The input variable **server_config** is needed to be provided for this role to be executed. The variable file looks like below
 ```
@@ -20,8 +19,7 @@ server_config: {
 squid: { enable: false },
 ntp: { enable: false },
 nfs: { enable: true, nfs_directory: "/NFS; /hana/software" },
-dns: { enable: false, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" },
-awscli: { enable: false }
+dns: { enable: false, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" }
 }
 ```
 Each services can be chosen to be enabled or not. Disabling is not supported. This variable file enables users, to enable one or many services on one or multiple servers, as desired.

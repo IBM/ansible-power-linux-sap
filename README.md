@@ -16,7 +16,7 @@ This collection has 4 modules, which are independent of each other and can be ru
 1)	**Preparing Operating System for SAP installations.**
 2)	**Creating Filesystems for SAP installations.**
 3)	**Configuring SWAP spaces.**
-4)	**Installing Services**
+4)	**Installing Management Services (SQUID, NTP, NFS, DNS)**
 
 ### Ansible Roles Summary
 
@@ -101,7 +101,7 @@ This collection has 4 modules, which are independent of each other and can be ru
         </tr>
 		<tr>
          <td rowspan=2><b><a href="./roles/powervs_fs_creation">powervs_fs_creation</a></b><br /></td>
-            <td rowspan=1><b>1.a. disks_configuration: { counts: [ ], names: [ ], paths: [ ], wwns: [ ] }<br />1.b. disks_configuration: [ { name: "", path: "", wwns: ""}...]</b></td>
+            <td rowspan=1><b>1.a. disks_configuration: { counts: [ ], names: [ ], mounts: [ ], wwns: [ ] }<br />1.b. disks_configuration: [ { name: "", mount: "", wwns: ""}...]</b></td>
  	    <td><b>Mandatory</b></td>
             <td>Disks configuration value to create and mount filesystems. Supports 2 data structures. First data structure is a single dictionary. Second data structure is a list of dictionaries.</td>
             <td rowspan=1>see <b><a href="README.md#example-a-data-structure-for-disks_configuration-variable-as-dictionary-value-example">example A </a></b> and <b><a href="README.md#example-b-data-structure-for-disks_configuration-variable-as-list-value-example">example B</a></b> below</td>
@@ -121,10 +121,10 @@ This collection has 4 modules, which are independent of each other and can be ru
         </tr>
 	<tr>
 		<td rowspan=1><b><a href="./roles/powervs_install_services">powervs_install_services</a></b><br /></td>
-            <td rowspan=1><b>1. server_config: { <br />squid: { enable:"" },<br /> ntp: { enable:"" },<br /> nfs: { enable:"" <br /> nfs_directory: "" },<br /> dns: { enable: "", dns_servers: "" },<br /> awscli: { enable: "" }<br />}</b></td>
+            <td rowspan=1><b>1. server_config: { <br />squid: { enable:"" },<br /> ntp: { enable:"" },<br /> nfs: { enable:"" <br /> nfs_directory: "" },<br /> dns: { enable: "", dns_servers: "" } }</b></td>
 	    <td><b>Mandatory</b></td>
             <td rowspan=1>server_config is a dictionary. Services are installed and enabled based on value passed for each service.</td>
-            <td rowspan=1>e.g.: { <br /> squid: { enable: false },<br />ntp: { enable: false },<br /> nfs: { enable: true, nfs_directory: "/NFS; /hana/software" },<br /> dns: { enable: false, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" },<br /> awscli: { enable: false } <br />}<b></b></td>
+            <td rowspan=1>e.g.: { <br /> squid: { enable: false },<br />ntp: { enable: false },<br /> nfs: { enable: true, nfs_directory: "/NFS; /hana/software" },<br /> dns: { enable: false, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" } }<b></b></td>
         </tr>
 	<tr>
 		<td rowspan=1><b><a href="./roles/powervs_client_enable_services">powervs_client_enable_services</a></b><br /></td>
@@ -167,6 +167,7 @@ This role performs the following tasks:
 - Sets **MTU** value to **9000** for SAP network interfaces
 - Activates **RHEL subscription** or **[Full Linux Subscription](https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-set-full-Linux)**
 - Set up network proxy on client. Modifies **/etc/bashrc** and **/etc/dnf/dnf.conf** files
+- Setting **transparent_hugepage** to never.
 
 This role is followed by execution of following [Red Hat Enterprise Linux System Roles](https://access.redhat.com/articles/3050101)
 - **[sap_general_preconfigure](https://access.redhat.com/articles/6857351)** 
@@ -203,7 +204,7 @@ disks_configuration:
 {
 counts: [2,2,1], 
 names: [data,log,shared], 
-paths: [/hana/data,/hana/log,/hana/shared], 
+mounts: [/hana/data,/hana/log,/hana/shared], 
 wwns: [600507681082018bc8000000000057e4,600507681082018bc8000000000057e8,600507681082018bc8000000000057e5,600507681082018bc8000000000057e6,600507681082018bc8000000000057e7]
 }
 ```
@@ -213,17 +214,17 @@ wwns: [600507681082018bc8000000000057e4,600507681082018bc8000000000057e8,6005076
 disks_configuration: [
 {
 name: data, 
-path: /hana/data, 
+mount: /hana/data, 
 wwns: 600507681082018bc8000000000057e4,600507681082018bc8000000000057e8
 },
 {
 name: log, 
-path: /hana/log, 
+mount: /hana/log, 
 wwns: 600507681082018bc8000000000057d9,600507681082018bc8000000000057ed7
 },
 {
 name: shared, 
-path: /hana/shared, 
+mount: /hana/shared, 
 wwns: 600507681082018bc8000000000057f1
 }
 .
@@ -261,22 +262,19 @@ This role performs the following tasks:
 
 This role will **start and enable** all above mentioned services.
 
-Additionally it will also install **awscli** package. awscli should be configured manually later.
-
 The input variable **server_config** is needed to be provided for this role to be executed. The variable file is defined as below
 ```
 server_config: {
 squid: { enable: false },
 ntp: { enable: false },
 nfs: { enable: false, nfs_file_system: [ { name: nfs, mount_path: "/nfs", size: 300 } ] },
-dns: { enable: false, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" },
-awscli: { enable: false }
+dns: { enable: false, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" }
 }
 ```
 
 Each service can be enabled separately. Disabling service is not supported. With the variable file, users can enable one or many services on one or multiple hosts, as desired.
 
-For NFS services, additional variable **nfs_file_system** is required. **nfs_file_system** is a list of dictionaries, which is used to create a NFS mountable filesystem named as per **name** variable, of provided **size* and mounted on **mount_path**. 
+For NFS services, additional variable **nfs_file_system** is required. **nfs_file_system** is a list of dictionaries, which is used to create a NFS mountable filesystem named as per **name** variable, of provided **size** and mounted on **mount_path**. 
 
 For DNS services, additional variable **dns_servers** is required. These are user-defined DNS servers IPs. In example, **161.26.0.7 and 161.26.0.8** are default **IBM Cloud** DNS servers and **9.9.9.9** is default **IBM Public** DNS server. Please note, **;(semicolon)** as a separator, in example.
 
@@ -330,111 +328,75 @@ To execute playbook, **cd** to playbooks directory of collection.
 
 Sample Ansible Playbook Execution
 
-Local Host Execution for SLES
+Local Host Execution
 
-```ansible-playbook --connection=local -i "localhost," powervs-sles.yml -e "<Variable>"```
+```ansible-playbook --connection=local -i "localhost," power-linux-configure.yml -e "<Variable>"```
 
-Target Host Execution for SLES
+Target Host Execution
 
-```ansible-playbook -i "<target-host>," powervs-sles.yml -e "<Variable>"```
-
-Local Host Execution for RHEL
-
-```ansible-playbook --connection=local -i "localhost," powervs-rhel.yml -e "<Variable>"```
-
-Target Host Execution for RHEL
-
-```ansible-playbook -i "<target-host>," powervs-rhel.yml -e "<Variable>"```
+```ansible-playbook -i "<target-host>," power-linux-configure.yml -e "<Variable>"```
 
 
 
-### 4.1 Execution examples for SLES
+### 4.1 Execution examples
 
-1. To run only **powervs_prepare_sles_sap** role without SUSE subscription variable, 
+
+1. To run all roles **powervs_prepare_sles_sap, powervs_fs_creation and powervs_swap_creation** using **variable file sample_linux_configuration_variable_file.yml** inside directory playbooks/vars.
 
 ```
-ansible-playbook --connection=local -i "localhost," powervs-sles.yml -e '{sap_solution: "HANA", host_ip: "192.168.1.1" }'
+ansible-playbook --connection=local -i "localhost," power-linux-configure.yml -e @vars/sample_linux_configuration_variable_file.yml
 ```
 
-2. To run only **powervs_prepare_sles_sap** role with SUSE subscription variable, 
+2. To run only **powervs_prepare_sles_sap** role without SUSE subscription variable, 
 
 ```
-ansible-playbook --connection=local -i "localhost," powervs-sles.yml -e '{sap_solution: "HANA", host_ip: "192.168.1.1", suse_subscription: { username: "XYZ", key: "ABC", release: "15"} }'
+ansible-playbook --connection=local -i "localhost," power-linux-configure.yml -e '{sap_solution: "HANA", host_ip: "192.168.1.1" }'
 ```
 
-3. To run only **powervs_fs_creation** role to create filesystems using **data structure example A** above for disks_configuration:
+3. To run only **powervs_prepare_sles_sap** role with SUSE subscription variable, 
 
 ```
-ansible-playbook --connection=local -i "localhost," powervs-sles.yml -e '{ disks_configuration: {counts:[8,8,1,1], names:[data,log,shared,usrsap], paths:[/hana/data,/hana/log,/hana/shared,/usr/sap], wwns:[6005076810810261F800000000004094,6005076810810261F800000000004096,6005076810810261F80000000000409D,6005076810810261F8000000000040A3,6005076810810261F80000000000409A,6005076810810261F8000000000040A0,6005076810810261F8000000000040A4,6005076810810261F800000000004097,6005076810810261F800000000004098,6005076810810261F80000000000409E,6005076810810261F80000000000409B,6005076810810261F80000000000409F,6005076810810261F8000000000040A2,6005076810810261F8000000000040A1,6005076810810261F800000000004095,6005076810810261F800000000004093,6005076810810261F80000000000409C,6005076810810261F800000000004099] } }'
+ansible-playbook --connection=local -i "localhost," power-linux-configure.yml -e '{sap_solution: "HANA", host_ip: "192.168.1.1", suse_subscription: { username: "XYZ", key: "ABC", release: "15"} }'
 ```
 
-4. To run only **powervs_fs_creation** role to create filesystems using **data structure example B** above for disks_configuration:
+4. To run only **powervs_prepare_rhel_sap** role without RHEL Subscription variable, 
 
 ```
-ansible-playbook --connection=local -i "localhost," powervs-sles.yml -e '{disks_configuration: [{ name: log, path: /hana/log, wwns: 6005076810810261F800000000004098,6005076810810261F80000000000409E,6005076810810261F80000000000409B,6005076810810261F80000000000409F,6005076810810261F8000000000040A2,6005076810810261F8000000000040A1,6005076810810261F800000000004095,6005076810810261F800000000004093},{ name: shared, path: /hana/shared, wwns: 6005076810810261F80000000000409C},{ name: usrsap, path: /usr/sap, wwns: 6005076810810261F800000000004099}]}'
+ansible-playbook --connection=local -i "localhost," power-linux-configure.yml -e '{sap_solution: "NETWEAVER", host_ip: "192.168.1.1" }'
 ```
 
-5. To run only **powervs_swap_creation** role:
-```
-ansible-playbook --connection=local -i "localhost," powervs-sles.yml -e '{swap_disk_wwn: 6005076810810261F80000000000409H}'
-```
-
-6. To run all roles **powervs_prepare_sles_sap, powervs_fs_creation and powervs_swap_creation** using **data structure example B** above for disks_configuration:
+5. To run only **powervs_prepare_rhel_sap** role with RHEL Subscription variable, 
 
 ```
-ansible-playbook --connection=local -i "localhost," powervs-sles.yml -e '{ sap_solution: "NETWEAVER", host_ip: "192.168.1.1", suse_subscription: { username: "XYZ", key: "ABC", release: "15"},  disks_configuration: [{ name: log, path: /hana/log, wwns:   6005076810810261F800000000004098,6005076810810261F80000000000409E,6005076810810261F80000000000409B,6005076810810261F80000000000409F,6005076810810261F8000000000040A2,6005076810810261F8000000000040A1,6005076810810261F800000000004095,6005076810810261F800000000004093},{ name: shared, path: /hana/shared, wwns: 6005076810810261F80000000000409C},{ name: usrsap, path: /usr/sap, wwns: 6005076810810261F800000000004099}], swap_disk_wwn: 6005076810810261F80000000000409H }'
+ansible-playbook --connection=local -i "localhost," power-linux-configure.yml -e '{sap_solution: "NETWEAVER", sap_domain: xyz.com, rhel_subscription: { username: "XYZ",password: "ABC", release: "8.2"}, host_ip: "192.168.1.1" }'
 ```
 
-7. To run all roles **powervs_prepare_sles_sap, powervs_fs_creation and powervs_swap_creation** using **variable file sample_sles_variable_file.yml** inside directory playbooks/vars.
+6. To run only **powervs_fs_creation** role to create filesystems using **data structure example A** above for disks_configuration:
 
 ```
-ansible-playbook --connection=local -i "localhost," powervs-sles.yml -e @vars/sample_sles_variable_file.yml
+ansible-playbook --connection=local -i "localhost," power-linux-configure.yml -e '{ disks_configuration: {counts:[8,8,1,1], names:[data,log,shared,usrsap], mounts:[/hana/data,/hana/log,/hana/shared,/usr/sap], wwns:[6005076810810261F800000000004094,6005076810810261F800000000004096,6005076810810261F80000000000409D,6005076810810261F8000000000040A3,6005076810810261F80000000000409A,6005076810810261F8000000000040A0,6005076810810261F8000000000040A4,6005076810810261F800000000004097,6005076810810261F800000000004098,6005076810810261F80000000000409E,6005076810810261F80000000000409B,6005076810810261F80000000000409F,6005076810810261F8000000000040A2,6005076810810261F8000000000040A1,6005076810810261F800000000004095,6005076810810261F800000000004093,6005076810810261F80000000000409C,6005076810810261F800000000004099] } }'
 ```
 
-### 4.2 Execution examples for RHEL
-
-1. To run only **powervs_prepare_rhel_sap** role without RHEL Subscription variable, 
+7. To run only **powervs_fs_creation** role to create filesystems using **data structure example B** above for disks_configuration:
 
 ```
-ansible-playbook --connection=local -i "localhost," powervs-rhel.yml -e '{sap_solution: "NETWEAVER", host_ip: "192.168.1.1" }'
+ansible-playbook --connection=local -i "localhost," power-linux-configure.yml -e '{disks_configuration: [{ name: log, mount: /hana/log, wwns: 6005076810810261F800000000004098,6005076810810261F80000000000409E,6005076810810261F80000000000409B,6005076810810261F80000000000409F,6005076810810261F8000000000040A2,6005076810810261F8000000000040A1,6005076810810261F800000000004095,6005076810810261F800000000004093},{ name: shared, mount: /hana/shared, wwns: 6005076810810261F80000000000409C},{ name: usrsap, mount: /usr/sap, wwns: 6005076810810261F800000000004099}]}'
 ```
 
-2. To run only **powervs_prepare_rhel_sap** role with RHEL Subscription variable, 
-
+8. To run only **powervs_swap_creation** role:
 ```
-ansible-playbook --connection=local -i "localhost," powervs-rhel.yml -e '{sap_solution: "NETWEAVER", sap_domain: xyz.com, rhel_subscription: { username: "XYZ",password: "ABC", release: "8.2"}, host_ip: "192.168.1.1" }'
-```
-
-3. To run only **powervs_fs_creation** role to create filesystems using **data structure example A** above for disks_configuration:
-
-```
-ansible-playbook --connection=local -i "localhost," powervs-rhel.yml -e '{ disks_configuration: {counts:[8,8,1,1], names:[data,log,shared,usrsap], paths:[/hana/data,/hana/log,/hana/shared,/usr/sap], wwns:[6005076810810261F800000000004094,6005076810810261F800000000004096,6005076810810261F80000000000409D,6005076810810261F8000000000040A3,6005076810810261F80000000000409A,6005076810810261F8000000000040A0,6005076810810261F8000000000040A4,6005076810810261F800000000004097,6005076810810261F800000000004098,6005076810810261F80000000000409E,6005076810810261F80000000000409B,6005076810810261F80000000000409F,6005076810810261F8000000000040A2,6005076810810261F8000000000040A1,6005076810810261F800000000004095,6005076810810261F800000000004093,6005076810810261F80000000000409C,6005076810810261F800000000004099] } }'
+ansible-playbook --connection=local -i "localhost," power-linux-configure.yml -e '{swap_disk_wwn: 6005076810810261F80000000000409H}'
 ```
 
-4. To run only **powervs_fs_creation** role to create filesystems using **data structure example B** above for disks_configuration:
+9. To run all roles **powervs_prepare_sles_sap, powervs_fs_creation and powervs_swap_creation** using **data structure example B** above for disks_configuration:
 
 ```
-ansible-playbook --connection=local -i "localhost," powervs-rhel.yml -e '{disks_configuration: [{ name: log, path: /hana/log, wwns: 6005076810810261F800000000004098,6005076810810261F80000000000409E,6005076810810261F80000000000409B,6005076810810261F80000000000409F,6005076810810261F8000000000040A2,6005076810810261F8000000000040A1,6005076810810261F800000000004095,6005076810810261F800000000004093},{ name: shared, path: /hana/shared, wwns: 6005076810810261F80000000000409C},{ name: usrsap, path: /usr/sap, wwns: 6005076810810261F800000000004099}] }'
-```
+ansible-playbook --connection=local -i "localhost," power-linux-configure.yml -e '{ sap_solution: "NETWEAVER", host_ip: "192.168.1.1", suse_subscription: { username: "XYZ", key: "ABC", release: "15"},  disks_configuration: [{ name: log, mount: /hana/log, wwns:   6005076810810261F800000000004098,6005076810810261F80000000000409E,6005076810810261F80000000000409B,6005076810810261F80000000000409F,6005076810810261F8000000000040A2,6005076810810261F8000000000040A1,6005076810810261F800000000004095,6005076810810261F800000000004093},{ name: shared, mount: /hana/shared, wwns: 6005076810810261F80000000000409C},{ name: usrsap, mount: /usr/sap, wwns: 6005076810810261F800000000004099}], swap_disk_wwn: 6005076810810261F80000000000409H }'
+``` 
 
-5. To run only **powervs_swap_creation** role:
-```
-ansible-playbook --connection=local -i "localhost," powervs-rhel.yml -e '{swap_disk_wwn: 6005076810810261F80000000000409H}'
-```
 
-6. To run all roles **powervs_prepare_rhel_sap, powervs_fs_creation and powervs_swap_creation** using **data structure example A** above for disks_configuration:
 
-```
-ansible-playbook --connection=local -i "localhost," powervs-rhel.yml -e '{sap_solution: "NETWEAVER", sap_domain: xyz.com, rhel_subscription: { username: "XYZ",password: "ABC", release: "8.2"}, host_ip: "192.168.1.1", disks_configuration: {counts:[8,8,1,1], names:[data,log,shared,usrsap], paths:[/hana/data,/hana/log,/hana/shared,/usr/sap], wwns:[6005076810810261F800000000004094,6005076810810261F800000000004096,6005076810810261F80000000000409D,6005076810810261F8000000000040A3,6005076810810261F80000000000409A,6005076810810261F8000000000040A0,6005076810810261F8000000000040A4,6005076810810261F800000000004097,6005076810810261F800000000004098,6005076810810261F80000000000409E,6005076810810261F80000000000409B,6005076810810261F80000000000409F,6005076810810261F8000000000040A2,6005076810810261F8000000000040A1,6005076810810261F800000000004095,6005076810810261F800000000004093,6005076810810261F80000000000409C,6005076810810261F800000000004099], swap_disk_wwn: 6005076810810261F80000000000409H} }'
-```
-
-7. To run all roles **powervs_prepare_rhel_sap, powervs_fs_creation and powervs_swap_creation** using **variable file sample_rhel_variable_file.yml** inside directory playbooks/vars.
-
-```
-ansible-playbook --connection=local -i "localhost," powervs-rhel.yml -e @vars/sample_rhel_variable_file.yml
-```
-
-### 4.3. Installing services. 
+### 4.2. Installing management services (SQUID, NTP, NFS, DNS). 
 
 
 1. To run **powervs_install_services** role, to configure all services on one host, using **variable file sample_services_variable_file.yml** inside directory playbooks/vars. Variable file should be modified like below:
@@ -443,8 +405,7 @@ server_config: {
 squid: { enable: true },
 ntp: { enable: true },
 nfs: { enable: false, nfs_file_system: [ { name: nfs, mount_path: "/nfs", size: 300 } ] },
-dns: { enable: true, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" },
-awscli: { enable: true }
+dns: { enable: true, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" }
 }
 ```
 ```
@@ -470,7 +431,7 @@ ansible-playbook -i "remote_host_name," powervs-services.yml -e @vars/sample_ser
 
 ```
 
-### 4.4. Enabling services. 
+### 4.3. Enabling services. 
 
 1. To run **powervs_client_enable_services** role, to enable services on client, using **variable file sample_client_services_variable_file.yml** inside directory playbooks/vars. Variable file should be modified like below:
 ```

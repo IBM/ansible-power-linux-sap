@@ -29,7 +29,7 @@ Version 1.0.3
 Notes
        * Full Linux subscription automation
        * Install services like Squid, DNS, NTP, and NFS.
-       * Install awscli packgaes
+       * Install awscli packages
        * Setup proxy on clients
        * Bug fixing.
 Availability
@@ -50,7 +50,7 @@ Availability
 
 Version 1.0.6
 Notes
-        * Added new role powervs_client_enable_services
+       * Added new role powervs_client_enable_services
 	* Updated Readme
 	* Bug Fixing
 Availability
@@ -79,15 +79,15 @@ Availability
 
 Version 1.0.10
 Notes
-        * Updated playbooks to use RHEl system calls, instead of community roles for SAP configurations 
+       * Updated playbooks to use RHEl system calls, instead of community roles for SAP configurations 
 Availability
        * GitHub v1.0.10(https://github.com/IBM/ansible-power-linux-sap)
 
 Version 1.0.11
 Notes
-        * Updated roles to work with new variable names. 
-	* Removed awscli usage
-	* Removed specific OS related playbooks, to have one universal for any OS.
-	* Updated README
+       * Updated roles to work with new variable names.
+       * Removed awscli usage
+       * Removed specific OS related playbooks, to have one universal for any Linux OS.
+       * Updated README
 Availability
        * GitHub v1.0.11(https://github.com/IBM/ansible-power-linux-sap)

@@ -21,7 +21,7 @@
 - name: Get the device name as per the disk size. 
   shell: " fdisk -l 2>/dev/null | egrep '^Disk' | egrep -v 'dm-|type|identifier|mapper' | grep -i {{ file_system_size }} | awk '{ print $2 }' | sed 's/://g' "
   register: wwn_dm_list
-
+  changed_when: false
 # set disk_name based on above command execution result
 - set_fact:
    disk_name: "{{ wwn_dm_list.stdout }}"
