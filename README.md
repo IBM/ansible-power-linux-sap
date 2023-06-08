@@ -396,7 +396,7 @@ ansible-playbook --connection=local -i "localhost," power-linux-configure.yml -e
 
 
 
-### 4.3. Installing management services (SQUID, NTP, NFS, DNS). 
+### 4.2. Installing management services (SQUID, NTP, NFS, DNS). 
 
 
 1. To run **powervs_install_services** role, to configure all services on one host, using **variable file sample_services_variable_file.yml** inside directory playbooks/vars. Variable file should be modified like below:
@@ -431,7 +431,7 @@ ansible-playbook -i "remote_host_name," powervs-services.yml -e @vars/sample_ser
 
 ```
 
-### 4.4. Enabling services. 
+### 4.3. Enabling services. 
 
 1. To run **powervs_client_enable_services** role, to enable services on client, using **variable file sample_client_services_variable_file.yml** inside directory playbooks/vars. Variable file should be modified like below:
 ```
