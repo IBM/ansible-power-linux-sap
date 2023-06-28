@@ -91,3 +91,9 @@ Notes
        * Updated README
 Availability
        * GitHub v1.0.11(https://github.com/IBM/ansible-power-linux-sap)
+
+Version 1.1.0
+Notes
+       * Updated playbook power-linux-configure.yml
+Availability
+       * GitHub v1.0.11(https://github.com/IBM/ansible-power-linux-sap)
