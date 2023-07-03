@@ -24,13 +24,21 @@
   - include_role: 
       name: sap_general_preconfigure
     vars:
-       sap_hana_preconfigure_fail_if_reboot_required: no
-    when: sap_solution is defined and ansible_distribution is match("RedHat*")  
+       sap_general_preconfigure_fail_if_reboot_required: no
+    when: 
+    - ansible_distribution is match("RedHat*")
+    - sap_solution is defined
   - include_role: 
      name: sap_hana_preconfigure
     vars:
       sap_hana_preconfigure_fail_if_reboot_required: no 
-    when: sap_solution is defined and sap_solution is match("HANA") and ansible_distribution is match("RedHat*")
+    when: 
+    - ansible_distribution is match("RedHat*") 
+    - sap_solution is defined 
+    - sap_solution is match("HANA")
   - include_role: 
       name: sap_netweaver_preconfigure
-    when: sap_solution is defined  and  sap_solution is match("NETWEAVER") and ansible_distribution is match("RedHat*")
+    when: 
+    - ansible_distribution is match("RedHat*") 
+    - sap_solution is defined 
+    - sap_solution is match("NETWEAVER")
