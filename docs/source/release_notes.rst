@@ -102,4 +102,10 @@ Version 1.1.2
 Notes
        * Updated playbook power-linux-configure.yml
 Availability
-       * GitHub v1.0.12(https://github.com/IBM/ansible-power-linux-sap)
+       * GitHub v1.1.2(https://github.com/IBM/ansible-power-linux-sap)
+
+Version 1.1.3
+Notes
+       * Fix for chrony/NTP 
+Availability
+       * GitHub v1.1.3(https://github.com/IBM/ansible-power-linux-sap)

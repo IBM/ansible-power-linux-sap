@@ -107,6 +107,11 @@
         path: /etc/chrony.conf
         regexp: "^#allow(.*)"
         replace: "allow 10.0.0.0/8"
+    - name: Comment out Port 0 line 
+      replace:
+        path: /etc/chrony.conf
+        regexp: "^port 0"  
+        replace: "#port 0"
 
     - name: Add Manual at EOF in /etc/chronyd
       lineinfile:
