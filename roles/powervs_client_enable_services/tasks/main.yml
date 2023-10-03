@@ -51,6 +51,9 @@
       when:
         - client_config.squid.no_proxy_hosts is defined
         - not replace_noproxy_log.changed
+    - name: Check that you can connect (GET) to a page and it returns a status 200
+      ansible.builtin.uri:
+        url: http://www.google.com
   when: client_config.squid.enable | default(false) | bool
 
 # This block will update DNS
@@ -59,6 +62,11 @@
       lineinfile:
         path: /etc/resolv.conf
         line: nameserver {{ client_config.dns.dns_server_ip }}
+    - name: Pause for 30 sec
+      pause:
+        seconds: 30
+    - name: Check for name resolution using dig command
+      command: dig -i www.google.com  
   when: client_config.dns.enable | default(false) | bool
 
 # This block will configure NTP
@@ -69,7 +77,7 @@
         name: chrony
         state: present
 
-    ## modifying /etc/chronyd file
+    ## Modifying /etc/chronyd file
     - name: Replace iburst line in /etc/chronyd file
       replace:
         path: /etc/chrony.conf
@@ -82,6 +90,12 @@
         name: chronyd
         state: restarted
         enabled: yes
+      changed_when: false
+    - name: Wait for 30sec
+      pause:
+        seconds: 30
+    - name: Verify Chrony configuration
+      shell: chronyc tracking | grep Leap | grep Normal
       changed_when: false
   when: client_config.ntp.enable | default(false) | bool
 
@@ -116,4 +130,9 @@
       with_together:
         - "{{ client_config.nfs.nfs_client_path.split(';')  }}"
         - "{{ client_config.nfs.nfs_server_path.split(';')  }}"
+    
+    - name: Verify if mount point is accessible
+      command: "ls -l {{ item }}"
+      loop: "{{ client_config.nfs.nfs_client_path.split(';')  }}"
+
   when: client_config.nfs.enable | default(false) | bool

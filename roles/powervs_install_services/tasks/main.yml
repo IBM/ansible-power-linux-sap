@@ -96,17 +96,24 @@
         state: latest
 
     # modify /etc/chronyd file
-    - name: Replace iburst line in /etc/chronyd file
+    - name: Replace iburst line in /etc/chrony.conf file
       replace:
         path: /etc/chrony.conf
         regexp: "^(.*)local stratum 10$"
         replace: "local stratum 10"
 
-    - name: Edit allowed subnet in /etc/chronyd file
+    - name: Edit allowed subnets in /etc/chrony.conf file
       replace:
         path: /etc/chrony.conf
         regexp: "^#allow(.*)"
-        replace: "allow 10.0.0.0/8"
+        replace: "allow 10.0.0.0/8\n
+                 allow 192.168.0.0/16\n
+                 allow 172.16.0.0/12"
+    # Removing Whitespaces 
+    - replace:
+        path: /etc/chrony.conf
+        regexp: "^ allow"
+        replace: "allow"
     - name: Comment out Port 0 line 
       replace:
         path: /etc/chrony.conf
