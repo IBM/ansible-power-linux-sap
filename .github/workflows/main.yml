@@ -32,6 +32,7 @@ jobs:
           eval `ssh-agent -s`
           echo PUBLIC_IP=${PUBLIC_IP}
           ssh-add ~/.ssh/private.key
+          molecule drivers
           find . -name molecule
           cd ./IBM/ansible-power-linux-sap/
           molecule test
