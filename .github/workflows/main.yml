@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install molecule-docker ansible-core
+          python3 -m pip install molecule==5.1.0 ansible-core
       - name: Test with molecule
         run: |
           ansible-galaxy collection install ansible.posix
