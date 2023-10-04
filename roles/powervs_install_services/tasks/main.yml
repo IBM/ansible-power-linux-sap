@@ -95,7 +95,7 @@
         name: chrony
         state: latest
 
-    # modify /etc/chronyd file
+    # modify /etc/chrony.conf file
     - name: Replace iburst line in /etc/chrony.conf file
       replace:
         path: /etc/chrony.conf
@@ -120,7 +120,7 @@
         regexp: "^port 0"  
         replace: "#port 0"
 
-    - name: Add Manual at EOF in /etc/chronyd
+    - name: Add Manual at EOF in /etc/chrony.conf
       lineinfile:
         path: /etc/chrony.conf
         line: manual

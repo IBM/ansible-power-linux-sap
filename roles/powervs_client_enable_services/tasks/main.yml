@@ -51,7 +51,7 @@
       when:
         - client_config.squid.no_proxy_hosts is defined
         - not replace_noproxy_log.changed
-    - name: Check that you can connect (GET) to a page and it returns a status 200
+    - name: Verify connection to internet
       ansible.builtin.uri:
         url: http://www.google.com
   when: client_config.squid.enable | default(false) | bool
@@ -77,8 +77,8 @@
         name: chrony
         state: present
 
-    ## Modifying /etc/chronyd file
-    - name: Replace iburst line in /etc/chronyd file
+    ## Modifying /etc/chrony.conf file
+    - name: Replace iburst line in /etc/chrony.conf file
       replace:
         path: /etc/chrony.conf
         regexp: "^(.*)iburst$"
