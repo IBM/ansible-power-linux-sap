@@ -67,7 +67,7 @@
         seconds: 60
     - name: Check for name resolution using dig command
       command: dig -i www.google.com 
-      change_when: false 
+      changed_when: false 
   when: client_config.dns.enable | default(false) | bool
 
 # This block will configure NTP
