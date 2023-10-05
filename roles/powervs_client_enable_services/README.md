@@ -1,4 +1,4 @@
-## Role: powervs_client_enable_services 
+## Role: powervs_client_enable_services
 
 ### Enabling Services
 
@@ -23,7 +23,7 @@ dns: { enable: false, dns_server_ip: "127.0.0.1" }
 ```
 Each services can be chosen to be enabled or not. Disabling is not supported. This variable file enables users, to enable one or many services on one or multiple SAP instances, as desired.
 
-For **NFS** services, nfs server path, which are already shared, and can be mounted on client should be provided. **nfs_client_path** are directories where NFS shared directory will be locally mounted. 
+For **NFS** services, nfs server path, which are already shared, and can be mounted on client should be provided. **nfs_client_path** are directories where NFS shared directory will be locally mounted.
 
 ## Dependencies
 

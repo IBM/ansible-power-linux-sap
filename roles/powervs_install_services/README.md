@@ -1,4 +1,4 @@
-## Role: powervs_install_services 
+## Role: powervs_install_services
 
 ### Enabling Services
 
