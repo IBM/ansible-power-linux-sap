@@ -30,7 +30,7 @@
         state: latest
 
     # modify /etc/named.conf file
-    - name: Modify /etc/named.conf file
+    - name: Modify acl allowed_clients in /etc/named.conf file
       blockinfile:
         marker_begin: "BEGIN_ACL"
         marker_end: "END_ACL"
@@ -42,7 +42,7 @@
           };
         insertbefore: ^options
 
-    - name: Modify /etc/named.conf file
+    - name: Modify forwarders in /etc/named.conf file
       blockinfile:
         path: /etc/named.conf
         block: |
@@ -51,27 +51,27 @@
           };
         insertafter: ^options
 
-    - name: Modify /etc/named.conf file
+    - name: Modify allow-query in /etc/named.conf file for RHEL
       replace:
         path: /etc/named.conf
         regexp: "^(.*)allow-query(.*)"
         replace: allow-query { allowed_clients; };
       when: ansible_distribution is match("RedHat*")
 
-    - name: Modify /etc/named.conf file
+    - name: Modify allow-query in /etc/named.conf file for SLES
       replace:
         path: /etc/named.conf
         regexp: "^(.*)#allow-query(.*)"
         replace: allow-query { allowed_clients; };
       when: ansible_distribution is match("SLES*")
 
-    - name: Modify /etc/named.conf file
+    - name: Modify /etc/named.conf file to include "forward only"
       lineinfile:
         path: /etc/named.conf
         line: forward only;
         insertafter: "^(.*)allow-query(.*)"
 
-    - name: Modify /etc/named.conf file
+    - name: Modify /etc/named.conf file to include "recursion yes"
       lineinfile:
         path: /etc/named.conf
         line: recursion yes;
@@ -110,7 +110,8 @@
                  allow 192.168.0.0/16\n
                  allow 172.16.0.0/12"
     # Removing Whitespaces 
-    - replace:
+    - name: To remove prefix  whitespaces from allowed subnet entry
+      replace:
         path: /etc/chrony.conf
         regexp: "^ allow"
         replace: "allow"
@@ -138,7 +139,7 @@
 ######## NFS Service ########
 - block:
     # Including a task to create a filesystem which will be NFS exported
-    - name: include task to create NFS filesystem
+    - name: Include task to create NFS filesystem
       include_tasks: vpc_fs_creation.yml
       with_items: "{{ server_config.nfs.nfs_file_system }}"
       when: ansible_architecture is match("x86*")
