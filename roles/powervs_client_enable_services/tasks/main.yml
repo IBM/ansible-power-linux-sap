@@ -96,7 +96,7 @@
       pause:
         seconds: 60
     - name: Verify Chrony configuration
-      shell: chronyc tracking | grep Leap | grep Normal
+      command: chronyc tracking | grep Leap | grep Normal
       changed_when: false
   when: client_config.ntp.enable | default(false) | bool
 
