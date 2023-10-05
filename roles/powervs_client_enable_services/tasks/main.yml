@@ -92,9 +92,9 @@
         state: restarted
         enabled: yes
       changed_when: false
-    - name: Wait for 30sec
+    - name: Pause for 60 sec
       pause:
-        seconds: 30
+        seconds: 60
     - name: Verify Chrony configuration
       shell: chronyc tracking | grep Leap | grep Normal
       changed_when: false
