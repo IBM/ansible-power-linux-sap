@@ -96,7 +96,7 @@
         state: latest
 
     # modify /etc/chrony.conf file
-    - name: Replace iburst line in /etc/chrony.conf file
+    - name: Edit iburst line in /etc/chrony.conf file
       replace:
         path: /etc/chrony.conf
         regexp: "^(.*)local stratum 10$"

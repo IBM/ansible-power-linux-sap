@@ -62,11 +62,12 @@
       lineinfile:
         path: /etc/resolv.conf
         line: nameserver {{ client_config.dns.dns_server_ip }}
-    - name: Pause for 30 sec
+    - name: Pause for 60 sec
       pause:
-        seconds: 30
+        seconds: 60
     - name: Check for name resolution using dig command
-      command: dig -i www.google.com  
+      command: dig -i www.google.com 
+      change_when: false 
   when: client_config.dns.enable | default(false) | bool
 
 # This block will configure NTP
@@ -134,5 +135,5 @@
     - name: Verify if mount point is accessible
       command: "ls -l {{ item }}"
       loop: "{{ client_config.nfs.nfs_client_path.split(';')  }}"
-
+      changed_when: false
   when: client_config.nfs.enable | default(false) | bool
