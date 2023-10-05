@@ -4,7 +4,7 @@ dependency:
 driver:
   name: delegated
 platforms:
- - name: 10.20.10.6
+  - name: 10.20.10.6
 provisioner:
   name: ansible
   inventory:

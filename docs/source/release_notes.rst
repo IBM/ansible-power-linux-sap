@@ -109,3 +109,10 @@ Notes
        * Fix for chrony/NTP 
 Availability
        * GitHub v1.1.3(https://github.com/IBM/ansible-power-linux-sap)
+
+Version 1.1.4
+Notes
+       * Add all private ip address range for NTP service
+       * Include tests for NTP, DNS and NFS services
+Availability
+       * GitHub v1.1.4(https://github.com/IBM/ansible-power-linux-sap)

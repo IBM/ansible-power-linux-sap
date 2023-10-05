@@ -7,6 +7,7 @@
     - set_fact:
         bash_file: /etc/bash.bashrc
       when: ansible_distribution is match("SLES*")
+
     # Check if http_proxy entries are already present. If yes, don't add new entries. If no, it should be added.
     - name: Check for http proxy entries in {{ bash_file }}
       replace:
@@ -20,6 +21,7 @@
         - HTTPS_PROXY
       register: replace_log
       when: client_config.squid.squid_server_ip_port is defined
+
     #In case no entries were present, next task, will add the first time entries.
     - name: Check for http proxy entries in {{ bash_file }}
       lineinfile:
@@ -34,6 +36,7 @@
       when:
         - client_config.squid.squid_server_ip_port is defined
         - not replace_log.changed
+
     # Check if no_proxy entries are already present. If yes, don't add new entries. If no, it should be added.
     - name: Check for http proxy entries in {{ bash_file }}
       replace:
@@ -42,6 +45,7 @@
         replace: "export no_proxy={{ client_config.squid.no_proxy_hosts }}"
       register: replace_noproxy_log
       when: client_config.squid.no_proxy_hosts is defined
+
     #In case no no_proxy entries were present, next task, will add the first time entries.
     - name: Check for http proxy entries in {{ bash_file }}
       lineinfile:
@@ -51,6 +55,7 @@
       when:
         - client_config.squid.no_proxy_hosts is defined
         - not replace_noproxy_log.changed
+
     - name: Verify connection to internet
       ansible.builtin.uri:
         url: http://www.google.com
@@ -62,12 +67,15 @@
       lineinfile:
         path: /etc/resolv.conf
         line: nameserver {{ client_config.dns.dns_server_ip }}
+
     - name: Pause for 60 sec
       pause:
         seconds: 60
+
     - name: Check for name resolution using dig command
-      command: dig -i www.google.com 
-      changed_when: false 
+      command: dig -i www.google.com
+      changed_when: false
+
   when: client_config.dns.enable | default(false) | bool
 
 # This block will configure NTP
@@ -92,10 +100,12 @@
         state: restarted
         enabled: yes
       changed_when: false
+
     - name: Pause for 60 sec
       pause:
         seconds: 60
-    - name: Verify Chrony configuration
+
+    - name: Verify Chrony configuration grepping for Leap status Normal using chronyc tracking
       command: chronyc tracking | grep Leap | grep Normal
       changed_when: false
   when: client_config.ntp.enable | default(false) | bool
@@ -113,7 +123,8 @@
         state: restarted
         enabled: yes
       changed_when: false
-    - name: Create a directory if it does not exist
+
+    - name: Create the NFS directory if it does not exist
       file:
         path: "{{ item }}"
         state: directory
@@ -131,7 +142,7 @@
       with_together:
         - "{{ client_config.nfs.nfs_client_path.split(';')  }}"
         - "{{ client_config.nfs.nfs_server_path.split(';')  }}"
-    
+
     - name: Verify if mount point is accessible
       command: "ls -l {{ item }}"
       loop: "{{ client_config.nfs.nfs_client_path.split(';')  }}"
