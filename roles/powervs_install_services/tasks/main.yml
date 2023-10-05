@@ -36,9 +36,9 @@
         marker_end: "END_ACL"
         path: /etc/named.conf
         block: |
-          acl allowed_clients { 
-            localhost; 
-            any; 
+          acl allowed_clients {
+            localhost;
+            any;
           };
         insertbefore: ^options
 
