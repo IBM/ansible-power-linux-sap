@@ -42,6 +42,24 @@
           };
         insertbefore: ^options
 
+    - name: Modify listen-on line in /etc/named.conf file to accept any IP
+      replace:
+        path: /etc/named.conf
+        regexp: "^(.*)listen-on port(.*)"
+        replace: "listen-on { any; };"
+
+    - name: Comment listen-on-v6 line in /etc/named.conf file
+      replace:
+        path: /etc/named.conf
+        regexp: "^(.*)listen-on-v6(.*)"
+        replace: "listen-on-v6 { any; };"
+    
+    - name: Change dnssec-validation to no in /etc/named.conf file
+      replace:
+        path: /etc/named.conf
+        regexp: "(.*)dnssec-validation(.*)"
+        replace: "dnssec-validation no;"
+
     - name: Modify forwarders in /etc/named.conf file
       blockinfile:
         path: /etc/named.conf

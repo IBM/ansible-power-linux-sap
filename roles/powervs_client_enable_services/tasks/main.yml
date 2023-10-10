@@ -73,8 +73,14 @@
         seconds: 60
 
     - name: Check for name resolution using dig command
-      command: dig -i www.google.com
+      command: dig -i www.google.com +short
+      register: dig_output
       changed_when: false
+    - debug: var=dig_output.stdout
+    - name: Verify if dig command returned an IP
+      fail:
+        msg: "DNS is not working, please verify setting"
+      when: dig_output.stdout is not ansible.utils.ipv4
 
   when: client_config.dns.enable | default(false) | bool
 
