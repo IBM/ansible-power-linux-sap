@@ -63,6 +63,12 @@
 
 # This block will update DNS
 - block:
+    ## Installing bind-utils
+    - name: Installing bind-utils
+      package:
+        name: bind-utils
+        state: present
+
     - name: Modifying /etc/resolv.conf file to add nameserver
       lineinfile:
         path: /etc/resolv.conf
