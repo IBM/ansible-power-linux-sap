@@ -25,6 +25,7 @@ jobs:
         run: |
           ansible-galaxy collection install ansible.posix
           ansible-galaxy collection install community.general
+          ansible-galaxy collection install ansible.utils
           mkdir -p ~/.ssh/
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/private.key
           sudo chmod 600 ~/.ssh/private.key
