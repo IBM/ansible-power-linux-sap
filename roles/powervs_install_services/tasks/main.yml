@@ -53,8 +53,8 @@
         path: /etc/named.conf
         regexp: "^(.*)listen-on-v6(.*)"
         replace: "listen-on-v6 { any; };"
-    
-    - name: Change dnssec-validation to no in /etc/named.conf file
+
+    - name: Set dnssec-validation to no in /etc/named.conf file
       replace:
         path: /etc/named.conf
         regexp: "(.*)dnssec-validation(.*)"
