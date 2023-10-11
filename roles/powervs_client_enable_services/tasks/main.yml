@@ -150,6 +150,7 @@
         src: "{{ item.1 }}"
         state: mounted
         boot: yes
+        opts: defaults,nofail
         fstype: nfs
       with_together:
         - "{{ client_config.nfs.nfs_client_path.split(';')  }}"

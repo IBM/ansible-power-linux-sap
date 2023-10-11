@@ -58,4 +58,5 @@
     path: "{{ file_system_path }}"
     src: "/dev/mapper/{{file_system_name}}vg-{{file_system_name}}lv"
     fstype: xfs
+    opts: defaults,nofail
     state: mounted
