@@ -80,4 +80,5 @@
     path: "{{ file_system.mount }}"
     src: "/dev/mapper/{{file_system.name}}vg-{{file_system.name}}lv"
     fstype: xfs
+    opts: defaults,nofail
     state: mounted
