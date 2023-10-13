@@ -4,7 +4,7 @@ Notes
 Availability
        * GitHub v0.0.1(https://github.com/IBM/ansible-power-linux-sap)
 
-Version 1.0.0 
+Version 1.0.0
 Notes
        * Change related to TSO
        * Removing all reference to terraform_wrapper variable, as it is no more used. Updated Readme and also updated few file names
@@ -34,7 +34,7 @@ Notes
        * Bug fixing.
 Availability
        * GitHub v1.0.3(https://github.com/IBM/ansible-power-linux-sap)
-       
+
 Version 1.0.4
 Notes
        * Updated Chrony/NTP tasks
@@ -44,7 +44,7 @@ Availability
 
 Version 1.0.5
 Notes
-       * Bug Fixing 
+       * Bug Fixing
 Availability
        * GitHub v1.0.5(https://github.com/IBM/ansible-power-linux-sap)
 
@@ -65,8 +65,8 @@ Availability
 
 Version 1.0.8
 Notes
-        * squid.conf updated 
-        * pip installation removed 
+        * squid.conf updated
+        * pip installation removed
 Availability
        * GitHub v1.0.8(https://github.com/IBM/ansible-power-linux-sap)
 
@@ -79,7 +79,7 @@ Availability
 
 Version 1.0.10
 Notes
-       * Updated playbooks to use RHEl system calls, instead of community roles for SAP configurations 
+       * Updated playbooks to use RHEl system calls, instead of community roles for SAP configurations
 Availability
        * GitHub v1.0.10(https://github.com/IBM/ansible-power-linux-sap)
 
@@ -106,6 +106,13 @@ Availability
 
 Version 1.1.3
 Notes
-       * Fix for chrony/NTP 
+       * Fix for chrony/NTP
 Availability
        * GitHub v1.1.3(https://github.com/IBM/ansible-power-linux-sap)
+
+Version 1.1.4
+Notes
+       * Add all private ip address range for NTP service
+       * Include tests for NTP, DNS and NFS services
+Availability
+       * GitHub v1.1.4(https://github.com/IBM/ansible-power-linux-sap)

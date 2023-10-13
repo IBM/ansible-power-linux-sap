@@ -1,5 +1,5 @@
 ---
-- hosts: all 
+- hosts: all
   roles:
   - { role: ../roles/powervs_install_services, when: server_config is defined }
   - { role: ../roles/powervs_client_enable_services, when: client_config is defined }

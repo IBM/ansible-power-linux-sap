@@ -20,11 +20,12 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install molecule ansible-core
+          python3 -m pip install molecule==5.1.0 ansible-core
       - name: Test with molecule
         run: |
           ansible-galaxy collection install ansible.posix
           ansible-galaxy collection install community.general
+          ansible-galaxy collection install ansible.utils
           mkdir -p ~/.ssh/
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/private.key
           sudo chmod 600 ~/.ssh/private.key
@@ -32,6 +33,7 @@ jobs:
           eval `ssh-agent -s`
           echo PUBLIC_IP=${PUBLIC_IP}
           ssh-add ~/.ssh/private.key
+          molecule drivers
           find . -name molecule
           cd ./IBM/ansible-power-linux-sap/
           molecule test
@@ -40,4 +42,3 @@ jobs:
           SSH_PRIVATE_KEY: ${{secrets.SAH_PRIVATE_KEY}}
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
           PUBLIC_IP: ${{secrets.PUBLIC_IP}}
-          

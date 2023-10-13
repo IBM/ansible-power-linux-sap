@@ -132,7 +132,7 @@ This collection has 4 modules, which are independent of each other and can be ru
 	    <td><b>Mandatory</b></td>
             <td rowspan=1>client_config is a dictionary. Services are installed and enabled based on value passed for each service.</td>
             <td rowspan=1>e.g.: { <br />squid: { enable: true, squid_server_ip_port: "172.23.0.12:3128", no_proxy_hosts: "161.0.0.0/8" }, <br />ntp: { enable: true, ntp_server_ip: "172.23.0.12" }, <br />nfs: { enable: true, nfs_server_path: "172.23.0.12:/NFS;172.23.0.12:/hana/software", nfs_client_path: "/mnt;/hana" }, <br />dns: { enable: true, dns_server_ip: "172.23.0.12" } <br />}<b></b></td>
-        </tr>	    
+        </tr>
         <tr>
     </tbody>
 </table>
@@ -143,8 +143,8 @@ This collection has 4 modules, which are independent of each other and can be ru
 ### 2.1. Preparing Operating System for SAP installations
 
 This module is different for **SLES and RHEL** and hence should be selected as per operating system in use.
- 
-#### 2.1.1 powervs_prepare_sles_sap: 
+
+#### 2.1.1 powervs_prepare_sles_sap:
 
 This role performs the following tasks:
 - Enables **multipathd** daemon
@@ -170,15 +170,15 @@ This role performs the following tasks:
 - Setting **transparent_hugepage** to never.
 
 This role is followed by execution of following [Red Hat Enterprise Linux System Roles](https://access.redhat.com/articles/3050101)
-- **[sap_general_preconfigure](https://access.redhat.com/articles/6857351)** 
+- **[sap_general_preconfigure](https://access.redhat.com/articles/6857351)**
 - **[sap_hana_preconfigure](https://access.redhat.com/articles/6857351)**
-- **[sap_netweaver_preconfigure](https://access.redhat.com/articles/6857351)** 
+- **[sap_netweaver_preconfigure](https://access.redhat.com/articles/6857351)**
 
 
 All settings applied remain persistent across reboot.
 
-**Note:** 
-Ansible playbook may report **Failure/Warning**, if scripts analyse reboot is required for settings applied by it. User should reboot their LPAR, in that case. 
+**Note:**
+Ansible playbook may report **Failure/Warning**, if scripts analyse reboot is required for settings applied by it. User should reboot their LPAR, in that case.
 
 
 
@@ -200,11 +200,11 @@ The input variable **disks_configuration** for this role supports 2 data structu
 
 #### **Example A**. Data structure for **disks_configuration** variable as **dictionary** value example:
 ```
-disks_configuration: 
+disks_configuration:
 {
-counts: [2,2,1], 
-names: [data,log,shared], 
-mounts: [/hana/data,/hana/log,/hana/shared], 
+counts: [2,2,1],
+names: [data,log,shared],
+mounts: [/hana/data,/hana/log,/hana/shared],
 wwns: [600507681082018bc8000000000057e4,600507681082018bc8000000000057e8,600507681082018bc8000000000057e5,600507681082018bc8000000000057e6,600507681082018bc8000000000057e7]
 }
 ```
@@ -213,18 +213,18 @@ wwns: [600507681082018bc8000000000057e4,600507681082018bc8000000000057e8,6005076
 ```
 disks_configuration: [
 {
-name: data, 
-mount: /hana/data, 
+name: data,
+mount: /hana/data,
 wwns: 600507681082018bc8000000000057e4,600507681082018bc8000000000057e8
 },
 {
-name: log, 
-mount: /hana/log, 
+name: log,
+mount: /hana/log,
 wwns: 600507681082018bc8000000000057d9,600507681082018bc8000000000057ed7
 },
 {
-name: shared, 
-mount: /hana/shared, 
+name: shared,
+mount: /hana/shared,
 wwns: 600507681082018bc8000000000057f1
 }
 .
@@ -242,10 +242,10 @@ This module configures swap space on LPAR, and is same for both RHEL and SLES. T
 
 This role performs the following tasks:
 - Removes previous swap device configured
-- Creates a new swap device on disk provided with swap_disk_wwn variable. 
+- Creates a new swap device on disk provided with swap_disk_wwn variable.
 
 #### Note:
-For RHEL, **swap disk of size >= 24GB** is required for RHEL system role **[sap-netweaver-preconfigure](https://github.com/linux-system-roles/sap-netweaver-preconfigure)** to succeed. 
+For RHEL, **swap disk of size >= 24GB** is required for RHEL system role **[sap-netweaver-preconfigure](https://github.com/linux-system-roles/sap-netweaver-preconfigure)** to succeed.
 
 
 ### 2.4. Installing Services
@@ -274,7 +274,7 @@ dns: { enable: false, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" }
 
 Each service can be enabled separately. Disabling service is not supported. With the variable file, users can enable one or many services on one or multiple hosts, as desired.
 
-For NFS services, additional variable **nfs_file_system** is required. **nfs_file_system** is a list of dictionaries, which is used to create a NFS mountable filesystem named as per **name** variable, of provided **size** and mounted on **mount_path**. 
+For NFS services, additional variable **nfs_file_system** is required. **nfs_file_system** is a list of dictionaries, which is used to create a NFS mountable filesystem named as per **name** variable, of provided **size** and mounted on **mount_path**.
 
 For DNS services, additional variable **dns_servers** is required. These are user-defined DNS servers IPs. In example, **161.26.0.7 and 161.26.0.8** are default **IBM Cloud** DNS servers and **9.9.9.9** is default **IBM Public** DNS server. Please note, **;(semicolon)** as a separator, in example.
 
@@ -284,7 +284,7 @@ For DNS services, additional variable **dns_servers** is required. These are use
 
 This module is same for both SLES and RHEL.
 
-#### Role: powervs_client_enable_services 
+#### Role: powervs_client_enable_services
 
 This role performs the following tasks:
 - Configures **SQUID** proxy.
@@ -306,7 +306,7 @@ dns: { enable: false, dns_server_ip: "172.23.0.12" }
 
 Each services can be chosen to be enabled or not. Disabling is not supported. This variable file enables users, to enable one or many services on one or multiple SAP instances, as desired.
 
-For **NFS** services, **nfs_server_path**, which are already network shared, and can be mounted on client should be provided. **nfs_client_path** are directories where NFS shared directory will be locally mounted. 
+For **NFS** services, **nfs_server_path**, which are already network shared, and can be mounted on client should be provided. **nfs_client_path** are directories where NFS shared directory will be locally mounted.
 
 ***
 
@@ -324,7 +324,7 @@ To install RHEL system roles, follow the steps provided [here](https://access.re
 
 # 4. Execution Details
 
-To execute playbook, **cd** to playbooks directory of collection. 
+To execute playbook, **cd** to playbooks directory of collection.
 
 Sample Ansible Playbook Execution
 
@@ -347,25 +347,25 @@ Target Host Execution
 ansible-playbook --connection=local -i "localhost," power-linux-configure.yml -e @vars/sample_linux_configuration_variable_file.yml
 ```
 
-2. To run only **powervs_prepare_sles_sap** role without SUSE subscription variable, 
+2. To run only **powervs_prepare_sles_sap** role without SUSE subscription variable,
 
 ```
 ansible-playbook --connection=local -i "localhost," power-linux-configure.yml -e '{sap_solution: "HANA", host_ip: "192.168.1.1" }'
 ```
 
-3. To run only **powervs_prepare_sles_sap** role with SUSE subscription variable, 
+3. To run only **powervs_prepare_sles_sap** role with SUSE subscription variable,
 
 ```
 ansible-playbook --connection=local -i "localhost," power-linux-configure.yml -e '{sap_solution: "HANA", host_ip: "192.168.1.1", suse_subscription: { username: "XYZ", key: "ABC", release: "15"} }'
 ```
 
-4. To run only **powervs_prepare_rhel_sap** role without RHEL Subscription variable, 
+4. To run only **powervs_prepare_rhel_sap** role without RHEL Subscription variable,
 
 ```
 ansible-playbook --connection=local -i "localhost," power-linux-configure.yml -e '{sap_solution: "NETWEAVER", host_ip: "192.168.1.1" }'
 ```
 
-5. To run only **powervs_prepare_rhel_sap** role with RHEL Subscription variable, 
+5. To run only **powervs_prepare_rhel_sap** role with RHEL Subscription variable,
 
 ```
 ansible-playbook --connection=local -i "localhost," power-linux-configure.yml -e '{sap_solution: "NETWEAVER", sap_domain: xyz.com, rhel_subscription: { username: "XYZ",password: "ABC", release: "8.2"}, host_ip: "192.168.1.1" }'
@@ -392,11 +392,11 @@ ansible-playbook --connection=local -i "localhost," power-linux-configure.yml -e
 
 ```
 ansible-playbook --connection=local -i "localhost," power-linux-configure.yml -e '{ sap_solution: "NETWEAVER", host_ip: "192.168.1.1", suse_subscription: { username: "XYZ", key: "ABC", release: "15"},  disks_configuration: [{ name: log, mount: /hana/log, wwns:   6005076810810261F800000000004098,6005076810810261F80000000000409E,6005076810810261F80000000000409B,6005076810810261F80000000000409F,6005076810810261F8000000000040A2,6005076810810261F8000000000040A1,6005076810810261F800000000004095,6005076810810261F800000000004093},{ name: shared, mount: /hana/shared, wwns: 6005076810810261F80000000000409C},{ name: usrsap, mount: /usr/sap, wwns: 6005076810810261F800000000004099}], swap_disk_wwn: 6005076810810261F80000000000409H }'
-``` 
+```
 
 
 
-### 4.2. Installing management services (SQUID, NTP, NFS, DNS). 
+### 4.2. Installing management services (SQUID, NTP, NFS, DNS).
 
 
 1. To run **powervs_install_services** role, to configure all services on one host, using **variable file sample_services_variable_file.yml** inside directory playbooks/vars. Variable file should be modified like below:
@@ -431,7 +431,7 @@ ansible-playbook -i "remote_host_name," powervs-services.yml -e @vars/sample_ser
 
 ```
 
-### 4.3. Enabling services. 
+### 4.3. Enabling services.
 
 1. To run **powervs_client_enable_services** role, to enable services on client, using **variable file sample_client_services_variable_file.yml** inside directory playbooks/vars. Variable file should be modified like below:
 ```

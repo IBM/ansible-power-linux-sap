@@ -30,19 +30,45 @@
         state: latest
 
     # modify /etc/named.conf file
-    - name: Modify /etc/named.conf file
+    - name: Modify acl allowed_clients in /etc/named.conf file
       blockinfile:
         marker_begin: "BEGIN_ACL"
         marker_end: "END_ACL"
         path: /etc/named.conf
         block: |
-          acl allowed_clients { 
-            localhost; 
-            any; 
+          acl allowed_clients {
+            localhost;
+            any;
           };
         insertbefore: ^options
 
-    - name: Modify /etc/named.conf file
+    - name: Modify listen-on line in /etc/named.conf file to accept any IP in RHEL
+      replace:
+        path: /etc/named.conf
+        regexp: "^(.*)listen-on port(.*)"
+        replace: "listen-on { any; };"
+      when: ansible_distribution is match("RedHat*")
+    - name: Comment listen-on-v6 line in /etc/named.conf file in RHEL
+      replace:
+        path: /etc/named.conf
+        regexp: "^(.*)listen-on-v6(.*)"
+        replace: "listen-on-v6 { any; };"
+      when: ansible_distribution is match("RedHat*")
+    - name: Set dnssec-validation to no in /etc/named.conf file in RHEL
+      replace:
+        path: /etc/named.conf
+        regexp: "(.*)dnssec-validation(.*)"
+        replace: "dnssec-validation no;"
+      when: ansible_distribution is match("RedHat*")
+
+    - name: Set dnssec-validation to no in /etc/named.conf file in SLES
+      lineinfile:
+        path: /etc/named.conf
+        line: "dnssec-validation no;"
+        insertafter: "^(.*)dnssec-validation(.*)"
+      when: ansible_distribution is match("SLES*")
+
+    - name: Modify forwarders in /etc/named.conf file
       blockinfile:
         path: /etc/named.conf
         block: |
@@ -51,27 +77,27 @@
           };
         insertafter: ^options
 
-    - name: Modify /etc/named.conf file
+    - name: Modify allow-query in /etc/named.conf file for RHEL
       replace:
         path: /etc/named.conf
         regexp: "^(.*)allow-query(.*)"
         replace: allow-query { allowed_clients; };
       when: ansible_distribution is match("RedHat*")
 
-    - name: Modify /etc/named.conf file
+    - name: Modify allow-query in /etc/named.conf file for SLES
       replace:
         path: /etc/named.conf
         regexp: "^(.*)#allow-query(.*)"
         replace: allow-query { allowed_clients; };
       when: ansible_distribution is match("SLES*")
 
-    - name: Modify /etc/named.conf file
+    - name: Modify /etc/named.conf file to include "forward only"
       lineinfile:
         path: /etc/named.conf
         line: forward only;
         insertafter: "^(.*)allow-query(.*)"
 
-    - name: Modify /etc/named.conf file
+    - name: Modify /etc/named.conf file to include "recursion yes"
       lineinfile:
         path: /etc/named.conf
         line: recursion yes;
@@ -95,25 +121,35 @@
         name: chrony
         state: latest
 
-    # modify /etc/chronyd file
-    - name: Replace iburst line in /etc/chronyd file
+    # modify /etc/chrony.conf file
+    - name: Edit iburst line in /etc/chrony.conf file
       replace:
         path: /etc/chrony.conf
         regexp: "^(.*)local stratum 10$"
         replace: "local stratum 10"
 
-    - name: Edit allowed subnet in /etc/chronyd file
+    - name: Edit allowed subnets in /etc/chrony.conf file
       replace:
         path: /etc/chrony.conf
         regexp: "^#allow(.*)"
-        replace: "allow 10.0.0.0/8"
-    - name: Comment out Port 0 line 
+        replace: "allow 10.0.0.0/8\n
+          allow 192.168.0.0/16\n
+          allow 172.16.0.0/12"
+
+    # Removing Whitespaces
+    - name: Remove whitespace prefix from allowed subnet entry in /etc/chrony.conf file
       replace:
         path: /etc/chrony.conf
-        regexp: "^port 0"  
+        regexp: "^ allow"
+        replace: "allow"
+
+    - name: Comment out Port 0 line from /etc/chrony.conf file
+      replace:
+        path: /etc/chrony.conf
+        regexp: "^port 0"
         replace: "#port 0"
 
-    - name: Add Manual at EOF in /etc/chronyd
+    - name: Add Manual at EOF in /etc/chrony.conf
       lineinfile:
         path: /etc/chrony.conf
         line: manual
@@ -131,7 +167,7 @@
 ######## NFS Service ########
 - block:
     # Including a task to create a filesystem which will be NFS exported
-    - name: include task to create NFS filesystem
+    - name: Include task to create NFS filesystem
       include_tasks: vpc_fs_creation.yml
       with_items: "{{ server_config.nfs.nfs_file_system }}"
       when: ansible_architecture is match("x86*")
@@ -139,6 +175,7 @@
     #    include_tasks: ppc_fs_creation.yml
     #    with_items: "{{ server_config.nfs.nfs_file_system }}"
     #    when: ansible_architecture is match("x86*")
+
     # Install NFS
     - name: Install nfs package
       package:
@@ -152,6 +189,7 @@
         path: /etc/exports
         state: touch
       changed_when: false
+
     # export /NFS directory as NFS directory
     - name: Export directory as NFS
       lineinfile:
@@ -167,6 +205,7 @@
         state: restarted
         enabled: yes
       changed_when: false
+
     # Verify if NFS device is correctly exported
     - name: Run showmount command to list nfs exported directory
       shell: showmount -e localhost  | grep  {{ item.mount_path | trim }}
@@ -174,6 +213,7 @@
       ignore_errors: true
       with_items: "{{ server_config.nfs.nfs_file_system }}"
       changed_when: false
+
     - name: Warning message if directory was not exported successfully
       debug:
         msg: "INFO: The command {{ item.cmd }} returned error.  Please ensure all NFS exports had been successful"

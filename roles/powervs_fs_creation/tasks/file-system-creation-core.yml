@@ -30,7 +30,7 @@
 - name: Check if multipath alias is enabled.
   shell: grep "user_friendly_names no" /etc/multipath.conf
   register: multipath_alias
-  ignore_errors: yes
+  ignore_errors: true
   changed_when: false
 - name: Setting count variable based on multipath aliasing is enabled or not
   set_fact:
@@ -80,4 +80,5 @@
     path: "{{ file_system.mount }}"
     src: "/dev/mapper/{{file_system.name}}vg-{{file_system.name}}lv"
     fstype: xfs
+    opts: defaults,nofail
     state: mounted

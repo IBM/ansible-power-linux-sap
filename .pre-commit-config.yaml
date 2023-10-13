@@ -1,0 +1,92 @@
+default_stages: [commit]
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: check-yaml
+        exclude: chart/|metadata.yaml
+      - id: check-json
+        types: [file]
+        files: \.(json|releaserc)$
+      - id: end-of-file-fixer
+        exclude: .svg
+      - id: trailing-whitespace
+      - id: check-merge-conflict
+      - id: detect-private-key
+        exclude: ibm_catalog.json
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
+        description: Forces to replace line ending by the UNIX 'lf' character.
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.1-beta
+    hooks:
+      - id: hadolint
+  - repo: https://github.com/ansible/ansible-lint.git
+    rev: v6.20.3
+    hooks:
+      - id: ansible-lint
+        files: \.(yaml|yml)$
+  # checkov (does not require checkov to be installed locally to run)
+  - repo: https://github.com/bridgecrewio/checkov.git
+    rev: 2.5.4
+    hooks:
+      - id: checkov
+        args:
+          # chart is owned by community
+          - --skip-path=chart/external-secrets
+          - --skip-path=.scv
+          - --skip-path=Dockerfile
+          - --skip-path=module-metadata.json
+          - --skip-path=ibm_catalog.json
+          - --skip-framework=github_actions
+          # see https://github.ibm.com/GoldenEye/issues/issues/5317
+          - --skip-check=CKV_TF_1
+  - repo: https://github.com/syntaqx/git-hooks
+    rev: v0.0.18
+    hooks:
+      - id: forbid-binary
+        exclude: .png|.jpg
+      - id: shellcheck
+      - id: go-fmt
+  - repo: https://github.com/ibm/detect-secrets
+    rev: 0.13.1+ibm.61.dss
+    hooks:
+      - id: detect-secrets
+        args:
+          [
+            "--baseline",
+            ".secrets.baseline",
+            "--fail-on-unaudited",
+            "--use-all-plugins",
+          ]
+        exclude: go.sum|module-metadata.json
+  # flake8
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.1.0
+    hooks:
+      - id: flake8
+        args: # arguments to configure flake8
+          # making isort line length compatible with black
+          - "--max-line-length=88"
+          # these are errors that will be ignored by flake8
+          # check out their meaning here
+          # https://flake8.pycqa.org/en/latest/user/error-codes.html
+          - "--ignore=E203,E501,W503"
+  # isort
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        args: ["--profile", "black", "--filter-files"]
+  # black
+  - repo: https://github.com/ambv/black
+    rev: 23.9.1
+    hooks:
+      - id: black
+        args: # arguments to configure black
+          - --line-length=88
+  # helm lint
+  - repo: https://github.com/gruntwork-io/pre-commit
+    rev: v0.1.22
+    hooks:
+      - id: helmlint
