@@ -42,23 +42,31 @@
           };
         insertbefore: ^options
 
-    - name: Modify listen-on line in /etc/named.conf file to accept any IP
+    - name: Modify listen-on line in /etc/named.conf file to accept any IP in RHEL
       replace:
         path: /etc/named.conf
         regexp: "^(.*)listen-on port(.*)"
         replace: "listen-on { any; };"
-
-    - name: Comment listen-on-v6 line in /etc/named.conf file
+      when: ansible_distribution is match("RedHat*")
+    - name: Comment listen-on-v6 line in /etc/named.conf file in RHEL
       replace:
         path: /etc/named.conf
         regexp: "^(.*)listen-on-v6(.*)"
         replace: "listen-on-v6 { any; };"
-
-    - name: Set dnssec-validation to no in /etc/named.conf file
+      when: ansible_distribution is match("RedHat*")
+    - name: Set dnssec-validation to no in /etc/named.conf file in RHEL
       replace:
         path: /etc/named.conf
         regexp: "(.*)dnssec-validation(.*)"
         replace: "dnssec-validation no;"
+      when: ansible_distribution is match("RedHat*")
+
+    - name: Set dnssec-validation to no in /etc/named.conf file in SLES
+      lineinfile:
+        path: /etc/named.conf
+        line: "dnssec-validation no;"
+        insertafter: "^(.*)dnssec-validation(.*)"
+      when: ansible_distribution is match("SLES*")
 
     - name: Modify forwarders in /etc/named.conf file
       blockinfile:
