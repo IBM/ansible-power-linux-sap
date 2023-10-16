@@ -1,60 +1,62 @@
 ---
 # setting variable values, to be used later for filesystem creation and disk discovery
-- set_fact:
+- name: Setting up variables for the file system
+  ansible.builtin.set_fact:
     file_system_name: "{{ item.name }}"
     file_system_path: "{{ item.mount_path }}"
     file_system_size: "{{ item.size }}"
 # install lvm package is not already installed
 - name: Install lvm package if not already installed
-  package:
+  ansible.builtin.package:
     name: lvm2
     state: present
 - name: Install lvm package if not already installed
-  package:
+  ansible.builtin.package:
     name: sg3_utils
     state: present
 
 - name: Rescanning for new disks
-  command: /usr/bin/rescan-scsi-bus.sh
+  ansible.builtin.command: /usr/bin/rescan-scsi-bus.sh
   changed_when: false
 
 - name: Get the device name as per the disk size.
-  shell: " fdisk -l 2>/dev/null | egrep '^Disk' | egrep -v 'dm-|type|identifier|mapper' | grep -i {{ file_system_size }} | awk '{ print $2 }' | sed 's/://g' "
+  ansible.builtin.shell: " fdisk -l 2>/dev/null | egrep '^Disk' | egrep -v 'dm-|type|identifier|mapper' | grep -i {{ file_system_size }} | awk '{ print $2 }' | sed 's/://g' "
   register: wwn_dm_list
   changed_when: false
 # set disk_name based on above command execution result
-- set_fact:
+- name: Setting up the disk name
+  ansible.builtin.set_fact:
     disk_name: "{{ wwn_dm_list.stdout }}"
 
 # Creating volume group.
-- name: Create LVM volume group {{ file_system_name }}vg on {{ disk_name}}
-  lvg:
+- name: Create LVM volume group "{{ file_system_name }}vg on {{ disk_name }}"
+  community.general.lvg:
     vg: "{{file_system_name}}vg"
     pvs: "{{disk_name}}"
     state: present
 
 # Making use of --stripesize as 64K as default, unless passed explicitly in extra vars
-- name: Create Logical Volume {{ file_system_name }}lv
-  lvol:
+- name: Create Logical Volume "{{ file_system_name }}"
+  community.general.lvol:
     vg: "{{ file_system_name }}vg"
     lv: "{{ file_system_name }}lv"
     size: 100%VG
     state: present
 
-- name: Create directory {{ file_system_path }} if doesn't exist
-  file:
+- name: If the file system path doesn't exist, create directory "{{ file_system_path }}"
+  ansible.builtin.file:
     path: "{{ file_system_path }}"
     state: directory
     mode: "0755"
 
 - name: Create filesystem
-  filesystem:
+  community.general.filesystem:
     fstype: xfs
     dev: "/dev/mapper/{{file_system_name}}vg-{{ file_system_name}}lv"
     opts: -K
 
-- name: Mount lv {{ file_system_name }}lv on {{ file_system_path }}
-  mount:
+- name: Mount lv "{{ file_system_name }}lv on {{ file_system_path }}"
+  ansible.posix.mount:
     path: "{{ file_system_path }}"
     src: "/dev/mapper/{{file_system_name}}vg-{{file_system_name}}lv"
     fstype: xfs

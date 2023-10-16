@@ -2,44 +2,48 @@
 ### this role is for validation of input sent in  disks_configuration variable. Check for valid WWNs, counts passed in ansible extra vars. Exit with error, if validation fails.
 
 - name: Running rescan command
-  shell: /usr/bin/rescan-scsi-bus.sh -a -c -v
+  ansible.builtin.command: /usr/bin/rescan-scsi-bus.sh -a -c -v
   changed_when: false
 # validate each wwn provided with multipath -ll command, for its presence. fail, if any 1 does not match.
 - name: Validating the wwn values passed
-  shell: /sbin/multipath -ll | grep {{ item }}
+  ansible.builtin.shell: /sbin/multipath -ll | grep {{ item }}
   register: validation_check
   with_items: "{{ disks_configuration.wwns | lower }}"
   ignore_errors: true
   changed_when: false
 - name: Check for the results
-  fail:
+  ansible.builtin.fail:
     msg: "command {{ item.cmd }} failed"
   when: item.rc==1
   with_items: "{{ validation_check.results }}"
 
 # get count of unique WWN
 - name: Validate number of wwn present
-  set_fact:
+  ansible.builtin.set_fact:
     total_wwn: "{{ disks_configuration.wwns | unique |  length }}"
 # fail if total count of disks and sum of counts provided does not match. Also match wwn unique values. Any duplicate, will lead to failure
-- set_fact: count_total=0
+- name: Set the total count of disks
+  ansible.builtin.set_fact:
+    count_total: 0
 - name: Get the total count as provided
-  set_fact:
+  ansible.builtin.set_fact:
     count_total: "{{ count_total|int +item|int }}"
   with_items: "{{ disks_configuration.counts }}"
 
-- fail:
+- name: Verify number of unique WWN
+  ansible.builtin.fail:
     msg: "Number of unique  WWN provided = {{ total_wwn }} is not equal to total count {{ count_total }} "
   when: count_total !=  total_wwn
 
 # fail if count value and number of items in count, name and mounts are different.
 - name: Check for number of fields for counts, names and  mounts
-  set_fact:
+  ansible.builtin.set_fact:
     count_fields: "{{ disks_configuration.counts | length }}"
     names_fields: "{{ disks_configuration.names | length }}"
     mounts_fields: "{{ disks_configuration.mounts | length }}"
 
-- fail:
+- name: Verify number of inputs
+  ansible.builtin.fail:
     msg: Number of inputs does not match, please verify INPUT
   when:
     - count_fields != names_fields or names_fields != mounts_fields

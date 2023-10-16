@@ -14,7 +14,10 @@
 # limitations under the License.
 # ------------------------------------------------------------------------
 ---
-- hosts: all
+- name: Execute Ansible roles for PowerVS services and enable client services
+  hosts: all
   roles:
-  - { role: ../roles/powervs_install_services, when: server_config is defined }
-  - { role: ../roles/powervs_client_enable_services, when: client_config is defined }
+    - role: powervs_install_services
+      when: server_config is defined
+    - role: powervs_client_enable_services
+      when: client_config is defined

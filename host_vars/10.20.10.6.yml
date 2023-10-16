@@ -1,6 +1,6 @@
 server_config: {
-squid: { enable: false },
-ntp: { enable: true },
-nfs: { enable: true, nfs_file_system: [ { name: nfs, mount_path: "/nfs", size: 101 } ] },
-dns: { enable: true, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;" },
+squid: {enable: false},
+ntp: {enable: true},
+nfs: {enable: true, nfs_file_system: [{name: nfs, mount_path: "/nfs", size: 101}]},
+dns: {enable: true, dns_servers: "161.26.0.7; 161.26.0.8; 9.9.9.9;"},
 }

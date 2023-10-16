@@ -7,7 +7,8 @@
 
     # TODO: Developer must implement and populate 'server' variable
 
-    - when: server.changed | default(false) | bool
+    - name: Create a server variable
+      when: server.changed | default(false) | bool
       block:
         - name: Populate instance config dict
           ansible.builtin.set_fact:
@@ -31,4 +32,4 @@
 
               {{ instance_conf | to_json | from_json | to_yaml }}
             dest: "{{ molecule_instance_config }}"
-            mode: 0600
+            mode: "0600"
