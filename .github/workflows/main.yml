@@ -37,7 +37,7 @@ jobs:
           find . -name molecule
           cd ./IBM/ansible-power-linux-sap/
           molecule test
-        ansible.builtin.shell: bash
+        shell: bash
         env:
           SSH_PRIVATE_KEY: ${{secrets.SAH_PRIVATE_KEY}}
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
