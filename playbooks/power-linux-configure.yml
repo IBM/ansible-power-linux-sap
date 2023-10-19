@@ -17,13 +17,13 @@
 - name: Executing roles for PowerVS swap and fs creation, preparing RHEL or SLES for SAP
   hosts: all
   roles:
-    - role: powervs_swap_creation
+    - ibm.power_linux_sap.powervs_swap_creation
       when: swap_disk_wwn is defined
-    - role: powervs_fs_creation
+    - ibm.power_linux_sap.powervs_fs_creation
       when: disks_configuration is defined
-    - role: powervs_prepare_rhel_sap
+    - ibm.power_linux_sap.powervs_prepare_rhel_sap
       when: sap_solution is defined and ansible_distribution is match("RedHat*")
-    - role: powervs_prepare_sles_sap
+    - ibm.power_linux_sap.powervs_prepare_sles_sap
       when: sap_solution is defined and ansible_distribution is match("SLES*")
   tasks:
   - name: Use the role sap_general_preconfigure

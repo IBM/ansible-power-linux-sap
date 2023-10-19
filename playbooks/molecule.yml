@@ -2,17 +2,10 @@
 - name: Executing roles for PowerVS and enable client services, fs and swap creation, preparing RHEL for SAP
   hosts: all
   roles:
-    - role: powervs_install_services
-      when: server_config is defined
-    - role: powervs_client_enable_services
-      when: client_config is defined
-    - role: powervs_fs_creation
-      when: disks_configuration is defined
-    - role: powervs_swap_creation
-      when: swap_disk_wwn is defined
-    - role: powervs_prepare_rhel_sap
-      when: sap_solution is defined
-    - role: powervs_install_services
-      when: server_config is defined
-    - role: powervs_client_enable_services
-      when: client_config is defined
+    - { role: roles/powervs_install_services, when: server_config is defined }
+    - { role: roles/powervs_client_enable_services, when: client_config is defined }
+    - { role: roles/powervs_fs_creation, when: disks_configuration is defined }
+    - { role: roles/powervs_swap_creation, when: swap_disk_wwn is defined }
+    - { role: roles/powervs_prepare_rhel_sap, when: sap_solution is defined }
+    - { role: roles/powervs_install_services, when: server_config is defined }
+    - { role: roles/powervs_client_enable_services, when: client_config is defined }
