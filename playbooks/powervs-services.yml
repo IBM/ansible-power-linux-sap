@@ -17,7 +17,5 @@
 - name: Execute Ansible roles for PowerVS services and enable client services
   hosts: all
   roles:
-    - role: powervs_install_services
-      when: server_config is defined
-    - role: powervs_client_enable_services
-      when: client_config is defined
+    - { role: ibm.power_linux_sap.powervs_install_services, when: server_config is defined and server_config.keys()|length > 0 }
+    - { role: ibm.power_linux_sap.powervs_client_enable_services, when: client_config is defined and client_config.keys()|length > 0 }
