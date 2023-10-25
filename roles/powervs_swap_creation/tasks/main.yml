@@ -60,7 +60,7 @@
 - name: Delete previous swap device
   ansible.builtin.command: swapoff {{ item }}
   with_items: "{{ swapon_device_list.stdout_lines }}"
-  when: swapon_device_list.stdout is defined
+  changed_when: swapon_device_list.stdout is defined && swapon_device_list.stdout | length > 0
 
 # validate if multipath alias is enabled. If enabled, set field to check for dm-X name, as 3, else it remains at default 2.
 - name: Check if multipath alias is enabled.
@@ -76,6 +76,7 @@
 - name: Get dm device for wwn  {{ swap_disk_wwn }}
   ansible.builtin.shell: 'multipath -ll | grep -B 1 {{ swap_disk_wwn | lower  }} | grep dm- | awk ''{print "/dev/"${{ count | default(2) }}}'' '
   register: swap_dm_name
+  changed_when: swap_dm_name.stdout | length > 0
 
 - name: Setting swap_dm_device variable
   ansible.builtin.set_fact:
@@ -85,7 +86,9 @@
 # enabling swap device
 - name: Mkswap on device  {{ swap_dm_device }}
   ansible.builtin.command: mkswap {{ swap_dm_device }}
+  changed_when: false
 
 # activating swap device
 - name: Swapon the device  {{ swap_dm_device }}
   ansible.builtin.command: swapon {{ swap_dm_device }}
+  changed_when: false

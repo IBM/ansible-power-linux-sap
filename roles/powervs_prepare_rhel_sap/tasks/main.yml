@@ -45,6 +45,7 @@
       ansible.builtin.copy:
         src: /usr/share/powervs-fls/powervs-fls-readme.md
         dest: /usr/share/powervs-fls/powervs-fls-readme.md_copy
+        mode: "0600"
 
     # Modifying readme file, to update proxy server and port
     - name: Update cloud-init command with proxy server details
@@ -63,6 +64,7 @@
       ansible.builtin.copy:
         src: /var/log/powervs-fls.log
         dest: /var/log/powervs-fls.log.backup
+        mode: "0600"
       ignore_errors: true
     - name: Remove the powervs-fls.log file
       ansible.builtin.file:
@@ -94,6 +96,8 @@
       ansible.builtin.copy:
         src: /usr/share/powervs-fls/powervs-fls-readme.md_copy
         dest: /usr/share/powervs-fls/powervs-fls-readme.md
+        mode: "0600"
+
     - name: Delete the file /usr/share/powervs-fls/powervs-fls-readme.md_copy
       ansible.builtin.file:
         path: /usr/share/powervs-fls/powervs-fls-readme.md_copy

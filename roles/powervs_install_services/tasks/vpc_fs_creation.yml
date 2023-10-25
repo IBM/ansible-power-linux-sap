@@ -31,8 +31,8 @@
 # Creating volume group.
 - name: Create LVM volume group "{{ file_system_name }}vg on {{ disk_name }}"
   community.general.lvg:
-    vg: "{{file_system_name}}vg"
-    pvs: "{{disk_name}}"
+    vg: "{{ file_system_name }}vg"
+    pvs: "{{ disk_name }}"
     state: present
 
 # Making use of --stripesize as 64K as default, unless passed explicitly in extra vars
@@ -52,13 +52,13 @@
 - name: Create filesystem
   community.general.filesystem:
     fstype: xfs
-    dev: "/dev/mapper/{{file_system_name}}vg-{{ file_system_name}}lv"
+    dev: "/dev/mapper/{{ file_system_name }}vg-{{ file_system_name }}lv"
     opts: -K
 
 - name: Mount lv "{{ file_system_name }}lv on {{ file_system_path }}"
   ansible.posix.mount:
     path: "{{ file_system_path }}"
-    src: "/dev/mapper/{{file_system_name}}vg-{{file_system_name}}lv"
+    src: "/dev/mapper/{{ file_system_name }}vg-{{ file_system_name }}lv"
     fstype: xfs
     opts: defaults,nofail
     state: mounted

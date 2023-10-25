@@ -36,6 +36,7 @@
   ansible.builtin.copy:
     content: "{{ pv_listing_dm  }}"
     dest: /root/tmp_file
+    mode: "0600"
   changed_when: false
 - name: Read and output the content of the tmp_file, delete unnecessary characters and write the content in the tmp_file_mod
   ansible.builtin.raw: "cat /root/tmp_file | tr [{},] '\n' | tee /root/tmp_file_mod"

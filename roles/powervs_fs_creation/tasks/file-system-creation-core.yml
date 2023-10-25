@@ -57,14 +57,14 @@
   loop: "{{ wwn_dm_list.results }}"
 # Creating volume group.
 - name: Create LVM volume group "{{ file_system.name }}vg on {{wwn_to_dm_list}}"
-  community.general.lvg:
+  lvg:
     vg: "{{file_system.name}}vg"
     pvs: "{{wwn_to_dm_list}}"
     state: present
 
 # Making use of --stripesize as 64K as default, unless passed explicitly in extra vars
 - name: Create Logical Volume "{{ file_system.name }}lv"
-  community.general.lvol:
+  lvol:
     vg: "{{ file_system.name }}vg"
     lv: "{{ file_system.name }}lv"
     size: 100%VG

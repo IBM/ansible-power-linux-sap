@@ -13,7 +13,7 @@
       ansible.builtin.copy:
         src: "{{ role_path }}/files/squid.conf"
         dest: /etc/squid/squid.conf
-        mode: 0640
+        mode: "0640"
     # Start and Enable Squid Service
     - name: Start squid service
       ansible.builtin.service:
@@ -155,7 +155,7 @@
       ansible.builtin.service:
         name: chronyd
         state: restarted
-        enabled: yes
+        enabled: true
       changed_when: false
 
 ######## NFS Service ########
@@ -184,6 +184,7 @@
       ansible.builtin.file:
         path: /etc/exports
         state: touch
+        mode: "0600"
       changed_when: false
 
     # export /NFS directory as NFS directory
