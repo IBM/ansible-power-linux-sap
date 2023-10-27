@@ -78,13 +78,13 @@
     mode: "0755"
 
 - name: Create filesystem
-  community.general.filesystem:
+  filesystem:
     fstype: xfs
     dev: "/dev/mapper/{{file_system.name}}vg-{{ file_system.name}}lv"
     opts: -K
 
 - name: Mount lv "{{ file_system.name }}lv on {{ file_system.mount }}"
-  ansible.posix.mount:
+  mount:
     path: "{{ file_system.mount }}"
     src: "/dev/mapper/{{file_system.name}}vg-{{file_system.name}}lv"
     fstype: xfs

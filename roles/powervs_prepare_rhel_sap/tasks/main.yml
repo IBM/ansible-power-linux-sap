@@ -117,7 +117,7 @@
   when: rhel_subscription is defined
   block:
     - name: Subscribing to RHEL and setting release to {{ rhel_subscription.release }}
-      community.general.redhat_subscription:
+      redhat_subscription:
         state: present
         username: "{{ rhel_subscription.username }}"
         password: "{{ rhel_subscription.password }}"
@@ -132,7 +132,7 @@
 
     # Add repos for installing RHEL packages required for SAP installation
     - name: Adding RHEL repos
-      community.general.rhsm_repository:
+      rhsm_repository:
         name: "{{ item }}"
         state: enabled
       with_items:

@@ -153,7 +153,7 @@
 
     # Mounting NFS directory. server_path, should be "server_name":"source_path"
     - name: Mount NFS directory
-      ansible.posix.mount:
+      mount:
         path: "{{ item.0 }}"
         src: "{{ item.1 }}"
         state: mounted
