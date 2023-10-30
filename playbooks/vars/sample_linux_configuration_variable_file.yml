@@ -1,13 +1,14 @@
 # ----------------------------- Mandatory parameters -----------------------------  #
-# Defining all mandatory variables, required to run complete automation suite. Please refer to README if individual modules are to be executed and for explanation for variables.
+# Defining all mandatory variables, required to run complete automation suite.
+# Please refer to README if individual modules are to be executed and for explanation for variables.
 
 sap_solution: HANA
 sap_domain: 'poc.cloud'
 # As a dictionary
 disks_configuration: {
-counts: [2,2,1],
-names: [data,log,shared],
-mounts: [/hana/data,/hana/log,/hana/shared],
+counts: [2, 2, 1],
+names: [data, log, shared],
+mounts: [/hana/data, /hana/log, /hana/shared],
 wwns: [600507681082018bc8000000000057e4, 600507681082018bc8000000000057e8, 600507681082018bc8000000000057e5, 600507681082018bc8000000000057e6, 600507681082018bc8000000000057e7]
 }
 

@@ -22,27 +22,27 @@
     - { role: ibm.power_linux_sap.powervs_prepare_rhel_sap, when: sap_solution is defined and ansible_distribution is match("RedHat*") }
     - { role: ibm.power_linux_sap.powervs_prepare_sles_sap, when: sap_solution is defined and ansible_distribution is match("SLES*") }
   tasks:
-  - name: Use the role sap_general_preconfigure
-    ansible.builtin.include_role:
-      name: sap_general_preconfigure
-    vars:
-      sap_general_preconfigure_fail_if_reboot_required: false
-    when:
-      - ansible_distribution is match("RedHat*")
-      - sap_solution is defined
-  - name: Use the role sap_hana_preconfigure
-    ansible.builtin.include_role:
-      name: sap_hana_preconfigure
-    vars:
-      sap_hana_preconfigure_fail_if_reboot_required: false
-    when:
-      - ansible_distribution is match("RedHat*")
-      - sap_solution is defined
-      - sap_solution is match("HANA")
-  - name: Use the role sap_netweaver_preconfigure
-    ansible.builtin.include_role:
-      name: sap_netweaver_preconfigure
-    when:
-      - ansible_distribution is match("RedHat*")
-      - sap_solution is defined
-      - sap_solution is match("NETWEAVER")
+    - name: Use the role sap_general_preconfigure
+      ansible.builtin.include_role:
+        name: sap_general_preconfigure
+      vars:
+        sap_general_preconfigure_fail_if_reboot_required: false
+      when:
+        - ansible_distribution is match("RedHat*")
+        - sap_solution is defined
+    - name: Use the role sap_hana_preconfigure
+      ansible.builtin.include_role:
+        name: sap_hana_preconfigure
+      vars:
+        sap_hana_preconfigure_fail_if_reboot_required: false
+      when:
+        - ansible_distribution is match("RedHat*")
+        - sap_solution is defined
+        - sap_solution is match("HANA")
+    - name: Use the role sap_netweaver_preconfigure
+      ansible.builtin.include_role:
+        name: sap_netweaver_preconfigure
+      when:
+        - ansible_distribution is match("RedHat*")
+        - sap_solution is defined
+        - sap_solution is match("NETWEAVER")

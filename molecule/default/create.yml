@@ -8,7 +8,7 @@
     # TODO: Developer must implement and populate 'server' variable
 
     - name: Create a server variable
-      when: server.changed | default(false) | bool
+      when: server.changed | default(false) | bool  # noqa: no-handler
       block:
         - name: Populate instance config dict
           ansible.builtin.set_fact:
@@ -17,7 +17,7 @@
               'address': "{{ }}",
               'user': "{{ }}",
               'port': "{{ }}",
-              'identity_file': "{{ }}", }
+              'identity_file': "{{ }}" }
           with_items: "{{ server.results }}"
           register: instance_config_dict
 
