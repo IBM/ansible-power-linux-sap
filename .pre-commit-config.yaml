@@ -27,7 +27,7 @@ repos:
   #    - id: ansible-lint
   #      files: \.(yaml|yml)$
       - id: ansible-lint
-        args: ["--exclude", "roles"]
+        args: ["--exclude", "roles", "playbooks", "meta", "molecule"]
   #    - id: ansible-lint
   #      args: ["--generate-ignore"]  # it generates the .ansible-lint-ignore file to ignore all violations
   # checkov (does not require checkov to be installed locally to run)
