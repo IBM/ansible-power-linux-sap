@@ -16,7 +16,7 @@
     state: present
 
 - name: Rescanning for new disks
-  ansible.builtin.command: /usr/bin/rescan-scsi-bus.sh
+  ansible.builtin.shell: /usr/bin/rescan-scsi-bus.sh
   changed_when: false
 
 - name: Get the device name as per the disk size.

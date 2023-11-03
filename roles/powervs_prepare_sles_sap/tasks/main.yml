@@ -42,7 +42,7 @@
 
     # Execute the cloud-init command as in readme
     - name: Execute cloud-init command
-      ansible.builtin.command: "{{ cloud_init_command.stdout }} {{ private_proxy_ip_port }}"
+      ansible.builtin.shell: "{{ cloud_init_command.stdout }} {{ private_proxy_ip_port }}"
 
     # Wait for successful completion of registration. It will timeout in 300 seconds, if search text is not found
     - name: Wait until the string "Successfully completed SLES subscription registration process"" is in the file /var/log/powervs-fls.log before continuing
@@ -149,10 +149,10 @@
   changed_when: saptune_status.rc != 0
 
 - name: Activate SLES tuning for SAP {{ sap_solution | upper }}
-  ansible.builtin.command: "saptune service takeover"
+  ansible.builtin.shell: "saptune service takeover"
 
 - name: Check for saptune installation and enablement
-  ansible.builtin.command: saptune_check
+  ansible.builtin.shell: saptune_check
   register: saptune_check_log
   ignore_errors: true
 

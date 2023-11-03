@@ -39,7 +39,7 @@
   when: disks_configuration is defined
 
 - name: Run rescan-scsi-bus.sh command to check for new devices
-  ansible.builtin.command: /usr/bin/rescan-scsi-bus.sh -a -c -v
+  ansible.builtin.shell: /usr/bin/rescan-scsi-bus.sh -a -c -v
   changed_when: false
 - name: Validate Disk ids passed when disks_configuration variables is of dictionary type
   ansible.builtin.import_tasks: disks-validation.yml

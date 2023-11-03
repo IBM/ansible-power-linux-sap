@@ -38,7 +38,7 @@
 
 ## first validate the date passed with swap_disk_wwn variable
 - name: Running rescan command
-  ansible.builtin.command: /usr/bin/rescan-scsi-bus.sh -a -c -v
+  ansible.builtin.shell: /usr/bin/rescan-scsi-bus.sh -a -c -v
 
 # validate swap_disk_wwn provided with multipath -ll command, for its presence. fail, if does not match.
 - name: Validating the wwn values passed
@@ -58,7 +58,7 @@
   register: swapon_device_list
 
 - name: Delete previous swap device
-  ansible.builtin.command: swapoff {{ item }}
+  ansible.builtin.shell: swapoff {{ item }}
   with_items: "{{ swapon_device_list.stdout_lines }}"
   changed_when: swapon_device_list.stdout is defined && swapon_device_list.stdout | length > 0
 
@@ -85,10 +85,10 @@
 # no create a new swap device, based on dm-X name of wwn disk.
 # enabling swap device
 - name: Mkswap on device  {{ swap_dm_device }}
-  ansible.builtin.command: mkswap {{ swap_dm_device }}
+  ansible.builtin.shell: mkswap {{ swap_dm_device }}
   changed_when: false
 
 # activating swap device
 - name: Swapon the device  {{ swap_dm_device }}
-  ansible.builtin.command: swapon {{ swap_dm_device }}
+  ansible.builtin.shell: swapon {{ swap_dm_device }}
   changed_when: false

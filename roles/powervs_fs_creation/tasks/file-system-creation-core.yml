@@ -14,7 +14,7 @@
   changed_when: false
 # before starting with filesystem creation, lets scan the for any new disk that may have been added to LPAR
 - name: Run rescan-scsi-bus.sh command to check for new devices
-  ansible.builtin.command: /usr/bin/rescan-scsi-bus.sh -a -c -v
+  ansible.builtin.shell: /usr/bin/rescan-scsi-bus.sh -a -c -v
   when: multipathd_executed is not defined
   changed_when: false
 # restart multipathd after rescan is completed.

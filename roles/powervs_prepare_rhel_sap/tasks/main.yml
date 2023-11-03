@@ -72,7 +72,7 @@
         state: absent
 
     - name: Execute cloud-init command
-      ansible.builtin.command: "{{ cloud_init_command.stdout }}"
+      ansible.builtin.shell: "{{ cloud_init_command.stdout }}"
 
     - name: Wait until the string "Exiting RHEL subscription registration process" is in the file /var/log/powervs-fls.log before continuing
       ansible.builtin.wait_for:

@@ -2,7 +2,7 @@
 ### this role is for validation of input sent in  disks_configuration variable. Check for valid WWNs, counts passed in ansible extra vars. Exit with error, if validation fails.
 
 - name: Running rescan command
-  ansible.builtin.command: /usr/bin/rescan-scsi-bus.sh -a -c -v
+  ansible.builtin.shell: /usr/bin/rescan-scsi-bus.sh -a -c -v
   changed_when: false
 # validate each wwn provided with multipath -ll command, for its presence. fail, if any 1 does not match.
 - name: Validating the wwn values passed
