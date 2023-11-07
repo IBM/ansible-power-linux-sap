@@ -64,7 +64,7 @@
 
 # validate if multipath alias is enabled. If enabled, set field to check for dm-X name, as 3, else it remains at default 2.
 - name: Check if multipath alias is enabled.
-  ansible.builtin.command: grep "user_friendly_names no" /etc/multipath.conf
+  ansible.builtin.shell: grep "user_friendly_names no" /etc/multipath.conf
   register: multipath_alias
   ignore_errors: true
 
@@ -74,7 +74,7 @@
   when: multipath_alias.rc == 1
 
 - name: Get dm device for wwn  {{ swap_disk_wwn }}
-  ansible.builtin.shell: 'multipath -ll | grep -B 1 {{ swap_disk_wwn | lower  }} | grep dm- | awk ''{print "/dev/"${{ count | default(2) }}}'' '
+  ansible.builtin.shell: 'multipath -ll | grep -B 1 {{ swap_disk_wwn | lower }} | grep dm- | awk ''{ print "/dev/"${{ count | default(2) }}}'' '
   register: swap_dm_name
   changed_when: swap_dm_name.stdout | length > 0
 

@@ -24,10 +24,8 @@ repos:
   - repo: https://github.com/ansible/ansible-lint.git
     rev: v6.20.3
     hooks:
-  #    - id: ansible-lint
-  #      files: \.(yaml|yml)$
       - id: ansible-lint
-        args: ["--exclude", "roles", "playbooks", "meta", "molecule"]
+        files: \.(yaml|yml)$
   #    - id: ansible-lint
   #      args: ["--generate-ignore"]  # it generates the .ansible-lint-ignore file to ignore all violations
   # checkov (does not require checkov to be installed locally to run)

@@ -56,7 +56,7 @@
 
     # Get the cloud-init command from readme
     - name: Get the cloud-init command from /usr/share/powervs-fls/powervs-fls-readme.md
-      ansible.builtin.command: grep {{ private_proxy_ip_port }} /usr/share/powervs-fls/powervs-fls-readme.md
+      ansible.builtin.shell: grep {{ private_proxy_ip_port }} /usr/share/powervs-fls/powervs-fls-readme.md
       register: cloud_init_command
 
     # Backing up the log file and removing it for latest use
@@ -160,7 +160,7 @@
 # For modification on network interfaces, create a dictionary of interfaces
 - name: Create interfaces dictionary
   ansible.builtin.set_fact:
-    interfaces: "{{ interfaces | default({}) | combine( { item: hostvars[ inventory_hostname ] ['ansible_' + item ]} ) }}"
+    interfaces: "{{ interfaces | default({}) | combine({item: hostvars[inventory_hostname]['ansible_' + item]}) }}"
   with_items: "{{ ansible_interfaces | replace('-', '_') }}"
 
 # to make jumbo frame persistent across reboot.

@@ -95,7 +95,7 @@
 # For modification on network interfaces, create a dictionary of interfaces
 - name: Create interfaces dictionary
   ansible.builtin.set_fact:
-    interfaces: "{{ interfaces | default({}) | combine( {item: hostvars[ inventory_hostname ] ['ansible_' + item ]} ) }}"
+    interfaces: "{{ interfaces | default({}) | combine({item: hostvars[inventory_hostname]['ansible_' + item]}) }}"
   with_items: "{{ ansible_interfaces | replace('-', '_') }}"
 
 # Make the above changes persistent across reboot.

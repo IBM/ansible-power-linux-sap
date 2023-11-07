@@ -30,7 +30,7 @@
 
 # Need to check multipath alias, if it is enabled then to multipath -ll command, returns dm-X device name in 3rd field else, it is in 2nd field. Introduce a count variable for same. If multipath alias is enabled, set count=3, else default if 2.
 - name: Check if multipath alias is enabled.
-  ansible.builtin.command: grep "user_friendly_names no" /etc/multipath.conf
+  ansible.builtin.shell: grep "user_friendly_names no" /etc/multipath.conf
   register: multipath_alias
   ignore_errors: true
   changed_when: false
@@ -50,25 +50,25 @@
     empty_list: "{{ empty_list | default([]) }}"
 - name: Set the variable wwn_to_dm_list
   ansible.builtin.set_fact:
-    wwn_to_dm_list: "{{ empty_list | default([])  }}"
+    wwn_to_dm_list: "{{ empty_list | default([]) }}"
 - name: Set the variable wwn_to_dm_list looping through the list results
   ansible.builtin.set_fact:
-    wwn_to_dm_list: "{{ wwn_to_dm_list | default([]) +  item.stdout_lines  }}"
+    wwn_to_dm_list: "{{ wwn_to_dm_list | default([]) + item.stdout_lines }}"
   loop: "{{ wwn_dm_list.results }}"
 # Creating volume group.
-- name: Create LVM volume group "{{ file_system.name }}vg on {{wwn_to_dm_list}}"
+- name: Create LVM volume group
   lvg:
-    vg: "{{file_system.name}}vg"
-    pvs: "{{wwn_to_dm_list}}"
+    vg: "{{ file_system.name }}vg"
+    pvs: "{{ wwn_to_dm_list }}"
     state: present
 
 # Making use of --stripesize as 64K as default, unless passed explicitly in extra vars
-- name: Create Logical Volume "{{ file_system.name }}lv"
+- name: Create Logical Volume "{{ file_system.name }}"
   lvol:
     vg: "{{ file_system.name }}vg"
     lv: "{{ file_system.name }}lv"
     size: 100%VG
-    opts: --stripes {{ wwn_list|length }} --stripesize {{ stripe_size | default('64K') }}
+    opts: --stripes {{ wwn_list | length }} --stripesize {{ stripe_size | default('64K') }}
     state: present
 
 - name: Create directory for the file system mount, if it does'n exist "{{ file_system.mount }}"
@@ -80,13 +80,13 @@
 - name: Create filesystem
   filesystem:
     fstype: xfs
-    dev: "/dev/mapper/{{file_system.name}}vg-{{ file_system.name}}lv"
+    dev: "/dev/mapper/{{ file_system.name }}vg-{{ file_system.name }}lv"
     opts: -K
 
-- name: Mount lv "{{ file_system.name }}lv on {{ file_system.mount }}"
+- name: Mount lv
   mount:
     path: "{{ file_system.mount }}"
-    src: "/dev/mapper/{{file_system.name}}vg-{{file_system.name}}lv"
+    src: "/dev/mapper/{{ file_system.name }}vg-{{ file_system.name }}lv"
     fstype: xfs
     opts: defaults,nofail
     state: mounted

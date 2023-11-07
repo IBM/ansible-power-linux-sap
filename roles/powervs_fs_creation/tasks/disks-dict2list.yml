@@ -20,13 +20,13 @@
     var: tmp_wwn_list
 - name: Show results of the type_debug
   ansible.builtin.debug:
-    var: "{{tmp_wwn_list | type_debug }}"
+    var: "{{ tmp_wwn_list | type_debug }}"
 # Create a dict with pv and its type
 - name: Set the pv_listing_dm variable
   ansible.builtin.set_fact:
     pv_listing_dm: "{{ pv_listing_dm | default({}) |  combine({ item.0: item.1  })}}"
   with_together:
-    - "{{ disks_configuration.wwns | map('trim') | list  }}"
+    - "{{ disks_configuration.wwns | map('trim') | list }}"
     - "{{ tmp_wwn_list }}"
 - name: Debug output of the pv_listing_dm
   ansible.builtin.debug:
@@ -34,7 +34,7 @@
 
 - name: Copy the pv_listing_dm into the tmp_file
   ansible.builtin.copy:
-    content: "{{ pv_listing_dm  }}"
+    content: "{{ pv_listing_dm }}"
     dest: /root/tmp_file
     mode: "0600"
   changed_when: false

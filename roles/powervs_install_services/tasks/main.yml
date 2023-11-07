@@ -1,7 +1,7 @@
 ---
 ######### SQUID Service #########
 - name: Setting up the SQUID Service
-  when: server_config.squid.enable|default(False)|bool == true
+  when: server_config.squid.enable
   block:
     - name: Install squid
       ansible.builtin.package:
@@ -23,7 +23,7 @@
 
 ######### BIND Service ############
 - name: Setting up the BIND Service
-  when: server_config.dns.enable|default(False)|bool == true
+  when: server_config.dns.enable
   block:
     # Installing bind.
     - name: Install bind
@@ -108,7 +108,7 @@
 
 ######## Chrony or NTP Service ########
 - name: Setting up the Chrony Service
-  when: server_config.ntp.enable|default(False)|bool == true
+  when: server_config.ntp.enable
   block:
     # Install chrony
     - name: Installing chrony
@@ -160,7 +160,7 @@
 
 ######## NFS Service ########
 - name: Seting Up NFS Service
-  when: server_config.nfs.enable|default(False)|bool == true
+  when: server_config.nfs.enable
   block:
     # Including a task to create a filesystem which will be NFS exported
     - name: Include task to create NFS filesystem
@@ -192,8 +192,8 @@
       ansible.builtin.lineinfile:
         path: /etc/exports
         state: present
-        line: "{{ item.mount_path | trim  }} * (rw,no_root_squash,no_subtree_check,insecure)"
-      with_items: "{{ server_config.nfs.nfs_file_system  }}"
+        line: "{{ item.mount_path | trim }} * (rw,no_root_squash,no_subtree_check,insecure)"
+      with_items: "{{ server_config.nfs.nfs_file_system }}"
 
     # Start NFS service
     - name: Start nfs service

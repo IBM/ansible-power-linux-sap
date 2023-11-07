@@ -29,7 +29,7 @@
     disk_name: "{{ wwn_dm_list.stdout }}"
 
 # Creating volume group.
-- name: Create LVM volume group "{{ file_system_name }}vg on {{ disk_name }}"
+- name: Create LVM volume group
   lvg:
     vg: "{{ file_system_name }}vg"
     pvs: "{{ disk_name }}"
@@ -55,7 +55,7 @@
     dev: "/dev/mapper/{{ file_system_name }}vg-{{ file_system_name }}lv"
     opts: -K
 
-- name: Mount lv "{{ file_system_name }}lv on {{ file_system_path }}"
+- name: Mount lv
   mount:
     path: "{{ file_system_path }}"
     src: "/dev/mapper/{{ file_system_name }}vg-{{ file_system_name }}lv"

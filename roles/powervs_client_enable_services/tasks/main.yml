@@ -16,8 +16,8 @@
     - name: Check for http proxy entries in {{ bash_file }}
       ansible.builtin.replace:
         path: "{{ bash_file }}"
-        regexp: "^(.*){{item}}(.*)$"
-        replace: "export {{item}}=http://{{ client_config.squid.squid_server_ip_port }}"
+        regexp: "^(.*){{ item }}(.*)$"
+        replace: "export {{ item }}=http://{{ client_config.squid.squid_server_ip_port }}"
       with_items:
         - http_proxy
         - https_proxy
@@ -30,8 +30,8 @@
     - name: Check for http proxy entries in {{ bash_file }}
       ansible.builtin.lineinfile:
         path: "{{ bash_file }}"
-        regexp: "^(.*){{item}}(.*)$"
-        line: "export {{item}}=http://{{ client_config.squid.squid_server_ip_port }}"
+        regexp: "^(.*){{ item }}(.*)$"
+        line: "export {{ item }}=http://{{ client_config.squid.squid_server_ip_port }}"
       with_items:
         - http_proxy
         - https_proxy
@@ -84,7 +84,7 @@
         seconds: 60
 
     - name: Check for name resolution using dig command
-      ansible.builtin.command: dig -i www.google.com +short
+      ansible.builtin.shell: dig -i www.google.com +short
       register: dig_output
       changed_when: false
       ignore_errors: true
@@ -125,7 +125,7 @@
         seconds: 60
 
     - name: Verify Chrony configuration grepping for Leap status Normal using chronyc tracking
-      ansible.builtin.command: chronyc tracking | grep Leap | grep Normal
+      ansible.builtin.shell: chronyc tracking | grep Leap | grep Normal
       changed_when: false
 
 # This block will Install NFS client and mount NFS exported directories locally
@@ -161,10 +161,10 @@
         opts: defaults,nofail
         fstype: nfs
       with_together:
-        - "{{ client_config.nfs.nfs_client_path.split(';')  }}"
-        - "{{ client_config.nfs.nfs_server_path.split(';')  }}"
+        - "{{ client_config.nfs.nfs_client_path.split(';') }}"
+        - "{{ client_config.nfs.nfs_server_path.split(';') }}"
 
     - name: Verify if mount point is accessible
-      ansible.builtin.command: "ls -l {{ item }}"
-      loop: "{{ client_config.nfs.nfs_client_path.split(';')  }}"
+      ansible.builtin.shell: "ls -l {{ item }}"
+      loop: "{{ client_config.nfs.nfs_client_path.split(';') }}"
       changed_when: false
