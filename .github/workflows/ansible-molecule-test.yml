@@ -1,7 +1,10 @@
 ---
-name: Molecule Test
-on: [push, pull_request]
+name: Ansible Molecule Test
+on:
+  workflow_call:
+
 jobs:
+  if: ${{ github.event.issue.pull_request && github.event.comment.body == '/run molecule test' }}
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 60

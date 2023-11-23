@@ -1,0 +1,19 @@
+name: CI-Pipeline
+on:
+
+  pull_request:
+    types: [review_requested, auto_merge_disabled]
+
+    branches:
+      - main
+      - dev
+
+  issue_comment:
+    types:
+      - created
+
+jobs:
+  run-pipeline:
+    name: Run Ansible Molecule test
+    if: ${{ github.event.issue.pull_request && github.event.comment.body == '/run molecule test' }}
+    uses: ./.github/workflows/ansible-molecule-test.yml
