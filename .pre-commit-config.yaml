@@ -4,7 +4,7 @@ repos:
     rev: v4.4.0
     hooks:
       - id: check-yaml
-        exclude: chart/|metadata.yaml
+#        exclude: chart/|metadata.yaml
       - id: check-json
         types: [file]
         files: \.(json|releaserc)$
@@ -13,7 +13,8 @@ repos:
       - id: trailing-whitespace
       - id: check-merge-conflict
       - id: detect-private-key
-        exclude: ibm_catalog.json
+      - id: no-commit-to-branch
+        args: [--branch, main]
       - id: mixed-line-ending
         args: ["--fix=lf"]
         description: Forces to replace line ending by the UNIX 'lf' character.
@@ -21,11 +22,17 @@ repos:
     rev: v2.12.1-beta
     hooks:
       - id: hadolint
-  - repo: https://github.com/ansible/ansible-lint.git
-    rev: v6.20.3
+  - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
+    rev: v9.9.0
     hooks:
-      - id: ansible-lint
-        files: \.(yaml|yml)$
+      - id: commitlint
+        stages: [commit-msg]
+        additional_dependencies: ['@commitlint/config-angular']
+ # - repo: https://github.com/ansible/ansible-lint.git
+ #   rev: v6.20.3
+ #   hooks:
+ #     - id: ansible-lint
+ #       files: \.(yaml|yml)$
   # checkov (does not require checkov to be installed locally to run)
   - repo: https://github.com/bridgecrewio/checkov.git
     rev: 2.5.4
