@@ -2,8 +2,8 @@
 name: Ansible Molecule Test
 #on: [push, pull_request]
 on:
-  pull_request:
-    types: [opened, review_requested, auto_merge_disabled]
+#  pull_request:
+#    types: [opened, review_requested, auto_merge_disabled]
   issue_comment:
     types:
       - created
