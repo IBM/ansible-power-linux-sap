@@ -2,6 +2,13 @@
 name: Ansible Molecule Test
 on:
 #  workflow_call:
+  pull_request:
+    types: [review_requested, auto_merge_disabled]
+
+    branches:
+      - main
+      - dev
+
   issue_comment:
     types:
       - created
