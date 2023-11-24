@@ -2,14 +2,15 @@
 name: Ansible Molecule Test
 #on: [push, pull_request]
 on:
-#  pull_request:
-#    types: [opened, review_requested, auto_merge_disabled]
+  pull_request:
+    types: [opened, review_requested, auto_merge_disabled]
   issue_comment:
     types:
       - created
 jobs:
   build:
-    if: ${{ github.event.issue.pull_request && github.event.comment.body == '/run molecule test' }}
+#    if: ${{ github.event.issue.pull_request && github.event.comment.body == '/run molecule test' }}
+    if: contains(github.event.comment.body, '/run molecule test')
     runs-on: ubuntu-latest
     timeout-minutes: 60
     strategy:
