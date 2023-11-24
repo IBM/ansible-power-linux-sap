@@ -1,8 +1,10 @@
 ---
 name: Ansible Molecule Test
 on:
-  workflow_call:
-
+#  workflow_call:
+  issue_comment:
+    types:
+      - created
 jobs:
   build:
     if: ${{ github.event.issue.pull_request && github.event.comment.body == '/run molecule test' }}
