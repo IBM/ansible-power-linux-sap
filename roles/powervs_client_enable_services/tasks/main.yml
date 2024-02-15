@@ -24,7 +24,7 @@
       register: replace_log
       when: client_config.squid.squid_server_ip_port is defined
 
-    # If http_proxy entries are absent(status obtained from previous register value), then items will add be added.
+    # If http_proxy entries are absent(status obtained from previous register value), then http_proxy entries will be added.
     - name: Insert http_proxy entries in /etc/bashrc or /etc/bash.bashrc file if not present
       lineinfile:
         path: "{{ bash_file }}"
@@ -39,7 +39,7 @@
         - client_config.squid.squid_server_ip_port is defined
         - not replace_log.changed
 
-    # On RHEL: If proxy entry exist in /etc/dnf/dnf.conf. If yes, don't add new entries. Modify the value.
+    # On RHEL: If proxy entry exist in /etc/dnf/dnf.conf then modify the value.
     - name: Modify proxy entry in /etc/dnf/dnf.conf file on RHEL OS
       replace:
         path: "/etc/dnf/dnf.conf"
@@ -48,7 +48,7 @@
       register: replace_dnf_log
       when: client_config.squid.squid_server_ip_port is defined and ansible_distribution is match("RedHat*")
 
-    # On RHEL: If proxy_entry is absent(status obtained from previous register value), then proxy will add be added to the /etc/dnf/dnf.conf file.
+    # On RHEL: If proxy entry is absent(status obtained from previous register value), then proxy will add be added to the /etc/dnf/dnf.conf file.
     - name: Insert proxy entry in /etc/dnf/dnf.conf file on RHEL OS if not present
       lineinfile:
         path: "/etc/dnf/dnf.conf"
