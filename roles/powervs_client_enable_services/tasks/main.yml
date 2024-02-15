@@ -88,7 +88,7 @@
 # Block: install DNS
 ####################################
 - block:
-    ## Installing bind-utils
+    # Install bind-utils
     - name: Installing bind-utils
       package:
         name: bind-utils
@@ -121,20 +121,20 @@
 # Block: install NTP
 ####################################
 - block:
-    ## Installing chrony
+    # Install chrony
     - name: Installing chrony
       package:
         name: chrony
         state: present
 
-    ## Modifying /etc/chrony.conf file
+    # Modifying /etc/chrony.conf file
     - name: Replace iburst line in /etc/chrony.conf file
       replace:
         path: /etc/chrony.conf
         regexp: "^(.*)iburst$"
         replace: "server {{ client_config.ntp.ntp_server_ip }} iburst"
 
-    ## Starting chronyd service
+    # Start chronyd service
     - name: Start chronyd service
       service:
         name: chronyd
@@ -155,6 +155,7 @@
 # Block: install NFS and mount
 ####################################
 - block:
+    # Install NFS
     - name: Install NFS client package
       package:
         name: nfs-utils
@@ -174,7 +175,7 @@
         mode: "0755"
       with_items: "{{ client_config.nfs.nfs_client_path.split(';') }}"
 
-    # Mounting NFS directory. server_path, should be "server_name":"source_path"
+    # Mount NFS directory. server_path, should be "server_name":"source_path"
     - name: Mount NFS directory
       mount:
         path: "{{ item.0 }}"
