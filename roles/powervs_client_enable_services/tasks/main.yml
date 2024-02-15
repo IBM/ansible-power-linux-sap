@@ -1,5 +1,7 @@
 ---
-## To modify bashrc file to add squid proxy
+####################################
+# Block: configure proxy settings
+####################################
 - block:
     - set_fact:
         bash_file: /etc/bashrc
@@ -8,12 +10,12 @@
         bash_file: /etc/bash.bashrc
       when: ansible_distribution is match("SLES*")
 
-    # Check if http_proxy entries are already present. If yes, don't add new entries. If no, it should be added.
+    # If items are present, then update the item with passed squid server ip and port. Status of items is registered in the variable.
     - name: Check for http proxy entries in {{ bash_file }}
       replace:
         path: "{{ bash_file }}"
-        regexp: "^(.*){{item}}(.*)$"
-        replace: "export {{item}}=http://{{ client_config.squid.squid_server_ip_port }}"
+        regexp: "^(.*){{ item }}(.*)$"
+        replace: "export {{ item }}=http://{{ client_config.squid.squid_server_ip_port }}"
       with_items:
         - http_proxy
         - https_proxy
@@ -22,12 +24,12 @@
       register: replace_log
       when: client_config.squid.squid_server_ip_port is defined
 
-    #In case no entries were present, next task, will add the first time entries.
+    # If items are absent(status obtained from previous register value), then items will add be added.
     - name: Check for http proxy entries in {{ bash_file }}
       lineinfile:
         path: "{{ bash_file }}"
-        regexp: "^(.*){{item}}(.*)$"
-        line: "export {{item}}=http://{{ client_config.squid.squid_server_ip_port }}"
+        regexp: "^(.*){{ item }}(.*)$"
+        line: "export {{ item }}=http://{{ client_config.squid.squid_server_ip_port }}"
       with_items:
         - http_proxy
         - https_proxy
@@ -37,7 +39,26 @@
         - client_config.squid.squid_server_ip_port is defined
         - not replace_log.changed
 
-    # Check if no_proxy entries are already present. If yes, don't add new entries. If no, it should be added.
+    # On RHEL additional check. Check if proxy entry is already present in /etc/dnf/dnf.conf. If yes, don't add new entries. Modify the value.
+    - name: Check for proxy entry in /etc/dnf/dnf.conf on RHEL OS
+      replace:
+        path: "/etc/dnf/dnf.conf"
+        regexp: "proxy(.*)$"
+        replace: "proxy=http://{{ client_config.squid.squid_server_ip_port }}"
+      register: replace_dnf_log
+      when: client_config.squid.squid_server_ip_port is defined and ansible_distribution is match("RedHat*")
+
+    # On RHEL additional check. If proxy_entry is absent(status obtained from previous register value), then proxy will add be added to the /etc/dnf/dnf.conf file.
+    - name: Check for proxy entry in /etc/dnf/dnf.conf
+      lineinfile:
+        path: "/etc/dnf/dnf.conf"
+        regexp: "proxy(.*)$"
+        line: "proxy=http://{{ client_config.squid.squid_server_ip_port }}"
+      when:
+        - client_config.squid.no_proxy_hosts is defined
+        - not replace_dnf_log.changed
+
+    # Check if no_proxy entries are already present. If yes, don't add new entries but modify with the values passed in.
     - name: Check for http proxy entries in {{ bash_file }}
       replace:
         path: "{{ bash_file }}"
@@ -46,7 +67,7 @@
       register: replace_noproxy_log
       when: client_config.squid.no_proxy_hosts is defined
 
-    #In case no no_proxy entries were present, next task, will add the first time entries.
+    # If no_proxy is absent(status obtained from previous register value), then items will add be added.
     - name: Check for http proxy entries in {{ bash_file }}
       lineinfile:
         path: "{{ bash_file }}"
@@ -56,12 +77,16 @@
         - client_config.squid.no_proxy_hosts is defined
         - not replace_noproxy_log.changed
 
+    # Test internet connectivity
     - name: Verify connection to internet
       ansible.builtin.uri:
         url: http://www.google.com
+
   when: client_config.squid.enable | default(false) | bool
 
-# This block will update DNS
+####################################
+# Block: install DNS
+####################################
 - block:
     ## Installing bind-utils
     - name: Installing bind-utils
@@ -92,7 +117,9 @@
 
   when: client_config.dns.enable | default(false) | bool
 
-# This block will configure NTP
+####################################
+# Block: install NTP
+####################################
 - block:
     ## Installing chrony
     - name: Installing chrony
@@ -124,7 +151,9 @@
       changed_when: false
   when: client_config.ntp.enable | default(false) | bool
 
-# This block will Install NFS client and mount NFS exported directories locally
+####################################
+# Block: install NFS and mount
+####################################
 - block:
     - name: Install NFS client package
       package:
