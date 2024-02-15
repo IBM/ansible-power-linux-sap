@@ -10,7 +10,7 @@
         bash_file: /etc/bash.bashrc
       when: ansible_distribution is match("SLES*")
 
-    # If items are present, then update the item with passed squid server ip and port. Status of items is registered in the variable.
+    # If http_proxy entries exists, then update the http_proxy entries with passed squid server ip and port.
     - name: Update http_proxy entries in /etc/bashrc or /etc/bash.bashrc file
       replace:
         path: "{{ bash_file }}"
@@ -24,7 +24,7 @@
       register: replace_log
       when: client_config.squid.squid_server_ip_port is defined
 
-    # If items are absent(status obtained from previous register value), then items will add be added.
+    # If http_proxy entries are absent(status obtained from previous register value), then items will add be added.
     - name: Insert http_proxy entries in /etc/bashrc or /etc/bash.bashrc file if not present
       lineinfile:
         path: "{{ bash_file }}"
@@ -39,7 +39,7 @@
         - client_config.squid.squid_server_ip_port is defined
         - not replace_log.changed
 
-    # On RHEL additional check. Check if proxy entry is already present in /etc/dnf/dnf.conf. If yes, don't add new entries. Modify the value.
+    # On RHEL: If proxy entry exist in /etc/dnf/dnf.conf. If yes, don't add new entries. Modify the value.
     - name: Modify proxy entry in /etc/dnf/dnf.conf file on RHEL OS
       replace:
         path: "/etc/dnf/dnf.conf"
@@ -48,7 +48,7 @@
       register: replace_dnf_log
       when: client_config.squid.squid_server_ip_port is defined and ansible_distribution is match("RedHat*")
 
-    # On RHEL additional check. If proxy_entry is absent(status obtained from previous register value), then proxy will add be added to the /etc/dnf/dnf.conf file.
+    # On RHEL: If proxy_entry is absent(status obtained from previous register value), then proxy will add be added to the /etc/dnf/dnf.conf file.
     - name: Insert proxy entry in /etc/dnf/dnf.conf file on RHEL OS if not present
       lineinfile:
         path: "/etc/dnf/dnf.conf"
@@ -58,7 +58,7 @@
         - client_config.squid.no_proxy_hosts is defined
         - not replace_dnf_log.changed
 
-    # Check if no_proxy entries are already present. If yes, don't add new entries but modify with the values passed in.
+    # If no_proxy entry exists, then modify with the values passed in.
     - name: Modify no_proxy entry in in /etc/bashrc or /etc/bash.bashrc file
       replace:
         path: "{{ bash_file }}"
@@ -67,7 +67,7 @@
       register: replace_noproxy_log
       when: client_config.squid.no_proxy_hosts is defined
 
-    # If no_proxy is absent(status obtained from previous register value), then items will add be added.
+    # If no_proxy is absent(status obtained from previous register value), then no_proxy will add be added.
     - name: Insert no_proxy entriy in in /etc/bashrc or /etc/bash.bashrc file if not present
       lineinfile:
         path: "{{ bash_file }}"
