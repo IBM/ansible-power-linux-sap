@@ -27,7 +27,7 @@
       # noqa ignore-errors
       ignore_errors: true
 
-    - Name: Delete the /var/log/powervs-fls.log file
+    - name: Delete the /var/log/powervs-fls.log file
       ansible.builtin.file:
         path: /var/log/powervs-fls.log
         state: absent
