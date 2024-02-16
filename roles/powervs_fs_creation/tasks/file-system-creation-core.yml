@@ -1,84 +1,113 @@
 ---
-### this role creates filesystem for SAP installations.
+### This role creates filesystem for SAP installations.
 
 # Converting comma separated wwn list passed as variable to a list of wwns
 - name: Convert a string separated with commas into a list of elements
-  set_fact: wwn_list="{{ file_system.wwns.split(',') }}"
-# stopping multipathd daemon, will restart after rescan. Making sure, that it is ran only once per execution, by introducing multipathd_executed variable and defining it after multipathd is started
+  ansible.builtin.set_fact:
+    wwn_list: "{{ file_system.wwns.split(',') }}"
+
+# Stopping multipathd daemon, will restart after rescan.
+# Making sure, that it is ran only once per execution, by introducing multipathd_executed variable and defining it after multipathd is started
 - name: Ensure multipathd daemon is stopped
-  service:
+  ansible.builtin.service:
     name: multipathd
     state: stopped
   when: multipathd_executed is not defined
   changed_when: false
+
 # before starting with filesystem creation, lets scan the for any new disk that may have been added to LPAR
 - name: Run rescan-scsi-bus.sh command to check for new devices
-  shell: /usr/bin/rescan-scsi-bus.sh -a -c -v
+  ansible.builtin.command: /usr/bin/rescan-scsi-bus.sh -a -c -v
   when: multipathd_executed is not defined
   changed_when: false
-# restart multipathd after rescan is completed.
+
+# Restart multipathd after rescan is completed.
 - name: Ensure multipathd daemon is enabled
-  service:
+  ansible.builtin.service:
     name: multipathd
     state: started
   when: multipathd_executed is not defined
   changed_when: false
-- set_fact:
+
+- name: Set fact for multipath executed
+  ansible.builtin.set_fact:
     multipathd_executed: 1
 
-# Need to check multipath alias, if it is enabled then to multipath -ll command, returns dm-X device name in 3rd field else, it is in 2nd field. Introduce a count variable for same. If multipath alias is enabled, set count=3, else default if 2.
+# Need to check multipath alias, if it is enabled then to multipath -ll command, returns dm-X device name in 3rd field else, it is in 2nd field.
+# Introduce a count variable for same. If multipath alias is enabled, set count=3, else default if 2.
 - name: Check if multipath alias is enabled.
-  shell: grep "user_friendly_names no" /etc/multipath.conf
+  ansible.builtin.command: grep "user_friendly_names no" /etc/multipath.conf
   register: multipath_alias
   ignore_errors: true
   changed_when: false
+
 - name: Setting count variable based on multipath aliasing is enabled or not
-  set_fact:
+  ansible.builtin.set_fact:
     count: 3
   when: multipath_alias.rc == 1
 
 - name: Get the device dm-X name listing using wwn.
-  shell: 'multipath -ll | grep -B 1 {{ item }} | grep dm- | awk ''{print "/dev/"${{ count | default(2) }}}'' '
+  # noqa risky-shell-pipe
+  ansible.builtin.shell: 'multipath -ll | grep -B 1 {{ item }} | grep dm- | awk ''{print "/dev/"${{ count | default(2) }}}'' '
   register: wwn_dm_list
   with_items: "{{ wwn_list | lower }}"
   changed_when: false
+
 # Create a list based on multipath output.
-- set_fact: empty_list="{{ empty_list | default([]) }}"
-- set_fact: wwn_to_dm_list="{{ empty_list | default([])  }}"
-- set_fact: wwn_to_dm_list="{{ wwn_to_dm_list | default([]) +  item.stdout_lines  }}"
+- ansible.builtin.set_fact:
+    empty_list: "{{ empty_list | default([]) }}"
+# noqa name[missing]
+
+- ansible.builtin.set_fact:
+    wwn_to_dm_list: "{{ empty_list | default([]) }}"
+# noqa name[missing]
+
+- ansible.builtin.set_fact:
+    wwn_to_dm_list: "{{ wwn_to_dm_list | default([]) + item.stdout_lines }}"
+  # noqa name[missing]
   loop: "{{ wwn_dm_list.results }}"
+
 # Creating volume group.
-- name: Create LVM volume group {{ file_system.name }}vg on {{wwn_to_dm_list}}
+- name: Create LVM volume group {{ file_system.name }}vg on {{ wwn_to_dm_list }}
+  # noqa name[template]
   lvg:
-    vg: "{{file_system.name}}vg"
-    pvs: "{{wwn_to_dm_list}}"
+    # noqa fqcn[action]
+    vg: "{{ file_system.name }}vg"
+    pvs: "{{ wwn_to_dm_list }}"
     state: present
 
 # Making use of --stripesize as 64K as default, unless passed explicitly in extra vars
 - name: Create Logical Volume {{ file_system.name }}lv
+  # noqa name[template]
   lvol:
+    # noqa fqcn[action]
     vg: "{{ file_system.name }}vg"
     lv: "{{ file_system.name }}lv"
     size: 100%VG
-    opts: --stripes {{ wwn_list|length }} --stripesize {{ stripe_size | default('64K') }}
+    opts: --stripes {{ wwn_list | length }} --stripesize {{ stripe_size | default('64K') }}
     state: present
 
 - name: Create directory {{ file_system.mount }} if doesn't exist
-  file:
+  # noqa name[template]
+  ansible.builtin.file:
     path: "{{ file_system.mount }}"
     state: directory
     mode: "0755"
 
 - name: Create filesystem
+  # noqa name[template]
   filesystem:
+    # noqa fqcn[action]
     fstype: xfs
-    dev: "/dev/mapper/{{file_system.name}}vg-{{ file_system.name}}lv"
+    dev: "/dev/mapper/{{ file_system.name }}vg-{{ file_system.name }}lv"
     opts: -K
 
 - name: Mount lv {{ file_system.name }}lv on {{ file_system.mount }}
+  # noqa name[template]
   mount:
+    # noqa fqcn[action]
     path: "{{ file_system.mount }}"
-    src: "/dev/mapper/{{file_system.name}}vg-{{file_system.name}}lv"
+    src: "/dev/mapper/{{ file_system.name }}vg-{{ file_system.name }}lv"
     fstype: xfs
     opts: defaults,nofail
     state: mounted
