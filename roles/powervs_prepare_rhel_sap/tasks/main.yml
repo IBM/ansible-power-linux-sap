@@ -14,57 +14,50 @@
 # limitations under the License.
 # ------------------------------------------------------------------------
 ---
-# this role configures RHEL lpar for sap installation.
+# This role configures RHEL lpar for sap installation.
 
-# Setting up proxy based on private_proxy_ip_port. If this variable is defined, proxy will be added to /etc/bashrc file.
-- block:
-    - name: Edit /etc/bashrc file, to add http_proxy
-      blockinfile:
-        path: /etc/bashrc
-        block: |
-          http_proxy=http://{{ private_proxy_ip_port }}
-          https_proxy=http://{{ private_proxy_ip_port }}
-          HTTP_PROXY=http://{{ private_proxy_ip_port }}
-          HTTPS_PROXY=http://{{ private_proxy_ip_port }}
-    - name: Edit /etc/dnf/dnf.conf to add proxy
-      blockinfile:
-        path: /etc/dnf/dnf.conf
-        block: |
-          proxy=http://{{ private_proxy_ip_port }}
-  when: private_proxy_ip_port is defined
-
-# Subscribing to Full Linux® subscription for Power Systems Virtual Servers
-- block:
+- name: Subscribing to Full Linux® subscription for Power Systems Virtual Servers
+  when:
+    - full_linux_subscription | default(False) | bool
+    - private_proxy_ip_port is defined
+  block:
     # Creating backup of readme file, to be restored later
     - name: Copy /usr/share/powervs-fls/powervs-fls-readme.md file
-      copy:
+      ansible.builtin.copy:
         src: /usr/share/powervs-fls/powervs-fls-readme.md
         dest: /usr/share/powervs-fls/powervs-fls-readme.md_copy
+        mode: preserve
 
     # Modifying readme file, to update proxy server and port
     - name: Update cloud-init command with proxy server details
-      replace:
+      ansible.builtin.replace:
         path: /usr/share/powervs-fls/powervs-fls-readme.md
         regexp: Private.proxy.IP.address:3128
         replace: "{{ private_proxy_ip_port }}"
 
     # Get the cloud-init command from readme
     - name: Get the cloud-init command from /usr/share/powervs-fls/powervs-fls-readme.md
-      shell: grep {{ private_proxy_ip_port }} /usr/share/powervs-fls/powervs-fls-readme.md
+      ansible.builtin.command: grep {{ private_proxy_ip_port }} /usr/share/powervs-fls/powervs-fls-readme.md
       register: cloud_init_command
+      changed_when: false
 
     # Backing up the log file and removing it for latest use
-    - name: Remove previous log file
-      copy:
+    - name: Backup current log file
+      # noqa ignore-errors
+      ansible.builtin.copy:
         src: /var/log/powervs-fls.log
         dest: /var/log/powervs-fls.log.backup
+        mode: preserve
       ignore_errors: true
-    - file:
+
+    - name: Delete the old log file
+      ansible.builtin.file:
         path: /var/log/powervs-fls.log
         state: absent
 
     - name: Execute cloud-init command
-      shell: "{{ cloud_init_command.stdout }}"
+      # noqa command-instead-of-shell
+      ansible.builtin.shell: "{{ cloud_init_command.stdout }}"
 
     - name: Wait until the string "Exiting RHEL subscription registration process" is in the file /var/log/powervs-fls.log before continuing
       ansible.builtin.wait_for:
@@ -74,88 +67,86 @@
       register: check_for_subscription_success
 
     - name: Getting RedHat registering server name
-      shell: grep sap_hana /usr/share/powervs-fls/powervs-fls-readme.md | awk -F"\-u" '{ print $NF }' | awk '{ print $1 }'
+      # noqa risky-shell-pipe
+      ansible.builtin.shell: grep sap_hana /usr/share/powervs-fls/powervs-fls-readme.md | awk -F"\-u" '{ print $NF }' | awk '{ print $1 }'
       register: rhsm_host
+      changed_when: false
 
     # Check for successful Registration
     - name: Check for successful registration
-      shell: subscription-manager config | grep {{ rhsm_host.stdout }}
+      # noqa no-changed-when
+      ansible.builtin.shell: subscription-manager config | grep {{ rhsm_host.stdout }}
       register: check_with_subscription_manager
       ignore_errors: true
 
     # Restoring Readme
     - name: Restoring /usr/share/powervs-fls/powervs-fls-readme.md file
-      copy:
+      ansible.builtin.copy:
         src: /usr/share/powervs-fls/powervs-fls-readme.md_copy
         dest: /usr/share/powervs-fls/powervs-fls-readme.md
-    - file:
+        mode: preserve
+
+    - name: Delete the temp file /usr/share/powervs-fls/powervs-fls-readme.md_copy
+      ansible.builtin.file:
         path: /usr/share/powervs-fls/powervs-fls-readme.md_copy
         state: absent
 
-    # Fail if registration fails.
-    - fail:
+    - name: Fail if registration fails.
+      ansible.builtin.fail:
         msg: "Full Linux Subscription failed, Please debug manually and take corrective action. Logs available at /var/log/powervs-fls.log"
       when:
         - check_with_subscription_manager.rc != 0 or check_for_subscription_success.failed | bool
 
-  when:
-    - full_linux_subscription | default(False) | bool
-    - private_proxy_ip_port is defined
-
-## END of cloud-init block.
-
-# Subscribing to RHEL and setting release to {{ rhel_subscription.release }}
-- block:
+- name: Subscribing to RHEL and setting release to {{ rhel_subscription.release }}
+  when: rhel_subscription is defined
+  block:
     - name: Subscribing to RHEL and setting release to {{ rhel_subscription.release }}
+      # noqa fqcn[action]
       redhat_subscription:
         state: present
         username: "{{ rhel_subscription.username }}"
         password: "{{ rhel_subscription.password }}"
         release: "{{ rhel_subscription.release }}"
         auto_attach: true
-        force_register: yes
-
-    # setting fact for major release. This will be used to setup repos for particular release.
-    - set_fact: rhel_major_release={{ rhel_subscription.release | int }}
+        force_register: true
 
     # Add repos for installing RHEL packages required for SAP installation
-    - name: Adding RHEL repos
+    - name: Enable required RHEL repositories
+      # noqa fqcn[action]
       rhsm_repository:
         name: "{{ item }}"
         state: enabled
       with_items:
-        - rhel-{{ rhel_major_release }}-for-ppc64le-baseos-e4s-rpms
-        - rhel-{{ rhel_major_release }}-for-ppc64le-appstream-e4s-rpms
-        - rhel-{{ rhel_major_release }}-for-ppc64le-sap-solutions-e4s-rpms
-        - rhel-{{ rhel_major_release }}-for-ppc64le-sap-netweaver-e4s-rpms
-        - rhel-{{ rhel_major_release }}-for-ppc64le-highavailability-e4s-rpms
+        - rhel-{{ rhel_subscription.release | int }}-for-ppc64le-baseos-e4s-rpms
+        - rhel-{{ rhel_subscription.release | int }}-for-ppc64le-appstream-e4s-rpms
+        - rhel-{{ rhel_subscription.release | int }}-for-ppc64le-sap-solutions-e4s-rpms
+        - rhel-{{ rhel_subscription.release | int }}-for-ppc64le-sap-netweaver-e4s-rpms
+        - rhel-{{ rhel_subscription.release | int }}-for-ppc64le-highavailability-e4s-rpms
 
-  when: rhel_subscription is defined
-
-##END of rhel_subscription block
+# END of rhel_subscription block
 
 # making sure all requisite filesets are installed.
 - name: Checking for multipath package
-  package:
+  ansible.builtin.package:
     name: device-mapper-multipath
     state: present
 
 # multipathd daemon is checked whether it's up or not. If not, it is started.
 - name: Ensure multipathd daemon is running
-  service:
+  ansible.builtin.service:
     name: multipathd
     state: started
-    enabled: yes
+    enabled: true
 
 # For modification on network interfaces, create a dictionary of interfaces
 - name: Create interfaces dictionary
-  set_fact:
-    interfaces: "{{ interfaces | default({}) | combine( {item: hostvars[ inventory_hostname ] ['ansible_' + item ]} ) }}"
+  ansible.builtin.set_fact:
+    interfaces: "{{ interfaces | default({}) | combine({item: hostvars[inventory_hostname]['ansible_' + item]}) }}"
   with_items: "{{ ansible_interfaces | replace('-', '_') }}"
 
 # to make jumbo frame persistent across reboot.
 - name: Set jumbo frames permanently so it is valid after reboots for all networks except eth0 and lo
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item.key }}"
     regexp: "^MTU"
     line: "MTU='9000'"
@@ -168,36 +159,36 @@
 
 # to reinforce changes in current boot
 - name: Restart network
-  service:
+  ansible.builtin.service:
     name: NetworkManager
     state: restarted
   changed_when: false
 # Installing irqbalance package
 - name: Installing irqbalance package
-  package:
+  ansible.builtin.package:
     name: irqbalance
     state: present
 
 - name: Enabling and starting irqbalance
-  service:
+  ansible.builtin.service:
     name: irqbalance.service
     state: restarted
-    enabled: yes
+    enabled: true
   changed_when: false
 # to Ensure that NFS and rpcbind daemon are up.
 - name: Ensure NFS client is running
-  service:
+  ansible.builtin.service:
     name: nfs-client.target
     state: started
-    enabled: yes
+    enabled: true
 
 - name: Ensure rpcbind is running
-  service:
+  ansible.builtin.service:
     name: rpcbind
     state: started
-    enabled: yes
+    enabled: true
 
 # To ensure transparent_hugepage is set to never
 - name: Set transparent_hugepage to never
-  shell: echo never > /sys/kernel/mm/transparent_hugepage/enabled
+  ansible.builtin.shell: echo never > /sys/kernel/mm/transparent_hugepage/enabled
   changed_when: false
