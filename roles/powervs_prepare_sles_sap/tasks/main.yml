@@ -1,43 +1,41 @@
 ---
-### this role preconfigures LPAR for SAP installation requirement. Based on sap_solution input, saptune configures the system for HANA or NETWEAVER.
+### This role preconfigures LPAR for SAP installation requirement. Based on sap_solution input, saptune configures the system for HANA or NETWEAVER.
 
-# Setting up proxy based on private_proxy_ip_port. If this variable is defined, proxy will be added to /etc/bashrc file.
-- name: Edit /etc/bash.bashrc file, to add http_proxy
-  blockinfile:
-    path: /etc/bash.bashrc
-    block: |
-      http_proxy=http://{{ private_proxy_ip_port }}
-      https_proxy=http://{{ private_proxy_ip_port }}
-      HTTP_PROXY=http://{{ private_proxy_ip_port }}
-      HTTPS_PROXY=http://{{ private_proxy_ip_port }}
-  when: private_proxy_ip_port is defined
-
-# Subscribing to Full Linux® subscription for Power Systems Virtual Servers
-- block:
+- name: Subscribing to Full Linux® subscription for Power Systems Virtual Servers
+  when: full_linux_subscription is defined
+  block:
     # Creating backup of readme file, to be restored later
     - name: Copy /usr/share/powervs-fls/powervs-fls-readme.md file
-      copy:
+      ansible.builtin.copy:
         src: /usr/share/powervs-fls/powervs-fls-readme.md
         dest: /usr/share/powervs-fls/powervs-fls-readme.md_copy
+        mode: preserve
 
     # Getting cloud-init, to update proxy server and port
     - name: Update cloud-init command with proxy server details
-      shell: grep cloud-init /usr/share/powervs-fls/powervs-fls-readme.md | grep -vi private
+      # noqa risky-shell-pipe
+      ansible.builtin.shell: grep cloud-init /usr/share/powervs-fls/powervs-fls-readme.md | grep -vi private
+      # noqa no-changed-when
       register: cloud_init_command
 
     # Backing up the log file and removing it for latest use
-    - name: Remove previous log file
-      copy:
+    - name: Take a backup of /var/log/powervs-fls.log file
+      ansible.builtin.copy:
         src: /var/log/powervs-fls.log
         dest: /var/log/powervs-fls.log.backup
+        mode: preserve
+      # noqa ignore-errors
       ignore_errors: true
-    - file:
+
+    - Name: Delete the /var/log/powervs-fls.log file
+      ansible.builtin.file:
         path: /var/log/powervs-fls.log
         state: absent
 
     # Execute the cloud-init command as in readme
     - name: Execute cloud-init command
-      shell: "{{ cloud_init_command.stdout }} {{ private_proxy_ip_port }}"
+      # noqa no-changed-when
+      ansible.builtin.command: "{{ cloud_init_command.stdout }} {{ private_proxy_ip_port }}"
 
     # Wait for successful completion of registration. It will timeout in 300 seconds, if search text is not found
     - name: Wait until the string "Successfully completed SLES subscription registration process"" is in the file /var/log/powervs-fls.log before continuing
@@ -47,54 +45,52 @@
       register: check_for_subscription_success
       ignore_errors: true
 
-    # Restoring Readme
     - name: Restoring /usr/share/powervs-fls/powervs-fls-readme.md file
-      copy:
+      ansible.builtin.copy:
         src: /usr/share/powervs-fls/powervs-fls-readme.md_copy
         dest: /usr/share/powervs-fls/powervs-fls-readme.md
-    - file:
+        mode: preserve
+
+    - name: Delete the backup file
+      ansible.builtin.file:
         path: /usr/share/powervs-fls/powervs-fls-readme.md_copy
         state: absent
 
-    # Fail if registration fails.
-    - fail:
+    - name: Fail if registration fails.
+      ansible.builtin.fail:
         msg: "Full Linux Subscription failed, Please debug manually and take corrective action. Logs available at /var/log/powervs-fls.log"
       when: check_for_subscription_success.failed | bool
 
-  when: full_linux_subscription is defined
-
-## END of full_linux_subscription block
-
-# subscribing to SUSE subscription
-# Add repos for installing SLES packages required for SAP installation
+# Subscribing to SUSE subscription
 - name: Register SUSE and enable repos
-  shell: |
+  # noqa no-changed-when
+  ansible.builtin.shell: |
     SUSEConnect -r {{ suse_subscription.key }}  -e {{ suse_subscription.username }}
-    SUSEConnect -p sle-module-public-cloud/{{suse_subscription.release}}/ppc64le
+    SUSEConnect -p sle-module-public-cloud/{{ suse_subscription.release }}/ppc64le
   when: suse_subscription is defined
 
 # making sure all requisite filesets are installed.
 - name: Checking for multipath package
-  package:
+  ansible.builtin.package:
     name: multipath-tools
     state: present
 
 # multipathd daemon is checked whether it's up or not. If not, it is started.
 - name: Ensure multipathd daemon is running
-  service:
+  ansible.builtin.service:
     name: multipathd
     state: started
-    enabled: yes
+    enabled: true
 
 # For modification on network interfaces, create a dictionary of interfaces
 - name: Create interfaces dictionary
-  set_fact:
-    interfaces: "{{ interfaces | default({}) | combine( {item: hostvars[ inventory_hostname ] ['ansible_' + item ]} ) }}"
+  ansible.builtin.set_fact:
+    interfaces: "{{ interfaces | default({}) | combine({item: hostvars[inventory_hostname]['ansible_' + item]}) }}"
   with_items: "{{ ansible_interfaces | replace('-', '_') }}"
 
 # Make the above changes persistent across reboot.
 - name: Set jumbo frames permanently so it is valid after reboots for all networks except eth0 and lo
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: "/etc/sysconfig/network/ifcfg-{{ item.key }}"
     regexp: "^MTU"
     line: "MTU='9000'"
@@ -107,7 +103,7 @@
 
 # Set jumbo frame changes persistent across reboot.
 - name: Set ETHTOOL_OPTIONS TSO ON permanently so it is valid after reboot for all networks except eth0 and lo
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: "/etc/sysconfig/network/ifcfg-{{ item.key }}"
     regexp: "^ETHTOOL_OPTIONS"
     line: "ETHTOOL_OPTIONS='-K {{ item.key }} tso on'"
@@ -119,63 +115,69 @@
 
 # Reinforce changes in current boot
 - name: Restart network
-  service:
+  ansible.builtin.service:
     name: network
     state: restarted
 
 # following task checked for SAPTUNE profile on system and apply {{ sap_solution }} profile if not applied. Also check for saptune rpm installation
 - name: Check saptune package installation
+  # noqa fqcn[action]
   zypper:
     name: saptune
     state: present
 
 - name: Check if {{ sap_solution | upper }} solution is applied or not
-  shell: "saptune solution enabled | grep -xi {{ sap_solution }}"
+  # noqa name[template]
+  ansible.builtin.shell: "saptune solution enabled | grep -xi {{ sap_solution }}"
   register: saptune_status
+  # noqa no-changed-when
   ignore_errors: true
 
 # Revert is any other solution is already applied, and apply {{ sap_solution | upper }}
 - name: Tune SLES for SAP {{ sap_solution | upper }}
-  shell: |
+  # noqa no-changed-when
+  ansible.builtin.shell: |
     saptune revert all
     saptune solution apply {{ sap_solution | upper }}
     saptune service enablestart
   when: saptune_status.rc != 0
 
 - name: Activate SLES tuning for SAP {{ sap_solution | upper }}
-  shell: "saptune service takeover"
+  # noqa no-changed-when
+  ansible.builtin.command: "saptune service takeover"
 
 - name: Check for saptune installation and enablement
-  shell: saptune_check
+  # noqa no-changed-when
+  ansible.builtin.command: saptune_check
   register: saptune_check_log
   ignore_errors: true
 
-# Fail if saptune is not setup correctly
-- debug:
+- name: Debug fail if saptune is not setup correctly
+  ansible.builtin.debug:
     msg: "Saptune may not be setup correctly, please verify and perform corrective action"
   when: saptune_check_log.rc != 0
 
 # Installing irqbalance package
 - name: Installing irqbalance package
-  package:
+  ansible.builtin.package:
     name: irqbalance
     state: present
 
 - name: Enabling and starting irqbalance
-  service:
+  ansible.builtin.service:
     name: irqbalance.service
     state: restarted
-    enabled: yes
+    enabled: true
 
 # to Ensure that NFS and rpcbind daemon are up.
 - name: Ensure NFS client is running
-  service:
+  ansible.builtin.service:
     name: nfs
     state: started
-    enabled: yes
+    enabled: true
 
 - name: Ensure rpcbind is running
-  service:
+  ansible.builtin.service:
     name: rpcbind
     state: started
-    enabled: yes
+    enabled: true
