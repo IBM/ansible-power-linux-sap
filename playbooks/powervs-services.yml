@@ -14,7 +14,8 @@
 # limitations under the License.
 # ------------------------------------------------------------------------
 ---
-- hosts: all
+- name: Install and configure network services
+  hosts: all
   roles:
   - { role: ../roles/server_install_network_services, when: server_config is defined }
   - { role: ../roles/powervs_client_configure_network_services, when: client_config is defined }
