@@ -13,6 +13,10 @@ tags:
   - rhel
   - sles
   - ibm
+  - cloud
+  - linux
+  - networking
+  - storage
 
 dependencies: {}
 repository: "https://github.com/IBM/ansible-power-linux-sap"
