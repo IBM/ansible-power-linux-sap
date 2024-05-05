@@ -182,7 +182,7 @@
   block:
     # Including a task to create a filesystem which will be NFS exported
     - name: Include task to create NFS filesystem
-      ansible.builtin.include_tasks: vpc_fs_creation.yml
+      ansible.builtin.include_tasks: x86_fs_creation.yml
       with_items: "{{ server_config.nfs.nfs_file_system }}"
       when: ansible_architecture is match("x86*")
 
