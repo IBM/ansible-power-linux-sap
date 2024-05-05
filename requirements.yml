@@ -8,3 +8,7 @@ collections:
   - name: community.general
     version: '>=8.4.0'
     type: galaxy
+
+  - name: ansible.utils
+    version: '>=3.4.0'
+    type: galaxy
