@@ -26,7 +26,8 @@
 <a name="v1.1.3"></a>
 # [v.1.1.3 (v1.1.3)](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.1.3) - 21 Aug 2023
 
-Chrony fix on ntp server
+## Fixes
+* Chrony fix on ntp server
 
 [Changes][v1.1.3]
 
@@ -34,11 +35,8 @@ Chrony fix on ntp server
 <a name="v1.1.2"></a>
 # [v1.1.2](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.1.2) - 03 Jul 2023
 
-Version 1.1.2
-Notes
-       * Updated playbook power-linux-configure.yml
-Availability
-       * GitHub v1.0.12(https://github.com/IBM/ansible-power-linux-sap)
+## Fixes
+* Updated playbook power-linux-configure.yml
 
 [Changes][v1.1.2]
 
@@ -46,11 +44,8 @@ Availability
 <a name="v1.1.0"></a>
 # [v1.1.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.1.0) - 28 Jun 2023
 
-Version 1.1.0
-Notes
-       * Updated playbook power-linux-configure.yml
-Availability
-       * GitHub v1.1.0(https://github.com/IBM/ansible-power-linux-sap)
+## Fixes
+* Updated playbook power-linux-configure.yml
 
 [Changes][v1.1.0]
 
@@ -58,14 +53,11 @@ Availability
 <a name="v1.0.11"></a>
 # [v1.0.11](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.0.11) - 09 Jun 2023
 
-Version 1.0.11
-Notes
-       * Updated roles to work with new variable names.
-       * Removed awscli usage
-       * Removed specific OS-related playbooks, to have one universal for any Linux OS.
-       * Updated README
-Availability
-       * GitHub v1.0.11(https://github.com/IBM/ansible-power-linux-sap)
+## Fixes
+* Updated roles to work with new variable names.
+* Removed awscli usage
+* Removed specific OS-related playbooks, to have one universal for any Linux OS.
+* Updated README
 
 [Changes][v1.0.11]
 
@@ -73,11 +65,8 @@ Availability
 <a name="v1.0.10"></a>
 # [v1.0.10](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.0.10) - 30 Jan 2023
 
-Version 1.0.10
-Notes
-        * Updated playbooks to use RHEl system calls, instead of community roles for SAP configurations
-Availability
-       * GitHub v1.0.10(https://github.com/IBM/ansible-power-linux-sap)
+## Fixes
+* Updated playbooks to use RHEL system calls, instead of community roles for SAP configurations
 
 [Changes][v1.0.10]
 
@@ -85,12 +74,9 @@ Availability
 <a name="v1.0.9"></a>
 # [v1.0.9](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.0.9) - 05 Jan 2023
 
-Version 1.0.9
-Notes
-        * updated NFS setting on server side, to create new filesystem for mountable NFS directories
-        * updated playbooks to run filesystem creation first
-Availability
-       * GitHub v1.0.9(https://github.com/IBM/ansible-power-linux-sap)
+## Fixes
+* updated NFS setting on server side, to create new filesystem for mountable NFS directories
+* updated playbooks to run filesystem creation first
 
 [Changes][v1.0.9]
 
@@ -98,10 +84,9 @@ Availability
 <a name="v1.0.8"></a>
 # [v1.0.8](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.0.8) - 14 Oct 2022
 
-Version 1.0.8 Notes
-
-- squid.conf updated
-- pip installation removed
+## Fixes
+* squid.conf updated
+* pip installation removed
 
 [Changes][v1.0.8]
 
@@ -109,12 +94,8 @@ Version 1.0.8 Notes
 <a name="v1.0.7"></a>
 # [v1.0.7](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.0.7) - 22 Sep 2022
 
-Version 1.0.7
-Notes
-        * Updated Readme
-        * Bug Fixing
-Availability
-       * GitHub v1.0.7(https://github.com/IBM/ansible-power-linux-sap)
+## Fixes
+* Updated Readme
 
 [Changes][v1.0.7]
 
@@ -122,11 +103,9 @@ Availability
 <a name="v1.0.6"></a>
 # [v1.0.6](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.0.6) - 14 Sep 2022
 
-Version 1.0.6
-Notes
-        * Added new role powervs_client_enable_services
-	* Updated Readme
-	* Bug Fixing
+## Features
+* Added new role powervs_client_enable_services
+* Updated Readme
 
 [Changes][v1.0.6]
 
@@ -134,9 +113,9 @@ Notes
 <a name="v1.0.4"></a>
 # [v1.0.4](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.0.4) - 26 Aug 2022
 
-Version 1.0.4 Notes
-       * Updated Chrony/NTP tasks
-       * Updated Readme
+## Fixes
+* Updated Chrony/NTP tasks
+* Updated Readme
 
 [Changes][v1.0.4]
 
@@ -144,6 +123,7 @@ Version 1.0.4 Notes
 <a name="v1.0.3"></a>
 # [v1.0.3](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.0.3) - 25 Aug 2022
 
+## Features
 This release will add the following capabilities:
 
 - Full Linux subscription automation
@@ -158,7 +138,7 @@ This release will add the following capabilities:
 <a name="v1.0.2"></a>
 # [v1.0.2](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.0.2) - 06 Jul 2022
 
-Version 1.0.2 Notes
+## Fixes
 * Updated Ansible Galaxy Readme
 
 [Changes][v1.0.2]
@@ -167,7 +147,7 @@ Version 1.0.2 Notes
 <a name="v1.0.0"></a>
 # [v1.0.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.0.0) - 06 Jul 2022
 
-Version 1.0.0 Notes
+## Fixes
 
 Change related to TSO
 Removing all reference to terraform_wrapper variable, as it is no more used. Updated Readme and also updated few file names
