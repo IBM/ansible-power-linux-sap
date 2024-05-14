@@ -47,7 +47,6 @@
   when: multipath_alias.rc == 1
 
 - name: Get the device dm-X name listing using wwn.
-
   ansible.builtin.shell: 'multipath -ll | grep -B 1 {{ item }} | grep dm- | awk ''{print "/dev/"${{ count | default(2) }}}'' '
   register: wwn_dm_list
   with_items: "{{ wwn_list | lower }}"
