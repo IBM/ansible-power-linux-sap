@@ -65,7 +65,6 @@
       register: check_for_subscription_success
 
     - name: Getting RedHat registering server name
-
       ansible.builtin.shell: grep sap_hana /usr/share/powervs-fls/powervs-fls-readme.md | awk -F"\-u" '{ print $NF }' | awk '{ print $1 }'
       register: rhsm_host
       changed_when: false
