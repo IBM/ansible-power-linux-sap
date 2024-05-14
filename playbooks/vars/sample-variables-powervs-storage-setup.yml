@@ -31,4 +31,3 @@ disks_configuration:
 #   mount: /hana/shared
 #   wwns:
 #     - 600507681082018bc8000000000057f1
-
