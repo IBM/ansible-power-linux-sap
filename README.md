@@ -28,11 +28,11 @@ Within this Ansible Collection, there are various Ansible Roles and no custom An
 
 | Name | Summary |
 | :--- | :--- |
-| [powervs_install_services](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_install_services)| Installs Squid, NTP, NFS and DNS services and configures it as a server|
-| [powervs_client_enable_services](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_client_enable_services) | Configures proxy and connects to NTP and DNS services and mounts the provided NFS path. |
+| [powervs_install_services](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_install_services)| Installs and configures Squid, NTP, NFS and DNS services as a server|
+| [powervs_client_enable_services](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_client_enable_services) | Configures proxy, connects to NTP and DNS services and mounts the provided NFS path. |
 | [powervs_storage_setup](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_storage_setup)| Configures storage |
 | [powervs_swap_creation](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_swap_creation)| Configures swap disk |
-| [powervs_prepare_rhel_sap](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_prepare_rhel_sap)| configure general RHEL OS settings for SAP software |
+| [powervs_prepare_rhel_sap](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_prepare_rhel_sap)| Configure general RHEL OS settings for SAP software |
 | [powervs_prepare_sles_sap](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_prepare_sles_sap)| configure general SLES OS settings for SAP software |
 
 
