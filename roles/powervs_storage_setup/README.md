@@ -1,4 +1,4 @@
-## Role: powervs_fs_creation
+## Role: powervs_storage_setup
 
 ### Creating Filesystems for SAP installations
 

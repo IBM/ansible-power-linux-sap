@@ -11,11 +11,11 @@
         - name: Populate instance config dict
           ansible.builtin.set_fact:
             instance_conf_dict: {
-              'instance': "{{ }}",
-              'address': "{{ }}",
-              'user': "{{ }}",
-              'port': "{{ }}",
-              'identity_file': "{{ }}", }
+              "instance": "{{ item.instance }}",
+              "address": "{{ item.address }}",
+              "user": "{{ item.user }}",
+              "port": "{{ item.port }}",
+              "identity_file": "{{ item.identity_file }}" }
           with_items: "{{ server.results }}"
           register: instance_config_dict
 

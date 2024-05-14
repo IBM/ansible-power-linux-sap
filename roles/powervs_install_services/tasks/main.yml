@@ -8,17 +8,14 @@
     - name: Install squid
       ansible.builtin.package:
         name: squid
-        # noqa package-latest
         state: latest
 
-    # Configure squid configuration file as required by full linux subscription
     - name: Replace squid.conf file
       ansible.builtin.copy:
         src: "{{ role_path }}/files/squid.conf"
         dest: /etc/squid/squid.conf
         mode: "0640"
 
-    # Start and Enable Squid Service
     - name: Start squid service
       ansible.builtin.service:
         name: squid
@@ -34,10 +31,9 @@
     - name: Install bind
       ansible.builtin.package:
         name: bind
-        # noqa package-latest
+
         state: latest
 
-    # modify /etc/named.conf file
     - name: Modify acl allowed_clients in /etc/named.conf file
       ansible.builtin.blockinfile:
         marker_begin: "BEGIN_ACL"
@@ -112,7 +108,6 @@
         insertafter: "^(.*)allow-query(.*)"
       when: ansible_distribution is match("SLES*")
 
-    # Enable named
     - name: Enable named service
       ansible.builtin.service:
         name: named
@@ -129,10 +124,8 @@
     - name: Installing chrony
       ansible.builtin.package:
         name: chrony
-        # noqa package-latest
         state: latest
 
-    # modify /etc/chrony.conf file
     - name: Edit iburst line in /etc/chrony.conf file
       ansible.builtin.replace:
         path: /etc/chrony.conf
@@ -147,7 +140,6 @@
           allow 192.168.0.0/16\n
           allow 172.16.0.0/12"
 
-    # Removing Whitespaces
     - name: Remove whitespace prefix from allowed subnet entry in /etc/chrony.conf file
       ansible.builtin.replace:
         path: /etc/chrony.conf
@@ -166,7 +158,6 @@
         line: manual
         insertbefore: EOF
 
-    # Start chronyd service
     - name: Start chronyd service
       ansible.builtin.service:
         name: chronyd
@@ -177,25 +168,20 @@
 ####################################
 # Install NFS Service
 ####################################
-- name: Seting Up NFS Service
+- name: Setting up NFS Service
   when: server_config.nfs.enable|default(False)|bool
   block:
-    # Including a task to create a filesystem which will be NFS exported
     - name: Include task to create NFS filesystem
       ansible.builtin.include_tasks: vpc_fs_creation.yml
       with_items: "{{ server_config.nfs.nfs_file_system }}"
       when: ansible_architecture is match("x86*")
 
-    # Install NFS
     - name: Install nfs package
       ansible.builtin.package:
         name: nfs-utils
-        # noqa package-latest
         state: latest
-      # noqa ignore-errors
       ignore_errors: true
 
-    # Check for /etc/export file, if non-existing, create one.
     - name: Create /etc/exports file. if not present
       ansible.builtin.file:
         path: /etc/exports
@@ -203,7 +189,6 @@
         mode: "0644"
       changed_when: false
 
-    # export /NFS directory as NFS directory
     - name: Export directory as NFS
       ansible.builtin.lineinfile:
         path: /etc/exports
@@ -211,7 +196,6 @@
         line: "{{ item.mount_path | trim }} *(rw,no_root_squash,no_subtree_check,insecure)"
       with_items: "{{ server_config.nfs.nfs_file_system }}"
 
-    # Start NFS service
     - name: Start nfs service
       ansible.builtin.service:
         name: nfs-server.service
@@ -219,7 +203,6 @@
         enabled: true
       changed_when: false
 
-    # Verify if NFS device is correctly exported
     - name: Run showmount command to list nfs exported directory
       ansible.builtin.shell: showmount -e localhost  | grep  {{ item.mount_path | trim }}
       register: showmount_log

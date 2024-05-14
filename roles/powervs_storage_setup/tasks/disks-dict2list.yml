@@ -87,7 +87,7 @@
   loop_control:
     loop_var: file_system
 
-## Remove temp file created.
+# Remove temp file created.
 - name: Remove temp file created during execution
   ansible.builtin.file:
     state: absent

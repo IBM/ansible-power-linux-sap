@@ -14,9 +14,9 @@
 # limitations under the License.
 # ------------------------------------------------------------------------
 ---
-## this role check for previous swap device and delete it if present. Then configure the new swap device on the disk wwn value passed with swap_disk_wwn
+# This role check for previous swap device and delete it if present. Then configure the new swap device on the disk wwn value passed with swap_disk_wwn
 
-## making sure that all requisite packages are present. If not, role will fail.
+# making sure that all requisite packages are present. If not, role will fail.
 - name: Ensure multipath package is installed on RHEL
   ansible.builtin.package:
     name: device-mapper-multipath
@@ -36,14 +36,12 @@
     state: started
     enabled: true
 
-## first validate the date passed with swap_disk_wwn variable
+# first validate the date passed with swap_disk_wwn variable
 - name: Running rescan command
-  # noqa no-changed-when
   ansible.builtin.command: /usr/bin/rescan-scsi-bus.sh -a -c -v
 
 # validate swap_disk_wwn provided with multipath -ll command, for its presence. fail, if does not match.
 - name: Validating the wwn values passed
-  # noqa no-changed-when
   ansible.builtin.shell: /sbin/multipath -ll | grep {{ swap_disk_wwn | lower }}
   register: validation_check
   ignore_errors: true
@@ -56,20 +54,16 @@
 # if above validation is successful, continue with core logic of removing the already present swap device and creating a new based on wwn passed
 # check for previous swap device, if any configured. If configured, remove it.
 - name: Check for any swap device, if present, need to be removed
-  # noqa risky-shell-pipe
   ansible.builtin.shell: swapon -s | grep -v Filename | awk '{ print $1 }'
-  # noqa no-changed-when
   register: swapon_device_list
 
 - name: Delete previous swap device
-  # noqa no-changed-when
   ansible.builtin.command: swapoff {{ item }}
   with_items: "{{ swapon_device_list.stdout_lines }}"
   when: swapon_device_list.stdout is defined
 
 # validate if multipath alias is enabled. If enabled, set field to check for dm-X name, as 3, else it remains at default 2.
 - name: Check if multipath alias is enabled.
-  # noqa risky-shell-pipe, no-changed-when
   ansible.builtin.command: grep "user_friendly_names no" /etc/multipath.conf
   register: multipath_alias
   ignore_errors: true
@@ -80,9 +74,7 @@
   when: multipath_alias.rc == 1
 
 - name: Get dm device for wwn {{ swap_disk_wwn }}
-  # noqa risky-shell-pipe
   ansible.builtin.shell: 'multipath -ll | grep -B 1 {{ swap_disk_wwn | lower }} | grep dm- | awk ''{print "/dev/"${{ count | default(2) }}}'' '
-  # noqa no-changed-when
   register: swap_dm_name
 
 - name: Set facts
@@ -90,9 +82,7 @@
     swap_dm_device: "{{ swap_dm_name.stdout }}"
 
 - name: Mkswap on device  {{ swap_dm_device }}
-  # noqa no-changed-when
   ansible.builtin.command: mkswap {{ swap_dm_device }}
 
 - name: Swapon the device  {{ swap_dm_device }}
-  # noqa no-changed-when
   ansible.builtin.command: swapon {{ swap_dm_device }}

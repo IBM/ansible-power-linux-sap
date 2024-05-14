@@ -24,7 +24,7 @@
 - name: Validate number of wwn present
   ansible.builtin.set_fact:
     total_wwn: "{{ disks_configuration.wwns | unique | length }}"
-# fail if total count of disks and sum of counts provided does not match. Also match wwn unique values. Any duplicate, will lead to failure# noqa no-free-form
+# fail if total count of disks and sum of counts provided does not match. Also match wwn unique values. Any duplicate, will lead to failure
 - name: Initialize count variable set fact
   # noqa no-free-form
   ansible.builtin.set_fact: count_total=0

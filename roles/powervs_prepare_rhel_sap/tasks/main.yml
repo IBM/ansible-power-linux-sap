@@ -43,7 +43,6 @@
 
     # Backing up the log file and removing it for latest use
     - name: Backup current log file
-      # noqa ignore-errors
       ansible.builtin.copy:
         src: /var/log/powervs-fls.log
         dest: /var/log/powervs-fls.log.backup
@@ -56,7 +55,6 @@
         state: absent
 
     - name: Execute cloud-init command
-      # noqa command-instead-of-shell
       ansible.builtin.shell: "{{ cloud_init_command.stdout }}"
 
     - name: Wait until the string "Exiting RHEL subscription registration process" is in the file /var/log/powervs-fls.log before continuing
@@ -67,14 +65,14 @@
       register: check_for_subscription_success
 
     - name: Getting RedHat registering server name
-      # noqa risky-shell-pipe
+
       ansible.builtin.shell: grep sap_hana /usr/share/powervs-fls/powervs-fls-readme.md | awk -F"\-u" '{ print $NF }' | awk '{ print $1 }'
       register: rhsm_host
       changed_when: false
 
     # Check for successful Registration
     - name: Check for successful registration
-      # noqa no-changed-when
+
       ansible.builtin.shell: subscription-manager config | grep {{ rhsm_host.stdout }}
       register: check_with_subscription_manager
       ignore_errors: true
@@ -125,26 +123,22 @@
 
 # END of rhel_subscription block
 
-# making sure all requisite filesets are installed.
 - name: Checking for multipath package
   ansible.builtin.package:
     name: device-mapper-multipath
     state: present
 
-# multipathd daemon is checked whether it's up or not. If not, it is started.
 - name: Ensure multipathd daemon is running
   ansible.builtin.service:
     name: multipathd
     state: started
     enabled: true
 
-# For modification on network interfaces, create a dictionary of interfaces
 - name: Create interfaces dictionary
   ansible.builtin.set_fact:
     interfaces: "{{ interfaces | default({}) | combine({item: hostvars[inventory_hostname]['ansible_' + item]}) }}"
   with_items: "{{ ansible_interfaces | replace('-', '_') }}"
 
-# to make jumbo frame persistent across reboot.
 - name: Set jumbo frames permanently so it is valid after reboots for all networks except eth0 and lo
   ansible.builtin.lineinfile:
     dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item.key }}"
@@ -157,13 +151,12 @@
     - "item.key != 'lo'"
     - "item.value.mtu != 9000"
 
-# to reinforce changes in current boot
 - name: Restart network
   ansible.builtin.service:
     name: NetworkManager
     state: restarted
   changed_when: false
-# Installing irqbalance package
+
 - name: Installing irqbalance package
   ansible.builtin.package:
     name: irqbalance
@@ -175,7 +168,7 @@
     state: restarted
     enabled: true
   changed_when: false
-# to Ensure that NFS and rpcbind daemon are up.
+
 - name: Ensure NFS client is running
   ansible.builtin.service:
     name: nfs-client.target
@@ -188,7 +181,6 @@
     state: started
     enabled: true
 
-# To ensure transparent_hugepage is set to never
 - name: Set transparent_hugepage to never
   ansible.builtin.shell: echo never > /sys/kernel/mm/transparent_hugepage/enabled
   changed_when: false

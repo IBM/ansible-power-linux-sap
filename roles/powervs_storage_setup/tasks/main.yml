@@ -14,7 +14,7 @@
 # limitations under the License.
 # ------------------------------------------------------------------------
 ---
-### This role creates filesystem for SAP installations.
+# This role creates filesystem for SAP installations.
 
 - name: Ensure multipath package on RHEL is installed
   ansible.builtin.package:

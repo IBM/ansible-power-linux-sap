@@ -1,0 +1,15 @@
+client_config:
+  squid:
+    enable: false
+    squid_server_ip_port: "10.51.0.121:3128"
+    no_proxy_hosts: "161.0.0.0/8"
+  ntp:
+    enable: false
+    ntp_server_ip: "10.51.0.121"
+  nfs:
+    enable: false
+    nfs_server_path: "10.51.0.121:/nfs;10.51.0.121:/software"
+    nfs_client_path: "/nfs;/software"
+  dns:
+    enable: false
+    dns_server_ip: "10.51.0.121"

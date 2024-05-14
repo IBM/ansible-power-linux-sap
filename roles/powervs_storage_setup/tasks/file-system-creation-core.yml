@@ -47,7 +47,7 @@
   when: multipath_alias.rc == 1
 
 - name: Get the device dm-X name listing using wwn.
-  # noqa risky-shell-pipe
+
   ansible.builtin.shell: 'multipath -ll | grep -B 1 {{ item }} | grep dm- | awk ''{print "/dev/"${{ count | default(2) }}}'' '
   register: wwn_dm_list
   with_items: "{{ wwn_list | lower }}"
@@ -69,7 +69,6 @@
 
 # Creating volume group.
 - name: Create LVM volume group {{ file_system.name }}vg on {{ wwn_to_dm_list }}
-  # noqa name[template]
   lvg:
     # noqa fqcn[action]
     vg: "{{ file_system.name }}vg"
@@ -78,7 +77,6 @@
 
 # Making use of --stripesize as 64K as default, unless passed explicitly in extra vars
 - name: Create Logical Volume {{ file_system.name }}lv
-  # noqa name[template]
   lvol:
     # noqa fqcn[action]
     vg: "{{ file_system.name }}vg"
@@ -88,14 +86,12 @@
     state: present
 
 - name: Create directory {{ file_system.mount }} if doesn't exist
-  # noqa name[template]
   ansible.builtin.file:
     path: "{{ file_system.mount }}"
     state: directory
     mode: "0755"
 
 - name: Create filesystem
-  # noqa name[template]
   filesystem:
     # noqa fqcn[action]
     fstype: xfs
@@ -103,7 +99,6 @@
     opts: -K
 
 - name: Mount lv {{ file_system.name }}lv on {{ file_system.mount }}
-  # noqa name[template]
   mount:
     # noqa fqcn[action]
     path: "{{ file_system.mount }}"
