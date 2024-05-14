@@ -18,6 +18,6 @@
   hosts: all
   pre_tasks:
     - name: Include variables
-      ansible.builtin.include_vars: ./vars/sample-variables-powervs-linux-configure.yml
+      ansible.builtin.include_vars: ./vars/sample-variables-powervs-install-services.yml
   roles:
    - { role: ../roles/powervs_install_services, when: server_config is defined }

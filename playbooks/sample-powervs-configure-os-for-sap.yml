@@ -16,6 +16,10 @@
 ---
 - name: Configure OS for network, storage and SAP.
   hosts: all
+  pre_tasks:
+    - name: Include variables
+      ansible.builtin.include_vars: ./vars/sample-powervs-configure-os-for-sap.yml
+  
   roles:
    - { role: ../roles/powervs_prepare_rhel_sap, when: sap_solution is defined and ansible_distribution is match("RedHat*") }
    - { role: ../roles/powervs_prepare_sles_sap, when: sap_solution is defined and ansible_distribution is match("SLES*") }
