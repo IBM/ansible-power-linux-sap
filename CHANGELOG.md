@@ -1,4 +1,4 @@
-[Changes][v2.0.0]
+[Changes](v2.0.0)
 
 
 <a name="v2.0.0"></a>
