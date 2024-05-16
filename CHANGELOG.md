@@ -1,3 +1,16 @@
+[Changes][v2.0.0]
+
+
+<a name="v2.0.0"></a>
+# [v2.0.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v2.0.0) - 16 May 2024
+
+## Features
+* Added checks using ansible-lint.
+* Renamed **powervs_fs_creation** role to **powervs_storage_setup**
+* Updated sample playbook files with sample variables files included.
+* README.md has been reworked.
+
+
 <a name="v1.1.5"></a>
 # [v1.1.5](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.1.5) - 16 Feb 2024
 
