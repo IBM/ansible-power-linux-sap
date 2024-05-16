@@ -1,0 +1,33 @@
+---
+stripe_size: 64K # optional parameter
+swap_disk_wwn: "60050768108002DC6800000000029801"
+
+# disk_configuration as a dictionary
+disks_configuration:
+  counts: [2, 2, 1]
+  names: ["data", "log", "shared"]
+  mounts: ["/hana/data", "/hana/log", "/hana/shared"]
+  wwns:
+    [
+      "600507681082018bc8000000000057e4",
+      "600507681082018bc8000000000057e8",
+      "600507681082018bc8000000000057e5",
+      "600507681082018bc8000000000057e6",
+      "600507681082018bc8000000000057e7",
+    ]
+# disk_configuration as a list of dictionaries. Only one type should be present in variable file. Uncomment if you want to use disks_configuration as a list.
+# disks_configuration:
+# - name: data
+#   mount: /hana/data
+#   wwns:
+#     - 600507681082018bc8000000000057e4
+#     - 600507681082018bc8000000000057e8
+# - name: log
+#   mount: /hana/log
+#   wwns:
+#     - 600507681082018bc8000000000057d9
+#     - 600507681082018bc8000000000057ed7
+# - name: shared
+#   mount: /hana/shared
+#   wwns:
+#     - 600507681082018bc8000000000057f1

@@ -83,7 +83,6 @@
         - client_config.squid.no_proxy_hosts is defined
         - not replace_noproxy_log.changed
 
-    # Test internet connectivity
     - name: Verify connection to internet
       ansible.builtin.uri:
         url: http://www.google.com
@@ -94,7 +93,6 @@
 - name: Install bind-utils for DNS
   when: client_config.dns.enable | default(false) | bool
   block:
-    # Install bind-utils
     - name: Installing bind-utils
       ansible.builtin.package:
         name: bind-utils
@@ -113,14 +111,12 @@
       ansible.builtin.command: dig -i www.google.com +short
       register: dig_output
       changed_when: false
-      # noqa ignore-errors
       ignore_errors: true
 
     - name: Verify if dig command returned an IP
       ansible.builtin.fail:
         msg: "DNS is not working, please verify setting"
       when: dig_output.stdout is not ansible.utils.ipv4
-      # noqa ignore-errors
       ignore_errors: true
 
 ####################################
@@ -129,21 +125,17 @@
 - name: Install Chrony for NTP
   when: client_config.ntp.enable | default(false) | bool
   block:
-    # Install chrony
     - name: Installing chrony
       ansible.builtin.package:
         name: chrony
         state: present
 
-    # Modifying /etc/chrony.conf file
     - name: Replace iburst line in /etc/chrony.conf file
       ansible.builtin.replace:
         path: /etc/chrony.conf
         regexp: "^(.*)iburst$"
         replace: "server {{ client_config.ntp.ntp_server_ip }} iburst"
 
-    # Start chronyd service
-    # noqa package-latest
     - name: Start chronyd service
       ansible.builtin.service:
         name: chronyd
@@ -165,11 +157,9 @@
 - name: Install NFS-utils
   when: client_config.nfs.enable | default(false) | bool
   block:
-    # Install NFS
     - name: Install NFS client package
       ansible.builtin.package:
         name: nfs-utils
-        # noqa package-latest
         state: latest
 
     - name: Start and enable NFS client service

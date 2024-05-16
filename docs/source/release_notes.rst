@@ -116,3 +116,12 @@ Notes
        * Include tests for NTP, DNS and NFS services
 Availability
        * GitHub v1.1.4(https://github.com/IBM/ansible-power-linux-sap)
+
+Version 2.0.0
+Notes
+       * Added checks using ansible-lint.
+       * Renamed **powervs_fs_creation** role to **powervs_storage_setup**
+       * Updated sample playbook files with sample variables files included.
+       * README.md has been reworked.
+Availability
+       * GitHub v2.0.0(https://github.com/IBM/ansible-power-linux-sap)
