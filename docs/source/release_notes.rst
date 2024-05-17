@@ -125,3 +125,9 @@ Notes
        * README.md has been reworked.
 Availability
        * GitHub v2.0.0(https://github.com/IBM/ansible-power-linux-sap)
+
+
+Version 2.1.0
+Notes
+       * Allow user to specify `opts` and `fstype` when mounting a `NFS` share.
+       * README.md update for powervs_client_enable_services.
