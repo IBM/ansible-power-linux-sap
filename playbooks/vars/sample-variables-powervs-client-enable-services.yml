@@ -10,6 +10,8 @@ client_config:
     enable: false
     nfs_server_path: "10.51.0.121:/nfs;10.51.0.121:/software"
     nfs_client_path: "/nfs;/software"
+    opts: sec=sys,nfsvers=4.1,nofail
+    fstype: nfs4
   dns:
     enable: false
     dns_server_ip: "10.51.0.121"
