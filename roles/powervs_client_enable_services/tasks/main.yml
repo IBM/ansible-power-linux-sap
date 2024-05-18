@@ -183,8 +183,8 @@
         src: "{{ item.1 }}"
         state: mounted
         boot: true
-        opts: defaults,nofail
-        fstype: nfs
+        opts: "{{ client_config.nfs.opts }}"
+        fstype: "{{ client_config.nfs.fstype }}"
       with_together:
         - "{{ client_config.nfs.nfs_client_path.split(';') }}"
         - "{{ client_config.nfs.nfs_server_path.split(';') }}"

@@ -1,3 +1,14 @@
+[Changes](v2.1.0)
+
+
+<a name="v2.1.0"></a>
+# [v2.1.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v2.1.0) - 17 May 2024
+
+## Features
+* Allow user to specify `opts` and `fstype` when mounting a `NFS` share.
+* README.md update for powervs_client_enable_services.
+
+
 [Changes](v2.0.0)
 
 

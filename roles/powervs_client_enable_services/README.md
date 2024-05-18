@@ -5,25 +5,39 @@
 This module is same for both SLES and RHEL.
 
 This role performs the following tasks:
-- Configures **SQUID** proxy.
-- Configures **DNS** server.
+- Configures **SQUID** proxy client.
+- Configures **DNS**.
 - Installs **NTP** packages and updates named.conf file with ntp server.
-- Installs **NFS** client packages, and mounts nfs exported directories as mentioned in variable file..
+- Installs **NFS** client packages, and mounts nfs exported directories as mentioned in variable file.
+- All above services will be **started and enabled**
 
-This role will also **start and enable** all above mentioned services.
+To execute this role the input variable **client_config** is required. The variable is defined below.
 
-The input variable **client_config** is needed to be provided for this role to be executed. The variable file looks like below
 ```
-client_config: {
-squid: { enable: false, squid_server_ip_port: "127.0.0.1:3128", no_proxy_hosts: "161.0.0.0/8" },
-ntp: { enable: false, ntp_server_ip: "127.0.0.1" },
-nfs: { enable: false, nfs_server_path: "127.0.0.1:/USER;127.0.0.1:/EXAMPLE", nfs_client_path: "/MNT;/HANA" },
-dns: { enable: false, dns_server_ip: "127.0.0.1" }
-}
+client_config:
+  squid:
+    enable: false
+    squid_server_ip_port: "10.51.0.121:3128"
+    no_proxy_hosts: "161.0.0.0/8"
+  ntp:
+    enable: false
+    ntp_server_ip: "10.51.0.121"
+  nfs:
+    enable: false
+    nfs_server_path: "10.51.0.121:/nfs;10.51.0.121:/software"
+    nfs_client_path: "/nfs;/software"
+    opts: sec=sys,nfsvers=4.1,nofail
+    fstype: nfs4
+  dns:
+    enable: false
+    dns_server_ip: "10.51.0.121"
 ```
-Each services can be chosen to be enabled or not. Disabling is not supported. This variable file enables users, to enable one or many services on one or multiple SAP instances, as desired.
 
-For **NFS** services, nfs server path, which are already shared, and can be mounted on client should be provided. **nfs_client_path** are directories where NFS shared directory will be locally mounted.
+## Notes
+- By default every service is `disabled`.
+- Each service can be chosen to be enabled or not by setting `enable: true`.
+- Disabling is not supported.
+- For **NFS** services, `nfs_server_path`, which are already shared, and can be mounted on client should be provided. `nfs_client_path` are directories where NFS shared directory will be locally mounted.
 
 ## Dependencies
 
