@@ -1,6 +1,4 @@
-===========================================
-ibm.ansible-power-linux-sap Release Notes
-===========================================
+# Release Notes
 
 <a name="v2.1.0"></a>
 # [v2.1.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v2.1.0) - 18 May 2024
