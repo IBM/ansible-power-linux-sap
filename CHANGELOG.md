@@ -149,7 +149,7 @@ This release will add the following capabilities:
 
 - Full Linux subscription automation
 - Install services like Squid, DNS, NTP, and NFS on server hosts.
-- Install awscli packgaes on server host.
+- Install awscli packages on server host.
 - Setup proxy on clients
 - Bug fixing.
 
