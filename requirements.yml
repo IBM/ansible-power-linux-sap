@@ -1,14 +1,13 @@
 ---
-
 collections:
   - name: ansible.posix
-    version: '>=1.5.4'
+    version: ">=1.5.4"
     type: galaxy
 
   - name: community.general
-    version: '>=8.4.0'
+    version: ">=8.4.0"
     type: galaxy
 
   - name: ansible.utils
-    version: '>=3.4.0'
+    version: ">=3.4.0"
     type: galaxy

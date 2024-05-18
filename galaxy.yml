@@ -1,10 +1,11 @@
 namespace: "ibm"
 name: "power_linux_sap"
-version: "2.1.0"
+version: 2.1.0
 readme: "README.md"
-description: RHEL/SLES ansible automation to prepare LPARs for installing SAP on Power Systems.
+description: Collection of Ansible Roles for RHEL/SLES OS to prepare LPARs for installing SAP on Power Systems.
 authors:
-  - "Sahitya Jain(@sahityajain123), Suraj Bharadwaj(@surajsbharadwaj)"
+  - Sahitya Jain <sahityajain(at)in.ibm.com>
+  - Suraj Bharadwaj <suraj.bharadwaj(at)ibm.com>
 
 license_file: "LICENSE"
 tags:
@@ -17,9 +18,10 @@ tags:
   - linux
   - networking
   - storage
+  - powervs
 
 dependencies: {}
 repository: "https://github.com/IBM/ansible-power-linux-sap"
-documentation: "https://github.com/IBM/ansible-power-linux-sap"
+documentation: "https://github.com/IBM/ansible-power-linux-sap/README.md"
 homepage: "https://github.com/IBM/ansible-power-linux-sap"
 issues: "https://github.com/IBM/ansible-power-linux-sap/issues"
