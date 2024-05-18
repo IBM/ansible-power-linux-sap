@@ -185,3 +185,23 @@ This release will add the following capabilities:
 Initial beta release of IBM Power Virtual Systems SAP with RISE collection, referred to as power_linux_sap
 
 [Changes][v0.0.1]
+
+
+[v2.1.0]: https://github.com/IBM/ansible-power-linux-sap/compare/v2.0.0...v2.1.0
+[v2.0.0]: https://github.com/IBM/ansible-power-linux-sap/compare/v1.1.5...v2.0.0
+[v1.1.5]: https://github.com/IBM/ansible-power-linux-sap/compare/v1.1.4...v1.1.5
+[v1.1.4]: https://github.com/IBM/ansible-power-linux-sap/compare/v1.1.3...v1.1.4
+[v1.1.3]: https://github.com/IBM/ansible-power-linux-sap/compare/v1.1.2...v1.1.3
+[v1.1.2]: https://github.com/IBM/ansible-power-linux-sap/compare/v1.1.0...v1.1.2
+[v1.1.0]: https://github.com/IBM/ansible-power-linux-sap/compare/v1.0.11...v1.1.0
+[v1.0.11]: https://github.com/IBM/ansible-power-linux-sap/compare/v1.0.10...v1.0.11
+[v1.0.10]: https://github.com/IBM/ansible-power-linux-sap/compare/v1.0.9...v1.0.10
+[v1.0.9]: https://github.com/IBM/ansible-power-linux-sap/compare/v1.0.8...v1.0.9
+[v1.0.8]: https://github.com/IBM/ansible-power-linux-sap/compare/v1.0.7...v1.0.8
+[v1.0.7]: https://github.com/IBM/ansible-power-linux-sap/compare/v1.0.6...v1.0.7
+[v1.0.6]: https://github.com/IBM/ansible-power-linux-sap/compare/v1.0.4...v1.0.6
+[v1.0.4]: https://github.com/IBM/ansible-power-linux-sap/compare/v1.0.3...v1.0.4
+[v1.0.3]: https://github.com/IBM/ansible-power-linux-sap/compare/v1.0.2...v1.0.3
+[v1.0.2]: https://github.com/IBM/ansible-power-linux-sap/compare/v1.0.0...v1.0.2
+[v1.0.0]: https://github.com/IBM/ansible-power-linux-sap/compare/v0.0.1...v1.0.0
+[v0.0.1]: https://github.com/IBM/ansible-power-linux-sap/tree/v0.0.1
