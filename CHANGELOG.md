@@ -1,5 +1,13 @@
 # Release Notes
 
+<a name="v2.1.1"></a>
+# [v2.1.1](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v2.1.1) - 30 May 2024
+
+## Release Summary
+* Fix missing distro condition to skip a proxy task for SLES.
+
+[Changes][v2.1.1]
+
 <a name="v2.1.0"></a>
 # [v2.1.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v2.1.0) - 18 May 2024
 
@@ -186,7 +194,7 @@ Initial beta release of IBM Power Virtual Systems SAP with RISE collection, refe
 
 [Changes][v0.0.1]
 
-
+[v2.1.1]: https://github.com/IBM/ansible-power-linux-sap/compare/v2.1.0...v2.1.1
 [v2.1.0]: https://github.com/IBM/ansible-power-linux-sap/compare/v2.0.0...v2.1.0
 [v2.0.0]: https://github.com/IBM/ansible-power-linux-sap/compare/v1.1.5...v2.0.0
 [v1.1.5]: https://github.com/IBM/ansible-power-linux-sap/compare/v1.1.4...v1.1.5
