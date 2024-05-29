@@ -131,3 +131,7 @@ Version 2.1.0
 Notes
        * Allow user to specify `opts` and `fstype` when mounting a `NFS` share.
        * README.md update for powervs_client_enable_services.
+
+Version 2.1.1
+Notes
+       * add missing distro condition to skip a proxy task for SLES.

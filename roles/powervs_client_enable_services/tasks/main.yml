@@ -63,6 +63,7 @@
       when:
         - client_config.squid.no_proxy_hosts is defined
         - not replace_dnf_log.changed
+        - ansible_distribution is match("RedHat*")
 
     # If no_proxy entry exists, then modify with the values passed in.
     - name: Modify no_proxy entry in in /etc/bashrc or /etc/bash.bashrc file
