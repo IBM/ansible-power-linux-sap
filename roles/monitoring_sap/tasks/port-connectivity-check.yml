@@ -1,0 +1,52 @@
+---
+# This playbook checks port connectivity to SAP System ports on the monitoring host
+- name: This playbook deploys the SAP monitoring configuration on the monitoring host
+  ansible.builtin.debug:
+      msg: "SAP monitoring configuration using the sap_monitoring_nr: {{ sap_monitoring_nr }}"
+
+- name: Check existence  of the SAP variables in the file sample-sap-monitoring-parameters.yml
+  ansible.builtin.fail:
+      msg: 'variable {{ sap_item }} is not defined in the file sample-sap-monitoring-parameters.yml'
+  when: not sap_item
+  # when:  sap_item is not defined
+  # when: "{{ sap_item }}" is not defined
+  loop_control:
+      loop_var: sap_item
+  loop:
+      - "{{ sap_monitoring_nr }}"
+      - "{{ ibmcloud_monitoring_instance_url }}"
+      - "{{ ibmcloud_monitoring_authorization_credentials }}"
+      - "{{ sap_hana_ip }}"
+      - "{{ sap_hana_http_port }}"
+      - "{{ sap_hana_sql_systemdb_port }}"
+      - "{{ sap_hana_sql_systemdb_user }}"
+      - "{{ sap_hana_sql_systemdb_password }}"
+      - "{{ sap_ascs_ip }}"
+      - "{{ sap_ascs_http_port }}"
+      - "{{ sap_app_server }}"
+
+- name: Install netcat-openbsd
+  ansible.builtin.zypper:
+      name: netcat-openbsd
+      state: present
+  tags: netcat-openbsd
+
+- name: Check network connectivity to SAP System, fail if ports are not open
+  ansible.builtin.command: "{{ netcat_item }}"
+  loop_control:
+      loop_var: netcat_item
+  loop:
+      - "netcat -vz {{ sap_hana_ip }} {{ sap_hana_sql_systemdb_port }}"
+      - "netcat -vz {{ sap_hana_ip }} {{ sap_hana_http_port }}"
+      - "netcat -vz {{ sap_ascs_ip }} {{ sap_ascs_http_port }}"
+      # - "netcat -vz {{ sap_hana_ip }} 99"
+  register: command_result
+  failed_when: "'failed' in command_result.stderr"
+
+- name: Check network connectivity to SAP App servers, fail if ports are not open
+  ansible.builtin.command: "netcat -vz {{ server_item.ip }} {{ server_item.port }}"
+  loop_control:
+      loop_var: server_item
+  loop: "{{ sap_app_server }}"
+  register: command_result
+  failed_when: "'failed' in command_result.stderr"
