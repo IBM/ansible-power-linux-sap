@@ -1,0 +1,15 @@
+{
+  "listen_address": "0.0.0.0",
+  "exposition_port": 5{{ sap_monitoring_nr }}02,
+  "multi_tenant": false,
+  "_comment_multi_tenant": "true, if you want another 1000 metrics",
+  "sap_monitoring_solution_name": "{{ sap_monitoring_solution_name }}",
+  "timeout": 30,
+  "hana": {
+    "host":  "{{ sap_hana_ip }}",
+    "port": {{ sap_hana_sql_systemdb_port }},
+    "userkey": "MONITORING{{ sap_monitoring_nr }}KEY",
+    "ssl": true,
+    "ssl_validate_cert": false
+  }
+}

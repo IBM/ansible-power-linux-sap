@@ -1,0 +1,9 @@
+# The listening TCP/IP address and port.
+address: "0.0.0.0"
+port: "5{{ sap_monitoring_nr }}04"
+log-level: "info"# ASCS instance
+# sap_monitoring_solution_name: {{ sap_monitoring_solution_name }}
+sap-control-url: "http://{{ sap_ascs_ip }}:{{ sap_ascs_http_port }}"
+# HTTP Basic Authentication credentials for the SAPControl web service,
+# e.g. <sid>adm user and password.
+# Make sure this file permissions are set to 600.
