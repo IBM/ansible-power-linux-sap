@@ -1,0 +1,51 @@
+---
+# This playbook contains  prometheus-agent configuration on the monitoring host
+
+- name: Install golang-github-prometheus-prometheus
+  ansible.builtin.zypper:
+    name: golang-github-prometheus-prometheus
+    state: present
+  tags: golang-github-prometheus-prometheus
+
+- name: Create and set permissions to prometheus agent directory /opt/prometheus
+  ansible.builtin.file:
+    path: /opt/prometheus
+    state: directory
+    owner: prometheus
+    group: prometheus
+    mode: '0750'
+    recurse: true
+
+- name: Copy systemd-file /etc/systemd/system/prometheus@.service
+  ansible.builtin.template:
+    src: prometheus@.service.j2
+    dest: /etc/systemd/system/prometheus@.service
+    owner: root
+    group: root
+    mode: '0640'
+
+- name: Force systemd to reread systemd configs
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Set permissions to prometheus configuration  directory /etc/prometheus/
+  ansible.builtin.file:
+    path: /etc/prometheus
+    state: directory
+    owner: prometheus
+    group: prometheus
+    mode: '0740'
+
+- name: Copy prometheus agent configuration to /etc/prometheus
+  ansible.builtin.template:
+    src: prometheus-sap_monitoring_nr.j2
+    dest: /etc/prometheus/{{ sap_monitoring_nr }}.yml
+    owner: prometheus
+    group: prometheus
+    mode: '0640'
+
+- name: Start systemd daemon prometheus@<sap_monitoring_nr>
+  ansible.builtin.systemd:
+    name: prometheus@{{ sap_monitoring_nr }}
+    state: started
+    enabled: true

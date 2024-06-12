@@ -1,0 +1,37 @@
+---
+# This playbook checks, if SAP_HANA_CLIENT is insttalled  on the monitoring host 
+- name: Check existence of /usr/lib64/python3.6/site-packages/hdbcli/dbapi.py
+  stat:
+    path: /usr/lib64/python3.6/site-packages/hdbcli/dbapi.py
+  register: file_hana_driver
+
+- name: If SAP HANA client does not exist then install SAP HANA client
+  ansible.builtin.include_tasks: "{{ task }}.yml"
+  loop_control:
+    loop_var: task
+  loop:
+    - repos-activation        
+    - sap-hana-client-installation
+  when: not file_hana_driver.stat.exists and sap_monitoring_action == "add"
+    
+- name: Add one SAP System to the monitoring configuration
+  ansible.builtin.include_tasks: "{{ task }}.yml"
+  loop_control:
+    loop_var: task
+  loop:
+    - port-connectivity-check
+    - sap-host-exporter-configuration
+    - hanadb-exporter-configuration
+    - prometheus-agent-configuration
+  when: sap_monitoring_action == "add"
+
+##  Delete a SAP System from monitoring
+- name: Check existence of the variables defined in roles/monitoring_sap/vars/main.yml
+  fail:
+    msg: 'variable {{ sap_monitoring_nr }} not defined in the file roles/monitoring_sap/vars/main.yml '
+  when: sap_monitoring_nr is not defined
+
+  # - name: Delete one SAP System from the monitoring configuration
+  # ansible.builtin.include_tasks: sap-monitoring-configuration-deletion
+  # when: sap_monitoring_action == "delete"
+

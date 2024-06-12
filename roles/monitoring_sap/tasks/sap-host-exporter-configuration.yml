@@ -1,0 +1,72 @@
+---
+# This playbook contains all sap_host_exporter (HANA, ASCS, ABAP) configuration.
+
+- name: Install prometheus-sap_host_exporter
+  ansible.builtin.zypper:
+    name: prometheus-sap_host_exporter
+    state: present
+  tags: prometheus-sap_host_exporter
+
+- name: Configure sap_host_exporter file HANA
+  ansible.builtin.template:
+    src: sap_host_exporter-HANA.conf.j2
+    dest: /etc/sap_host_exporter/sap_host_exporter-{{ sap_monitoring_nr }}-HANA.yaml
+    owner: root
+    group: root
+    mode: '0600'
+  tags: prometheus-sap_host_exporter HANA
+
+- name: Configure sap_host_exporter file ASCS
+  ansible.builtin.template:
+    src: sap_host_exporter-ASCS.conf.j2
+    dest: /etc/sap_host_exporter/sap_host_exporter-{{ sap_monitoring_nr }}-ASCS.yaml
+    owner: root
+    group: root
+    mode: '0600'
+  tags: prometheus-sap_host_exporter ASCS
+
+- name: Configure sap_host_exporter DI
+  ansible.builtin.template:
+    src: sap_host_exporter-DI.conf.j2
+    dest: /etc/sap_host_exporter/sap_host_exporter-{{ sap_monitoring_nr }}-DI-{{ item.sap_app_server_nr }}.yaml
+    owner: root
+    group: root
+    mode: '0600'
+  loop_control:
+    loop_var: item
+  loop: "{{ sap_app_server }}"
+  tags: prometheus-sap_host_exporter DI
+
+- name: Configure systemd-daemon to sap_host_exporter
+  ansible.builtin.template:
+    src: sap_host_exporter@.service.j2
+    dest: /etc/systemd/system/sap_host_exporter@.service
+    owner: root
+    group: root
+    mode: '0640'
+
+- name: Force systemd to reread configs
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Start daemon sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-HANA
+  ansible.builtin.systemd:
+    name: sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-HANA
+    state: started
+    enabled: true
+
+- name: Start daemon sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-ASCS
+  ansible.builtin.systemd:
+    name: sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-ASCS
+    state: started
+    enabled: true
+
+- name: Start daemon all sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-DI
+  ansible.builtin.systemd:
+    name: sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-DI-{{ daemon_item.sap_app_server_nr }}
+    state: started
+    enabled: true
+  loop_control:
+    loop_var: daemon_item
+  loop: "{{ sap_app_server }}"
+  tags: prometheus-sap_host_exporter DI

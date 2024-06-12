@@ -1,0 +1,17 @@
+---
+# The role common will activate SLES OS Repos and install the prometheus packages
+
+- name: Install netcat-openbsd
+  ansible.builtin.zypper:
+    name: netcat-openbsd
+    state: present
+  tags: netcat-openbsd
+
+- name: Activate SLES repo SLE-Module-SAP-Applications15-SP5-Updates & SLE-Module-Packagehub-Subpackages15-SP5-Pool
+  ansible.builtin.command: "{{ item_cmd }}"
+  loop:
+    - hostname
+    - /usr/sbin/SUSEConnect -p sle-module-sap-applications/15.5/x86_64
+    - /usr/sbin/SUSEConnect -p PackageHub/15.5/x86_64
+  loop_control:
+    loop_var: item_cmd
