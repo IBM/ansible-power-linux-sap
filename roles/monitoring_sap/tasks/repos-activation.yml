@@ -10,8 +10,7 @@
 - name: Activate SLES repo SLE-Module-SAP-Applications15-SP5-Updates & SLE-Module-Packagehub-Subpackages15-SP5-Pool
   ansible.builtin.command: "{{ item_cmd }}"
   loop:
-    - hostname
-    - /usr/sbin/SUSEConnect -p sle-module-sap-applications/15.5/x86_64
-    - /usr/sbin/SUSEConnect -p PackageHub/15.5/x86_64
+    - /usr/sbin/SUSEConnect -p sle-module-sap-applications/{{ ansible_distribution_version }}/x86_64
+    - /usr/sbin/SUSEConnect -p PackageHub/{{ ansible_distribution_version }}/x86_64
   loop_control:
     loop_var: item_cmd
