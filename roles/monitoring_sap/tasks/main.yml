@@ -1,37 +1,63 @@
 ---
-# This playbook checks, if SAP_HANA_CLIENT is insttalled  on the monitoring host 
-- name: Check existence of /usr/lib64/python3.6/site-packages/hdbcli/dbapi.py
-  stat:
-    path: /usr/lib64/python3.6/site-packages/hdbcli/dbapi.py
-  register: file_hana_driver
+# 2 blocks executing 2 different actions, controlled by the customer variable  sap_monitoring_action (add/delete)
 
-- name: If SAP HANA client does not exist then install SAP HANA client
-  ansible.builtin.include_tasks: "{{ task }}.yml"
-  loop_control:
-    loop_var: task
-  loop:
-    - repos-activation        
-    - sap-hana-client-installation
-  when: not file_hana_driver.stat.exists and sap_monitoring_action == "add"
-    
-- name: Add one SAP System to the monitoring configuration
-  ansible.builtin.include_tasks: "{{ task }}.yml"
-  loop_control:
-    loop_var: task
-  loop:
-    - port-connectivity-check
-    - sap-host-exporter-configuration
-    - hanadb-exporter-configuration
-    - prometheus-agent-configuration
+##########################################
+#  Block: Delete a SAP System from the monitoring configuration
+##########################################
+
+- name: Delete a SAP System from the monitoring configuration
+  when: sap_monitoring_action == "delete"
+  block:
+
+    - name: Check existence of the variables defined in ./vars/sample-monitoring-sap-parameters.yml
+      fail:
+        msg: 'variable {{ sap_monitoring_nr }} not defined in the file ./vars/sample-monitoring-sap-parameters.yml '
+      when: sap_monitoring_nr is not defined
+
+    - name: Delete one SAP System from the monitoring configuration
+      ansible.builtin.include_tasks: sap-monitoring-configuration-deletion.yml
+
+
+#######################################
+#  Block: Add a SAP System to the monitoring configuration
+#######################################
+
+- name: Add a SAP System to the monitoring configuration
   when: sap_monitoring_action == "add"
+  block:
 
-##  Delete a SAP System from monitoring
-- name: Check existence of the variables defined in roles/monitoring_sap/vars/main.yml
-  fail:
-    msg: 'variable {{ sap_monitoring_nr }} not defined in the file roles/monitoring_sap/vars/main.yml '
-  when: sap_monitoring_nr is not defined
+    - name: Check OS architecture
+      fail :
+        msg: 'Required architecture is x86_64'
+      when: ansible_architecture != "x86_64"
+      
+    - name: Check distribution version architecture
+      fail :
+        msg: 'Required minimum distribution version is 15.5'
+      when: ansible_distribution_version <= "15.4"
 
-  # - name: Delete one SAP System from the monitoring configuration
-  # ansible.builtin.include_tasks: sap-monitoring-configuration-deletion
-  # when: sap_monitoring_action == "delete"
+      # checks, if SAP_HANA_CLIENT DB-driver is installed on the monitoring host 
+    - name: Check existence of /usr/lib64/python3.6/site-packages/hdbcli/dbapi.py
+      stat:
+        path: /usr/lib64/python3.6/site-packages/hdbcli/dbapi.py
+      register: file_hana_driver
+
+    - name: If SAP HANA client does not exist then install SAP HANA client
+      ansible.builtin.include_tasks: "{{ task }}.yml"
+      loop_control:
+        loop_var: task
+      loop:
+        - repos-activation        
+        - sap-hana-client-installation
+      when: not file_hana_driver.stat.exists
+    
+    - name: Add one SAP System to the monitoring configuration
+      ansible.builtin.include_tasks: "{{ task }}.yml"
+      loop_control:
+        loop_var: task
+      loop:
+        - port-connectivity-check
+        - sap-host-exporter-configuration
+        - hanadb-exporter-configuration
+        - prometheus-agent-configuration
 

@@ -1,26 +1,13 @@
 ---
-- name:  sap monitoring configuration
+- name: SAP monitoring configuration
   hosts: 127.0.0.1
   connection: local
-  gather_facts: no
+  pre_tasks:
+    - name: Include variables
+      ansible.builtin.include_vars: ./vars/sample-monitoring-sap-parameters.yml
+  gather_facts: yes 
   tasks:
 
     - name: Execute the  role monitoring_sap
-      # include_role:
-      import_role:
-        name: { role: ../roles/monitoring_sap }
-      when: sap_monitoring_action == "add"
-
-      ##  Delete a SAP System from monitoring
-    - name: Check existence of the variables defined in roles/monitoring_sap/vars/main.yml
-      fail:
-        msg: 'variable {{ sap_monitoring_nr }} not defined in the file roles/monitoring_sap/vars/main.yml'
-      when: sap_monitoring_nr is not defined
-
-    - name: include role
       include_role:
         name: { role: ../roles/monitoring_sap }
-        tasks_from: sap-monitoring-configuration-deletion
-      when: sap_monitoring_action == "delete"
-
-      
