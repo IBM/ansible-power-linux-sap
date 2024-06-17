@@ -1,5 +1,5 @@
 ---
-# The role will install ths SAP-HANA-client and SAP hdbcli which is used by hanadb_exporter
+# The role will install the SAP-HANA-client and SAP hdbcli which is used by hanadb_exporter
 
 - name: Install python3-pip
   ansible.builtin.zypper:
@@ -7,7 +7,7 @@
     state: present
   tags: python3-pip
 
-- name: Chmod 750 on files in  /root/sap/ (expecting file in /root/sap)
+- name: Chmod 750 on files in /root/sap/ (expecting file in /root/sap)
   ansible.builtin.file:
     path: /root/sap/
     state: directory
