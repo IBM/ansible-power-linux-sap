@@ -1,9 +1,9 @@
 ---
 # 2 blocks executing 2 different actions, controlled by the customer variable  sap_monitoring_action (add/delete)
 
-##########################################
+#################################################################
 #  Block: Delete a SAP System from the monitoring configuration
-##########################################
+#################################################################
 
 - name: Delete a SAP System from the monitoring configuration
   when: sap_monitoring_action == "delete"
@@ -18,9 +18,9 @@
       ansible.builtin.include_tasks: sap-monitoring-configuration-deletion.yml
 
 
-#######################################
+############################################################
 #  Block: Add a SAP System to the monitoring configuration
-#######################################
+############################################################
 
 - name: Add a SAP System to the monitoring configuration
   when: sap_monitoring_action == "add"

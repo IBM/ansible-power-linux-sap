@@ -4,7 +4,7 @@
   ansible.builtin.debug:
       msg: "SAP monitoring configuration using the sap_monitoring_nr: {{ sap_monitoring_nr }}"
 
-- name: Check existence  of the SAP variables in the file sample-sap-monitoring-parameters.yml
+- name: Check existence of the SAP variables in the file sample-sap-monitoring-parameters.yml
   ansible.builtin.fail:
       msg: 'variable {{ sap_item }} is not defined in the file sample-sap-monitoring-parameters.yml'
   when: not sap_item
