@@ -14,7 +14,7 @@
       loop_var: sap_item
   loop:
       - "{{ sap_monitoring_nr }}"
-      - "{{ directory_sap_tools }}"
+      - "{{ sap_tools_directory }}"
       - "{{ ibmcloud_monitoring_instance_url }}"
       - "{{ ibmcloud_monitoring_authorization_credentials }}"
       - "{{ sap_hana_ip }}"
