@@ -1,5 +1,7 @@
 ---
 # 2 blocks executing 2 different actions, controlled by the customer variable  sap_monitoring_action (add/delete)
+# these Ansible tasks are NOT idempotent on purpose due to the actions: 
+# existing configurations are overwritten on purpose
 
 #################################################################
 #  Block: Delete a SAP System from the monitoring configuration
@@ -38,15 +40,8 @@
           - "In case you want to override the existing monitoring configuration, set the parameter <config_override> to true."
       when: prometheus_agent_yml.stat.exists and not config_override
 
-    - name: Check OS architecture
-      fail :
-        msg: 'Required architecture is x86_64'
-      when: ansible_architecture != "x86_64"
-      
-    - name: Check distribution version architecture
-      fail :
-        msg: 'Required minimum distribution version is 15.5'
-      when: ansible_distribution_version <= "15.4"
+    - name: Check requirements on OS and applications
+      ansible.builtin.include_tasks: check-requirements.yml
 
       # checks, if SAP_HANA_CLIENT DB-driver is installed on the monitoring host 
     - name: Check existence of /usr/lib64/python3.6/site-packages/hdbcli/dbapi.py

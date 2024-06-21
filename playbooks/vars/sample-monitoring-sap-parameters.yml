@@ -4,6 +4,7 @@
 sap_monitoring_action: add
 # sap_monitoring_action: delete
 config_override: false
+directory_sap_tools: /root/sap
 
 #monitoring meta parameter
 sap_monitoring_nr: "03"
