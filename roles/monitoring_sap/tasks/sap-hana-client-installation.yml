@@ -7,9 +7,9 @@
     state: present
   tags: python3-pip
 
-- name: Chmod 750 on files in directory_sap_tools: (expecting file in {{ directory_sap_tools }}:)
+- name: Chmod 750 on files in <sap_tools_directory>: (expecting file in {{ sap_tools_directory }}:)
   ansible.builtin.file:
-    path: "{{ directory_sap_tools }}"
+    path: "{{ sap_tools_directory }}"
     state: directory
     owner: root
     group: root
@@ -18,13 +18,13 @@
 
 - name: Extract the SAP HANA Client from the SAR-file with SAPCAR
   ansible.builtin.shell:
-    cmd: "{{ directory_sap_tools }}/SAPCAR_*.EXE -xvf {{ directory_sap_tools }}/IMDB_CLIENT*.SAR"
-    chdir: "{{ directory_sap_tools }}"
+    cmd: "{{ sap_tools_directory }}/SAPCAR_*.EXE -xvf {{ sap_tools_directory }}/IMDB_CLIENT*.SAR"
+    chdir: "{{ sap_tools_directory }}"
 
 - name: Executing hdbinst to install the SAP HANA client
   ansible.builtin.command:
-    cmd: "{{ directory_sap_tools }}/SAP_HANA_CLIENT/hdbinst --path=/usr/sap/hdbclient"
-    chdir: "{{ directory_sap_tools }}/SAP_HANA_CLIENT/"
+    cmd: "{{ sap_tools_directory }}/SAP_HANA_CLIENT/hdbinst --path=/usr/sap/hdbclient"
+    chdir: "{{ sap_tools_directory }}/SAP_HANA_CLIENT/"
 
 - name: Install the SAP HANA python driver
   ansible.builtin.shell: "pip install /usr/sap/hdbclient/hdbcli-*.tar.gz"
