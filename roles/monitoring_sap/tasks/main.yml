@@ -69,6 +69,7 @@
       loop_control:
         loop_var: task
       loop:
+        - check-requirements 
         - port-connectivity-check
         - sap-host-exporter-configuration
         - hanadb-exporter-configuration
