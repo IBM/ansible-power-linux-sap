@@ -7,7 +7,7 @@
     state: present
   tags: python3-pip
 
-- name: Chmod 750 on files in <sap_tools_directory>: (expecting file in {{ sap_tools_directory }}:)
+- name: Chmod 750 on files in <sap_tools_directory>. Expecting file in {{ sap_tools_directory }}
   ansible.builtin.file:
     path: "{{ sap_tools_directory }}"
     state: directory
