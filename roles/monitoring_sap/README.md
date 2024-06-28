@@ -77,8 +77,8 @@ Overview of the whole Setup:
 with the same security group as the SAP System.
 
 • copy the SAP-HANA-Client SAR-File and SAPCAR-XXX.exe to a subdirectory
-on the monitoring host
 
+on the monitoring host:
 * activate the PackageHub Reository
 * install the packages Ansible and git-core
 * clone the ansible-power-linux-sap reository from github
