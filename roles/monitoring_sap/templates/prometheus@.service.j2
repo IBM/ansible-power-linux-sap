@@ -1,0 +1,16 @@
+[Unit]
+Description=PrometheusAfter=network.target
+
+[Service]
+User=prometheus
+Group=prometheus
+Type=simple
+Restart=always
+ExecStart=/usr/bin/prometheus --config.file=/etc/prometheus/%i.yml --storage.agent.path=/opt/prometheus/%i --enable-feature=agent --web.listen-address=localhost:5%i01
+# --web.listen-address=localhost:5${{ sap_monitoring_nr }}01
+ExecReload=/bin/kill -HUP $MAINPID
+TimeoutStopSec=20s
+SendSIGKILL=no
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,9 @@
+# The listening TCP/IP address and port.
+address: "0.0.0.0"
+port: "5{{ sap_monitoring_nr }}05"
+log-level: "info"
+# sap_monitoring_solution_name: {{ sap_monitoring_solution_name }}
+# DI instance 01  (89 metrics dispatcher server + resources)
+sap-control-url: "http://{{ item.ip }}:{{ item.port }}"
+# HTTP Basic Authentication credentials for the SAPControl web service, e.g. <sid>adm user and password.
+# Make sure this file's permissions are set to 600.

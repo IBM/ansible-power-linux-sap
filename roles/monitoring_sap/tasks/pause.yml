@@ -1,0 +1,7 @@
+---
+# This role pauses the deployment until user input
+
+- name: Pause
+  ansible.builtin.pause:
+    prompt: "pause"
+    echo: false

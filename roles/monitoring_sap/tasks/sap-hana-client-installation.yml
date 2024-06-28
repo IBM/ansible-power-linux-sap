@@ -1,0 +1,35 @@
+---
+# The role will install the SAP-HANA-client and SAP hdbcli which is used by hanadb_exporter
+
+- name: Install python3-pip
+  ansible.builtin.zypper:
+    name: python3-pip
+    state: present
+  tags: python3-pip
+
+- name: Chmod 750 on files in <sap_tools_directory>. Expecting file in {{ sap_tools_directory }}
+  ansible.builtin.file:
+    path: "{{ sap_tools_directory }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0750'
+    recurse: true
+
+- name: Extract the SAP HANA Client from the SAR-file with SAPCAR
+  ansible.builtin.shell:
+    cmd: "{{ sap_tools_directory }}/SAPCAR_*.EXE -xvf {{ sap_tools_directory }}/IMDB_CLIENT*.SAR"
+    chdir: "{{ sap_tools_directory }}"
+
+- name: Executing hdbinst to install the SAP HANA client
+  ansible.builtin.command:
+    cmd: "{{ sap_tools_directory }}/SAP_HANA_CLIENT/hdbinst --path=/usr/sap/hdbclient"
+    chdir: "{{ sap_tools_directory }}/SAP_HANA_CLIENT/"
+
+- name: Install the SAP HANA python driver
+  ansible.builtin.shell: "pip install /usr/sap/hdbclient/hdbcli-*.tar.gz"
+
+- name: Allow execution of hdbcli to non-root users
+  ansible.builtin.shell:
+    cmd: "chmod -R a+rx /usr/lib64/python3.*/site-packages/hdbcli/*"
+    #warn: false

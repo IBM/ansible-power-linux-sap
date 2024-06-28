@@ -1,0 +1,29 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 20s
+
+remote_write:
+- url: "{{ ibmcloud_monitoring_instance_url }}"
+  authorization:
+    credentials: "{{ ibmcloud_monitoring_authorization_credentials }}"
+  write_relabel_configs:
+    - target_label: instance
+      replacement: 'SAP-{{ sap_monitoring_nr }}-{{ sap_monitoring_solution_name }}'
+      # sap_monitoring_solution_name: {{ sap_monitoring_solution_name }}
+
+scrape_configs:
+  - job_name: "hanadb_exporter"
+    static_configs:
+       - targets: ['localhost:5{{ sap_monitoring_nr }}02']
+    relabel_configs:
+      - target_label: domain
+        replacement: 'SAP'
+
+  - job_name: "sap_host_exporter"
+    static_configs:
+       - targets: ['localhost:5{{ sap_monitoring_nr }}03','localhost:5{{ sap_monitoring_nr }}04','localhost:5{{ sap_monitoring_nr }}05']
+    # 05 – n : as many as existing Application server
+
+    relabel_configs:
+      - target_label: domain
+        replacement: 'SAP'
