@@ -64,6 +64,8 @@ Deleting a SAP monitoring configuration of only the <sap_monitoring_nr> in the c
 
 ## Quickstart
 
+Overview of the whole Setup:
+
 • Create an IBM Cloud Monitoring instance within the same region as the SAP System.
 
 • Create HANA-DB-User with ReadOnly premissions
@@ -167,7 +169,7 @@ to monitor SAP Systems running on IBM Cloud Power Workspace.
 HA SAP Systems are not supported yet.
 
 The Ansible role does not cover the creation of a IBM Cloud Monitoring Instance,
-nor the changes on the SAP Systems. 
+nor the changes on the SAP Systems.
 
 For each SAP System this Ansible playbook has to be executed with a different
 configuration file playbooks/vars/sample-sap-monitoring-parameters.yml that determines the SAP host parameters, IBM monitoring instance and action parameters.
@@ -203,7 +205,7 @@ A successful configuration will forward the SAP metrics to your IBM monitoring i
 where you can add Dashboards for Views on HANA DB and SAP Services.
 # SAP Monitoring in detail
 
-## 1. Create a IBM Cloud Monitoring Instance with your IBM IAM account
+## 1. Create an IBM Cloud Monitoring Instance with your IBM IAM account
 
 One IBM Cloud monitoring instance collects and supplies visualized SAP monitoring Dashboards
 
@@ -217,7 +219,7 @@ In IBM Cloud Web UI navigate to
 
 Observability/Monitoring: click the button ‘create +’
 
-(as described in IBM Cloud Doku [](https://cloud.ibm.com/docs/monitoring?topic=monitoring-getting-started#getting-started-step2)):
+(as described in  [IBM Cloud Doku](https://cloud.ibm.com/docs/monitoring?topic=monitoring-getting-started#getting-started-step2)):
 
 - Select location: the monitoring instance must be in the same region as the monitoring host
 - Select the resource group
@@ -230,8 +232,7 @@ Observability/Monitoring: click the button ‘create +’
 
 Enabled VRF and service endpoints are the default settings in the IAM account.
 In case creating a monitoring instance is impossible, enable these setting in your IAM account,
-which is described in the IBM cloud document
-[](https://cloud.ibm.com/docs/account?topic=account-vrf-service-endpoint&interface=ui)
+which is described in the [IBM cloud document](https://cloud.ibm.com/docs/account?topic=account-vrf-service-endpoint&interface=ui).
 
 Only the owner of the IAM account can change these settings, not an authorized member of
 the IAM account.
@@ -260,8 +261,7 @@ add ‘ingest.prws.private.’ to the url as private ingestion endpoint
 `https://ingest.prws.private.<REGIONtag>.monitoring.cloud.ibm.com/prometheus/remote/write`
 use whole URL as value of the variable <ibmcloud_monitoring_instance_url> in the monitoring configuration.
 
-All private ingestion endpoints per region are listed here
-[](https://cloud.ibm.com/docs/monitoring?topic=monitoring-prometheus_remote_write)
+All private ingestion endpoints per region are listed in [IBM Cloud Document](https://cloud.ibm.com/docs/monitoring?topic=monitoring-prometheus_remote_write)
 
 Use the credentials as value of the variable <ibmcloud_monitoring_authorization_credentials>.
 
@@ -381,15 +381,14 @@ Create a new or use an existing VPC VirtualServer as monitoring host
 with the same security group as the SAP System.
 
 Click on  IBM Cloud catalog: search “Virtual server for VPC “, click on the suggested Virtual server for VPC"
-as described in IBM Cloud Docu [](https://cloud.ibm.com/docs/vpc?topic=vpc-creating-virtual-
-servers&interface=ui)
+as described in this [IBM Cloud Document](https://cloud.ibm.com/docs/vpc?topic=vpc-creating-virtual-servers&interface=ui)
 
 Choose these settings for the new host:
 
 - Location: select the same region in which the existing SAP System is running
 - As OS image select the SLES image "ibm-sles-15-5-amd64-sap-applications-2"
 - As Profile choose the smallest available sizing (2 cores).
-- Add your matching SSH keys as described in IBM Cloud Docu [](https://cloud.ibm.com/docs/vpc?topic=vpc-managing-ssh-keys&interface=ui)
+- Add your matching SSH keys as described in this [IBM Cloud Document](https://cloud.ibm.com/docs/vpc?topic=vpc-managing-ssh-keys&interface=ui)
 - use a network with the same security group as the SAP System.
   Manage the local network of the host as described in IBM Cloud Docu
   [](https://cloud.ibm.com/docs/vpc?topic=vpc-using-instance-vnics&interface=ui)
@@ -430,8 +429,6 @@ Details about the variables are lsited in the Quickstart section.
 Execute the playbook:
 
 `ansible-playbook --connection=local -i "localhost," playbooks/sample-monitoring-sap.yml `
-
-
 
 You may keep track of these <sap_monitoring_nr> and corresponding SAP Systems,
 on the command line it is always possible to check how many configurations are running by
@@ -609,24 +606,29 @@ curl http://<${IP_Monitoring_Host}>:5<sap_monitoring_nr>06/metrics
 ```
 
 8. List the SAPstart services and OS user of the process
+
 ```
 root>ps aux | grep sapstartsrv
 # show SapStartServices DI and ASCS on the application server, HANA on the HANA-DB host
 ```
 
 9. List Instance and Instance-Nr (on Apps Server and HANA-DB host)
+
 ```
 root>/usr/sap/hostctrl/exe/lssap
 # shows: ==> SID, Nr,Instance, SAPLOCALHOST,Version,EXECUTABLE
 ```
 
 10. List HTTP/S-Port of InstanceNr
+
 ```
 su - <OS-user of SAPstartsrv>
 sapcontrol -nr <instance_nr> -function GetSystemInstanceList
 # shows ==> hostname, instanceNr, httpPort, httpsPort, startPriority,features, disptatus
 ```
+
 11. Determine SQL-Ports of SystemDB and TenantDB
+
 ```
 root@HANADB>su - <HANADB-adm>
 hdbsql -i <Instance_nr> -d SYSTEMDB -u SYSTEM -p <PASSWORD>
@@ -635,6 +637,7 @@ SELECT * FROM SYS_DATABASES.M_SERVICES
 ```
 
 12. Status of all Hana-DBs
+
 ```
 SELECT * FROM SYS.M_DATABASES
 # shows ==>DATABASE_NAME,DESCRIPTION,ACTIVE_STATUS,ACTIVE_STATUS_DETAILS,
