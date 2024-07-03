@@ -1,13 +1,13 @@
 # Sections
 
-1. [Introduction](README.md#1. Introduction)
+1. [Introduction](README.md#1-Introduction)
 2. [Role Description](README.md#2. Role description)
 3. [Configuration variables](README.md#3. Edit parameters in the monitoring configuration file)
 4. [Installation Guide](README.md#4.Installation Guide)
 5. [Gather SAP parameters](README.md#5. Gather SAP parameters)
 6. [Troubleshooting](README.md#6. Troubleshooting monitoring)
 
-#1. Introduction
+#1-Introduction
 
 This ansible role is configuring or deleting one SAP monitoring on a SLES IBM Cloud Virtual Server.
 A maximum of 99 SAP monitoring configurations can be deployed targeting 99 different SAP Systems located in the same security group. Monitoring HA SAP Systems is not covered in this release.
