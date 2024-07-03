@@ -1,20 +1,20 @@
 # Sections
 
 1. [Introduction](README.md#1-Introduction)
-2. [Role Description](README.md#2. Role description)
-3. [Configuration variables](README.md#3. Edit parameters in the monitoring configuration file)
-4. [Installation Guide](README.md#4.Installation Guide)
-5. [Gather SAP parameters](README.md#5. Gather SAP parameters)
-6. [Troubleshooting](README.md#6. Troubleshooting monitoring)
+2. [Role Description](README.md#2-Role description)
+3. [Configuration variables](README.md#3-Edit parameters in the monitoring configuration file)
+4. [Installation Guide](README.md#4-Installation Guide)
+5. [Gather SAP parameters](README.md#5-Gather SAP parameters)
+6. [Troubleshooting](README.md#6-Troubleshooting monitoring)
 
 #1-Introduction
 
 This ansible role is configuring or deleting one SAP monitoring on a SLES IBM Cloud Virtual Server.
 A maximum of 99 SAP monitoring configurations can be deployed targeting 99 different SAP Systems located in the same security group. Monitoring HA SAP Systems is not covered in this release.
 Each deployment has to use a different <sap_monitoring_nr> in the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml`
-The Ansible role is only a part of the monitoring workflow model as described in [docs/Introduction-details.md](docs/Introduction-details).
+The Ansible role is only a part of the monitoring workflow model as described in [docs/Introduction-details.md](docs/Introduction-details.md).
 
-#2. Role description
+#2-Role description
 
 This role requires some prerequisites that are not covered by the Ansible module:
 A IBM Cloud monitoring instance, SAP DB user with ReadOnly permissions, VSI host with a specific SLES SAP applications image, the SAP-HANA-Client as SAR-file and SAPCAR utility in the host directory <sap_tools_directory>
@@ -34,7 +34,7 @@ Adding a SAP monitoring configuration includes:
 Deleting a SAP monitoring configuration requires only the <sap_monitoring_nr> in the configuration file to execute:
 - Stopping and disabling all daemons of prometheus-agent, hanadb-exporter and all sap-host-exporters
 - Deleting all configuration files of the prometheus-agent, hanadb-exporter and all sap-host-exporters
-# 3. Edit parameters in the monitoring configuration file
+#3-Edit parameters in the monitoring configuration file
 
 Edit the configuration file` playbooks/vars/sample-sap-monitoring-parameters.yml`
 Any additional monitoring configuration will be added with executing the same command but different variables:
@@ -100,25 +100,25 @@ or to protect from overwriting (<config_override> set to `false`).
 
 Adding a monitoring configuration requires all SAP parameters,
 deleting a SAP monitoring configuration only requires the <sap_monitoring_nr>, all other parameters will not be checked.
-# 4.Installation Guide
+#4-Installation Guide
 
 ## 4.1. Prerequisites
 
 #### 4.1.1 Create an IBM Cloud Monitoring Instance with your IBM IAM account in the same region as the monitoring host and extract url + credentials
 
-as described in the file [docs/HOWTO-create-IBM-Cloud-monitoring-instance.md](/docs/HOWTO-create-IBM-Cloud-monitoring-instance)
+as described in the file [docs/HOWTO-create-IBM-Cloud-monitoring-instance.md](/docs/HOWTO-create-IBM-Cloud-monitoring-instance.md)
 
 ### 4.1.2 Changes on the SAP System:
 
 - Create a SAP DB user with ReadOnly permissions
   as instructed in the file docs/HOWTO-create-HANA-DB-User-ReadOnly-permissions.md
 - Check the SAPstart services on the HANA DB host and all Application Server hosts
-  and change according to the file [docs/HOWTO-configure-SAP-system-services.md](/docs/HOWTO-configure-SAP-system-services)
+  and change according to the file [docs/HOWTO-configure-SAP-system-services.md](/docs/HOWTO-configure-SAP-system-services.md)
   to allow HTTP-queries without user/passwords
 
 ### 4.1.3 Create or use an existing IBM VPC VirtualServer as monitoring host
 
-as described in [docs/HOWTO-create-IBM-Cloud-monitoring-instance.md](/docs/HOWTO-create-IBM-Cloud-monitoring-instance)
+as described in [docs/HOWTO-create-IBM-Cloud-monitoring-instance.md](/docs/HOWTO-create-IBM-Cloud-monitoring-instance.md)
 
 ## 4.2 Installation steps on the monitoring host 
 (the IBM Cloud VSI Virtual Server):
@@ -151,7 +151,7 @@ cd ansible-power-linux-sap
 
 ### 4.2.6 edit the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml` with your variables as described in chapter 2
 
-This document  [docs/HOWTO-gather-SAP-parameters.md](docs/HOWTO-gather-SAP-parameters) describes how to gather these SAP parameters.
+This document  [docs/HOWTO-gather-SAP-parameters.md](docs/HOWTO-gather-SAP-parameters.md) describes how to gather these SAP parameters.
 
 
 ### 4.2.7 execute the Ansible playbook
@@ -183,16 +183,16 @@ ansible-playbook --connection=local -i "localhost," playbooks/sample-monitoring-
 
 ### 4.3.1 Create, edit and duplicate SAP Dashboards in the IBM Cloud Monitoring Instance to visualize SAP metrics
 
-explained in the file [docs/HOWTO-SAP-Dashboards.md](/docs/HOWTO-SAP-Dashboards)
+explained in the file [docs/HOWTO-SAP-Dashboards.md](/docs/HOWTO-SAP-Dashboards.md)
 # 5. Gather SAP parameters
 
 Each monitoring configuration requires the parameters of your targeted SAP System
 
 in the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml`
 
-This document  [docs/HOWTO-gather-SAP-parameters.md](docs/HOWTO-gather-SAP-parameters) describes how to gather these SAP parameters.
+This document  [docs/HOWTO-gather-SAP-parameters.md](docs/HOWTO-gather-SAP-parameters.md) describes how to gather these SAP parameters.
 
 # 6. Troubleshooting monitoring
 
 The Ansible run may fail.
-This document [docs/troubleshooting-monitoring.md](docs/troubleshooting-monitoring) is listing several reasons for failing and how to scrutinize the causes.
+This document [docs/troubleshooting-monitoring.md](docs/troubleshooting-monitoring.md) is listing several reasons for failing and how to scrutinize the causes.
