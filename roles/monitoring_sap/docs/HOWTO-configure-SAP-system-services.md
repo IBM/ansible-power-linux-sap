@@ -41,7 +41,7 @@ edit the file that does not list DEFAULT.PFL or secinfo
 
 Add these lines:
 (The config text must be put in one single line or change the line if an entry already exists)
-“service/protectedwebmethods”) after the SETENV parameters (the line service is one line only):
+“'service/protectedwebmethods'” after the SETENV parameters (the line service is one line only):
 
 ```
 # IBM SAP monitoring

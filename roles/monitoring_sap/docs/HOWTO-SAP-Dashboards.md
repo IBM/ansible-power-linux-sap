@@ -18,7 +18,7 @@ as the dashboards can be edited to focus on specific SAP Systems only.
 
 Even on the original two Dashboards you may change the scope to make your SAP System visible.
 To select the SAP System choose “instance in” on the top of the Dashboard.
-The SAP instance is definded by the <sap_monitoring_nr> and the optional <sap_monitoring_solution_name>.
+The SAP instance is defined by the <sap_monitoring_nr> and the optional <sap_monitoring_solution_name>.
 
 To  verify specific metrics have been collected by the IBM Cloud monitoring instance check monitoring instance navigation panel "Explore":
 The SAP metrics are visible in the entity scope "SAP".
@@ -26,7 +26,7 @@ If this scope is not set, select the scope via "Grouping scope" + "domain in SAP
 Extend the filters "hanadb" to check HANA-DB metrics,
 extend the filter "sap" to check sap service metrics.
 
-The details of these metrics show the instance when "mouseover" one selcted metric  : the sap_monitoring_nr or sap_solution name, instance_nr, instance_hostname and the prometheus exporter
+The details of these metrics show the instance when "mouseover" one selected metric: the sap_monitoring_nr or sap_solution name, instance_nr, instance_hostname and the prometheus exporter
 
 ### Duplicate Dashboards
 
