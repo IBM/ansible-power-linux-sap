@@ -9,53 +9,50 @@
 
 # 1-Introduction
 
-This ansible role is configuring or deleting one SAP monitoring on a SLES IBM Cloud Virtual Server.
-A maximum of 99 SAP monitoring configurations can be deployed targeting 99 different SAP Systems located in the same security group. Monitoring HA SAP Systems is not covered in this release.
-Each deployment has to use a different <sap_monitoring_nr> in the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml`
+This ansible role is configuring or deleting one SAP monitoring on a SLES IBM Cloud Virtual Server. <br>
+A maximum of 99 SAP monitoring configurations can be deployed targeting 99 different SAP Systems located in the same security group. Monitoring HA SAP Systems is not covered in this release. <br>
+Each deployment has to use a different <sap_monitoring_nr> in the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml` <br>
 The Ansible role is only a part of the monitoring workflow model as described in [docs/Introduction-details.md](docs/Introduction-details.md).
 
 # 2-Role_description
 
-This role requires some prerequisites that are not covered by the Ansible module:
+This role requires some prerequisites that are not covered by the Ansible module: <br>
 A IBM Cloud monitoring instance, SAP DB user with ReadOnly permissions, VSI host with a specific SLES SAP applications image, the SAP-HANA-Client as SAR-file and SAPCAR utility in the host directory <sap_tools_directory>
 
 This role performs the following tasks:
-
 - Deleting or adding the monitoring configuration for one specific SAP System
 
 Adding a SAP monitoring configuration includes:
-
 - Check of existing monitoring configurations with the same <sap_monitoring_nr>
 - Installing the SAP HANA client and python3-driver if not already present
 - Installing and configuring the prometheus-sap_host_exporter to collect metrics from SAP services
 - Installing and configuring the prometheus-hanadb_exporter using the SAP HANA client tool hdbuserstore
   to collect metrics from HANA DB
 - Installing and configuring the golang-github-prometheus-prometheus to forward metrics to the IBM Cloud monitoring instance
-- enabling and activating systemd daemons to all listed prometheus exporters and prometheus agent
+- Enabling and activating systemd daemons to all listed prometheus exporters and prometheus agent
 
 Deleting a SAP monitoring configuration requires only the <sap_monitoring_nr> in the configuration file to execute:
-
 - Stopping and disabling all daemons of prometheus-agent, hanadb-exporter and all sap-host-exporters
 - Deleting all configuration files of the prometheus-agent, hanadb-exporter and all sap-host-exporters
 # 3-Edit_parameters_in_the_monitoring_configuration_file
 
-Edit the configuration file` playbooks/vars/sample-sap-monitoring-parameters.yml`
+Edit the configuration file `playbooks/vars/sample-sap-monitoring-parameters.yml`.  <br>
 Any additional monitoring configuration will be added with executing the same command but different variables:
 
 
 | VARIABLE NAME                                   | example value                                                                       | comment                                                                                                                                    |
 | ----------------------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-|                                                 |                                                                                     |                                                                                                                                            |
+|                                                 |                                |                              |
 | # variable group: monitoring meta parameters    |                                                                                     |                                                                                                                                            |
-| sap_monitoring_nr                               | "03"                                                                                | quotation is required.<br>Two-digit incremental number, starting with 01 upto 99. <br>This is not a existing SAP ID, but a pure virtual NR |
+| sap_monitoring_nr                               | "03"                                                                                | Quotation is required.<br>Two-digit incremental number, starting with 01 up to 99. <br>This is not a existing SAP ID, but a pure virtual NR |
 | sap_monitoring_solution_name                    | "PM2 6.1 (S/4 2022)"                                                                | Optional. If set, quotation is required.<br>A virtual arbitrary short name to recognize your SAP System                                    |
-| sap_monitoring_action                           | add  OR delete                                                                     | this controls the Ansbile action to add or delete a configuration                                                                          |
-| config_override                                 | false OR true                                                                       | boolean. default: false.<br>if true, an existing configuration will be overwritten                                                         |
-| sap_tools_directory                             | /root/sap                                                                           | full directory path, create and copy SAP-HANA-Client into this directory                                                                   |
+| sap_monitoring_action                           | add  OR delete                                                                     | This controls the Ansible action to add or delete a configuration                                                                          |
+| config_override                                 | false OR true                                                                       | Boolean. Default: false.<br>if true, an existing configuration will be overwritten                                                         |
+| sap_tools_directory                             | /root/sap                                                                           | Full directory path, create and copy SAP-HANA-Client into this directory                                                                   |
 |                                                 |                                                                                     |                                                                                                                                            |
 | # variable group: IBM cloud parameters          |                                                                                     |                                                                                                                                            |
 | ibmcloud_monitoring_instance_url                | https://ingest.prws.private.br-sao.monitoring.cloud.ibm.com/prometheus/remote/write | URL of the IBM Cloud monitoring instance,<br> the keyword private is added to the URL,used in prometheus agent configuration               |
-| bmcloud_monitoring_authorization_credentials    | a123-b123-c123-12345678ab1232                                                       | credentials to access the IBM Cloud monitoring instance                                                                                    |
+| ibmcloud_monitoring_authorization_credentials    | a123-b123-c123-12345678ab1232                                                       | Credentials to access the IBM Cloud monitoring instance                                                                                    |
 |                                                 |                                                                                     |                                                                                                                                            |
 | # variable group: hana parameters               |                                                                                     |                                                                                                                                            |
 | sap_hana_ip                                     | 10.0.0.2                                                                            | IPv4 address of HANA-DB Server                                                                                                             |
@@ -67,7 +64,7 @@ Any additional monitoring configuration will be added with executing the same co
 | # variable group: application server parameters |                                                                                     |                                                                                                                                            |
 | sap_ascs_ip                                     | 10.0.0.3                                                                            | IPv4 address of first (primary) Application Server                                                                                         |
 | sap_ascs_http_port                              | 50013                                                                               | HTTP Port of SAP service ASCS on Application Server                                                                                        |
-| sap_app_server                                  | example:see the following code box                                                  | DI-server as a object list with incremental number, IPV4 and Port                                                                          |
+| sap_app_server                                  | Example:see the following code box                                                  | DI-server as a object list with incremental number, IPV4 and Port                                                                          |
 
 ```
 sap_app_server:
@@ -95,19 +92,19 @@ These Variables will be used by Ansible on the monitoring host in configuration 
 | 5<sap_monitoring_nr>06              | sap_host_exporter_DI_02 (second APPS Server)         |
 | 5<sap_monitoring_nr>07              | sap_host_exporter_DI_03 (third APPS Server)          |
 
-All parameter variables are in one configuration file playbooks/vars/sample-sap-monitoring-parameters.yml.
-You can add or delete a SAP monitoring configuration by setting the variable sap_monitoring_action to  "add" or "delete".
+All parameter variables are in one configuration file `playbooks/vars/sample-sap-monitoring-parameters.yml`. <br>
+You can add or delete a SAP monitoring configuration by setting the variable sap_monitoring_action to  "`add`" or "`delete`".
 
 The variable <config_override> controls whether to overwrite existing configurations with the same <sap_monitoring_nr>  (<config_override> set to `true`)
 or to protect from overwriting (<config_override> set to `false`).
 
-Adding a monitoring configuration requires all SAP parameters,
+Adding a monitoring configuration requires all SAP parameters, <br>
 deleting a SAP monitoring configuration only requires the <sap_monitoring_nr>, all other parameters will not be checked.
 # 4-Installation_Guide
 
 ## 4.1. Prerequisites
 
-#### 4.1.1 Create an IBM Cloud Monitoring Instance with your IBM IAM account in the same region as the monitoring host and extract url + credentials
+#### 4.1.1 Create an IBM Cloud Monitoring Instance with your IBM IAM account in the same region as the monitoring host and extract URL + Credentials
 
 as described in the file [docs/HOWTO-create-IBM-Cloud-monitoring-instance.md](/docs/HOWTO-create-IBM-Cloud-monitoring-instance.md)
 
@@ -191,11 +188,11 @@ explained in the file [docs/HOWTO-SAP-Dashboards.md](/docs/HOWTO-SAP-Dashboards.
 
 Each monitoring configuration requires the parameters of your targeted SAP System
 
-in the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml`
+in the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml`. <br>
 
 This document  [docs/HOWTO-gather-SAP-parameters.md](docs/HOWTO-gather-SAP-parameters.md) describes how to gather these SAP parameters.
 
 # 6-Troubleshooting_monitoring
 
-The Ansible run may fail.
+The Ansible run may fail. <br>
 This document [docs/troubleshooting-monitoring.md](docs/troubleshooting-monitoring.md) is listing several reasons for failing and how to scrutinize the causes.
