@@ -192,7 +192,7 @@ in the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml`.
 
 This document  [docs/HOWTO-gather-SAP-parameters.md](docs/HOWTO-gather-SAP-parameters.md) describes how to gather these SAP parameters.
 
-# 6-Troubleshooting_monitoring
+# 6. Troubleshooting monitoring
 
 The Ansible run may fail. <br>
 This document [docs/troubleshooting-monitoring.md](docs/troubleshooting-monitoring.md) is listing several reasons for failing and how to scrutinize the causes.
