@@ -1,13 +1,13 @@
 # Sections
 
-1. [Introduction](README.md#1-Introduction)
+1. [Introduction](README.md#1)
 2. [Role Description](README.md#2-Role_description)
-3. [Configuration variables](README.md#3-Edit_parameters_in_the_monitoring_configuration_file)
+3. [Configuration variables](README.md#3)
 4. [Installation Guide](README.md#4-Installation_Guide)
 5. [Gather SAP parameters](README.md#5-Gather_SAP_parameters)
 6. [Troubleshooting](README.md#6-Troubleshooting_monitoring)
 
-# 1-Introduction
+# 1. Introduction {#1}
 
 This ansible role is configuring or deleting one SAP monitoring on a SLES IBM Cloud Virtual Server. <br>
 A maximum of 99 SAP monitoring configurations can be deployed targeting 99 different SAP Systems located in the same security group. Monitoring HA SAP Systems is not covered in this release. <br>
@@ -34,7 +34,7 @@ Adding a SAP monitoring configuration includes:
 Deleting a SAP monitoring configuration requires only the <sap_monitoring_nr> in the configuration file to execute:
 - Stopping and disabling all daemons of prometheus-agent, hanadb-exporter and all sap-host-exporters
 - Deleting all configuration files of the prometheus-agent, hanadb-exporter and all sap-host-exporters
-# 3-Edit_parameters_in_the_monitoring_configuration_file
+# 3. Edit parameters_in_the_monitoring_configuration_file {#3}
 
 Edit the configuration file `playbooks/vars/sample-sap-monitoring-parameters.yml`.  <br>
 Any additional monitoring configuration will be added with executing the same command but different variables:
