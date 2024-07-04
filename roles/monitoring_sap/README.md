@@ -1,20 +1,20 @@
 # Sections
 
 1. [Introduction](README.md#1)
-2. [Role Description](README.md#2-Role_description)
+2. [Role Description](README.md#role)
 3. [Configuration variables](README.md#3)
 4. [Installation Guide](README.md#4-Installation_Guide)
 5. [Gather SAP parameters](README.md#5-Gather_SAP_parameters)
 6. [Troubleshooting](README.md#6-Troubleshooting_monitoring)
 
-# 1. Introduction {#1}
+# 1. Introduction {#intro}
 
 This ansible role is configuring or deleting one SAP monitoring on a SLES IBM Cloud Virtual Server. <br>
 A maximum of 99 SAP monitoring configurations can be deployed targeting 99 different SAP Systems located in the same security group. Monitoring HA SAP Systems is not covered in this release. <br>
 Each deployment has to use a different <sap_monitoring_nr> in the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml` <br>
 The Ansible role is only a part of the monitoring workflow model as described in [docs/Introduction-details.md](docs/Introduction-details.md).
 
-# 2-Role_description
+# 2-Role_description {#role}
 
 This role requires some prerequisites that are not covered by the Ansible module: <br>
 A IBM Cloud monitoring instance, SAP DB user with ReadOnly permissions, VSI host with a specific SLES SAP applications image, the SAP-HANA-Client as SAR-file and SAPCAR utility in the host directory <sap_tools_directory>
