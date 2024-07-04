@@ -1,20 +1,20 @@
 # Sections
 
 1. [Introduction](README.md#1-Introduction)
-2. [Role Description](README.md#2-Role_description)
-3. [Configuration variables](README.md#3-Edit_parameters_in_the_monitoring_configuration_file)
-4. [Installation Guide](README.md#4-Installation_Guide)
-5. [Gather SAP parameters](README.md#5-Gather_SAP_parameters)
-6. [Troubleshooting](README.md#6-Troubleshooting_monitoring)
+2. [Role Description](README.md#2-Role-description)
+3. [Configuration variables](README.md#3-Edit-parameters-in-the-monitoring-configuration-file)
+4. [Installation Guide](README.md#4-Installation-Guide)
+5. [Gather SAP parameters](README.md#5-Gather-SAP-parameters)
+6. [Troubleshooting](README.md#6-Troubleshooting-monitoring)
 
-# 1-Introduction
+# 1. Introduction
 
 This ansible role is configuring or deleting one SAP monitoring on a SLES IBM Cloud Virtual Server. <br>
 A maximum of 99 SAP monitoring configurations can be deployed targeting 99 different SAP Systems located in the same security group. Monitoring HA SAP Systems is not covered in this release. <br>
 Each deployment has to use a different <sap_monitoring_nr> in the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml` <br>
 The Ansible role is only a part of the monitoring workflow model as described in [docs/Introduction-details.md](docs/Introduction-details.md).
 
-# 2-Role_description
+# 2. Role Description
 
 This role requires some prerequisites that are not covered by the Ansible module: <br>
 A IBM Cloud monitoring instance, SAP DB user with ReadOnly permissions, VSI host with a specific SLES SAP applications image, the SAP-HANA-Client as SAR-file and SAPCAR utility in the host directory <sap_tools_directory>
@@ -34,7 +34,7 @@ Adding a SAP monitoring configuration includes:
 Deleting a SAP monitoring configuration requires only the <sap_monitoring_nr> in the configuration file to execute:
 - Stopping and disabling all daemons of prometheus-agent, hanadb-exporter and all sap-host-exporters
 - Deleting all configuration files of the prometheus-agent, hanadb-exporter and all sap-host-exporters
-# 3-Edit_parameters_in_the_monitoring_configuration_file
+# 3. Edit parameters in the monitoring configuration file
 
 Edit the configuration file `playbooks/vars/sample-sap-monitoring-parameters.yml`.  <br>
 Any additional monitoring configuration will be added with executing the same command but different variables:
@@ -100,7 +100,7 @@ or to protect from overwriting (<config_override> set to `false`).
 
 Adding a monitoring configuration requires all SAP parameters, <br>
 deleting a SAP monitoring configuration only requires the <sap_monitoring_nr>, all other parameters will not be checked.
-# 4-Installation_Guide
+# 4. Installation Guide
 
 ## 4.1. Prerequisites
 
@@ -184,7 +184,7 @@ ansible-playbook --connection=local -i "localhost," playbooks/sample-monitoring-
 ### 4.3.1 Create, edit and duplicate SAP Dashboards in the IBM Cloud Monitoring Instance to visualize SAP metrics
 
 explained in the file [docs/HOWTO-SAP-Dashboards.md](/docs/HOWTO-SAP-Dashboards.md)
-# 5-Gather_SAP_parameters
+# 5. Gather SAP parameters
 
 Each monitoring configuration requires the parameters of your targeted SAP System
 
