@@ -104,21 +104,21 @@ deleting a SAP monitoring configuration only requires the <sap_monitoring_nr>, a
 
 ## 4.1. Prerequisites
 
-#### 4.1.1 Create an IBM Cloud Monitoring Instance with your IBM IAM account in the same region as the monitoring host and extract URL + Credentials
+#### 4.1.1 Create an IBM Cloud Monitoring Instance with your IBM IAM account in the same region as the monitoring host and extract URL and Credentials
 
-as described in the file [docs/HOWTO-create-IBM-Cloud-monitoring-instance.md](/docs/HOWTO-create-IBM-Cloud-monitoring-instance.md)
+as described in the file [docs/HOWTO-create-IBM-Cloud-monitoring-instance.md](docs/HOWTO-create-IBM-Cloud-monitoring-instance.md)
 
 ### 4.1.2 Changes on the SAP System:
 
 - Create a SAP DB user with ReadOnly permissions
   as instructed in the file docs/HOWTO-create-HANA-DB-User-ReadOnly-permissions.md
 - Check the SAPstart services on the HANA DB host and all Application Server hosts
-  and change according to the file [docs/HOWTO-configure-SAP-system-services.md](/docs/HOWTO-configure-SAP-system-services.md)
+  and change according to the file [docs/HOWTO-configure-SAP-system-services.md](docs/HOWTO-configure-SAP-system-services.md)
   to allow HTTP-queries without user/passwords
 
 ### 4.1.3 Create or use an existing IBM VPC VirtualServer as monitoring host
 
-as described in [docs/HOWTO-create-IBM-Cloud-monitoring-instance.md](/docs/HOWTO-create-IBM-Cloud-monitoring-instance.md)
+as described in [docs/HOWTO-create-IBM-Cloud-VPC-VirtualServer.md](docs/HOWTO-create-IBM-Cloud-VPC-VirtualServer.md)
 
 ## 4.2 Installation steps on the monitoring host
 
@@ -183,7 +183,7 @@ ansible-playbook --connection=local -i "localhost," playbooks/sample-monitoring-
 
 ### 4.3.1 Create, edit and duplicate SAP Dashboards in the IBM Cloud Monitoring Instance to visualize SAP metrics
 
-explained in the file [docs/HOWTO-SAP-Dashboards.md](/docs/HOWTO-SAP-Dashboards.md)
+explained in the file [docs/HOWTO-SAP-Dashboards.md](docs/HOWTO-SAP-Dashboards.md)
 # 5. Gather SAP parameters
 
 Each monitoring configuration requires the parameters of your targeted SAP System
