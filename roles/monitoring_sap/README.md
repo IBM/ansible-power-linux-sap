@@ -2,28 +2,28 @@
 
 1. [Introduction](README.md#1-Introduction)
 2. [Role Description](README.md#2-Role-description)
-3. [Configuration variables](README.md#3-Edit-parameters-in-the-monitoring-configuration-file)
+3. [Configuration Variables](README.md#3-Edit-parameters-in-the-monitoring-configuration-file)
 4. [Installation Guide](README.md#4-Installation-Guide)
-5. [Gather SAP parameters](README.md#5-Gather-SAP-parameters)
+5. [Gather SAP Parameters](README.md#5-Gather-SAP-parameters)
 6. [Troubleshooting](README.md#6-Troubleshooting-monitoring)
 
 # 1. Introduction
 
-This ansible role is configuring or deleting one SAP monitoring on a SLES IBM Cloud Virtual Server. <br>
+This ansible role is configuring or deleting one SAP monitoring on a IBM Cloud Virtual Server. <br>
 A maximum of 99 SAP monitoring configurations can be deployed targeting 99 different SAP Systems located in the same security group. Monitoring HA SAP Systems is not covered in this release. <br>
-Each deployment has to use a different <sap_monitoring_nr> in the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml` <br>
+Each deployment has to use a different `<sap_monitoring_nr>` in the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml` <br>
 The Ansible role is only a part of the monitoring workflow model as described in [docs/Introduction-details.md](docs/Introduction-details.md).
 
 # 2. Role Description
 
 This role requires some prerequisites that are not covered by the Ansible module: <br>
-A IBM Cloud monitoring instance, SAP DB user with ReadOnly permissions, VSI host with a specific SLES SAP applications image, the SAP-HANA-Client as SAR-file and SAPCAR utility in the host directory <sap_tools_directory>
+A IBM Cloud monitoring instance, SAP DB user with ReadOnly permissions, VSI host with a specific SLES SAP applications image, the SAP-HANA-Client as SAR-file and SAPCAR utility in the host directory `<sap_tools_directory>`
 
 This role performs the following tasks:
 - Deleting or adding the monitoring configuration for one specific SAP System
 
 Adding a SAP monitoring configuration includes:
-- Check of existing monitoring configurations with the same <sap_monitoring_nr>
+- Check of existing monitoring configurations with the same `<sap_monitoring_nr>`
 - Installing the SAP HANA client and python3-driver if not already present
 - Installing and configuring the prometheus-sap_host_exporter to collect metrics from SAP services
 - Installing and configuring the prometheus-hanadb_exporter using the SAP HANA client tool hdbuserstore
@@ -31,7 +31,7 @@ Adding a SAP monitoring configuration includes:
 - Installing and configuring the golang-github-prometheus-prometheus to forward metrics to the IBM Cloud monitoring instance
 - Enabling and activating systemd daemons to all listed prometheus exporters and prometheus agent
 
-Deleting a SAP monitoring configuration requires only the <sap_monitoring_nr> in the configuration file to execute:
+Deleting a SAP monitoring configuration requires only the `<sap_monitoring_nr>` in the configuration file to execute:
 - Stopping and disabling all daemons of prometheus-agent, hanadb-exporter and all sap-host-exporters
 - Deleting all configuration files of the prometheus-agent, hanadb-exporter and all sap-host-exporters
 # 3. Edit parameters in the monitoring configuration file
@@ -64,9 +64,11 @@ Any additional monitoring configuration will be added with executing the same co
 | # variable group: application server parameters |                                                                                     |                                                                                                                                            |
 | sap_ascs_ip                                     | 10.0.0.3                                                                            | IPv4 address of first (primary) Application Server                                                                                         |
 | sap_ascs_http_port                              | 50013                                                                               | HTTP Port of SAP service ASCS on Application Server                                                                                        |
-| sap_app_server                                  | Example:see the following code box                                                  | DI-server as a object list with incremental number, IPV4 and Port                                                                          |
+| sap_app_server                                  | Example:see the following code box        | DI-server as a object list with incremental number, IPV4 and Port |
+
 
 ```
+# example of the variable sap_app_server as a object with several sap_app_server 
 sap_app_server:
   - sap_app_server_nr: 01
     ip: 10.0.0.4
@@ -93,96 +95,89 @@ These Variables will be used by Ansible on the monitoring host in configuration 
 | 5<sap_monitoring_nr>07              | sap_host_exporter_DI_03 (third APPS Server)          |
 
 All parameter variables are in one configuration file `playbooks/vars/sample-sap-monitoring-parameters.yml`. <br>
-You can add or delete a SAP monitoring configuration by setting the variable sap_monitoring_action to  "`add`" or "`delete`".
+You can add or delete a SAP monitoring configuration by setting the variable `<sap_monitoring_action>` to  "`add`" or "`delete`".
 
-The variable <config_override> controls whether to overwrite existing configurations with the same <sap_monitoring_nr>  (<config_override> set to `true`)
-or to protect from overwriting (<config_override> set to `false`).
+The variable `<config_override>` controls whether to overwrite existing configurations with the same `<sap_monitoring_nr>`  (`<config_override>` set to `true`)
+or to protect from overwriting (`<config_override>` set to `false`).
 
 Adding a monitoring configuration requires all SAP parameters, <br>
-deleting a SAP monitoring configuration only requires the <sap_monitoring_nr>, all other parameters will not be checked.
+deleting a SAP monitoring configuration only requires the `<sap_monitoring_nr>`, all other parameters will not be checked.
 # 4. Installation Guide
 
 ## 4.1. Prerequisites
 
-#### 4.1.1 Create an IBM Cloud Monitoring Instance with your IBM IAM account in the same region as the monitoring host and extract URL and Credentials
-
+#### 4.1.1 Create an IBM Cloud Monitoring Instance 
+Create an IBM Cloud Monitoring Instance with your IBM IAM account in the same region as the monitoring host and extract URL and Credentials
 as described in the file [docs/HOWTO-create-IBM-Cloud-monitoring-instance.md](docs/HOWTO-create-IBM-Cloud-monitoring-instance.md)
 
 ### 4.1.2 Changes on the SAP System:
 
 - Create a SAP DB user with ReadOnly permissions
-  as instructed in the file docs/HOWTO-create-HANA-DB-User-ReadOnly-permissions.md
+  as instructed in the file [docs/HOWTO-create-HANA-DB-User-ReadOnly-permissions.md](docs/HOWTO-create-HANA-DB-User-ReadOnly-permissions.md)
 - Check the SAPstart services on the HANA DB host and all Application Server hosts
   and change according to the file [docs/HOWTO-configure-SAP-system-services.md](docs/HOWTO-configure-SAP-system-services.md)
   to allow HTTP-queries without user/passwords
 
 ### 4.1.3 Create or use an existing IBM VPC VirtualServer as monitoring host
 
-as described in [docs/HOWTO-create-IBM-Cloud-VPC-VirtualServer.md](docs/HOWTO-create-IBM-Cloud-VPC-VirtualServer.md)
+Create an IBM VPC VirtualServer as described in [docs/HOWTO-create-IBM-Cloud-VPC-VirtualServer.md](docs/HOWTO-create-IBM-Cloud-VPC-VirtualServer.md)
 
 ## 4.2 Installation steps on the monitoring host
 
 (the IBM Cloud VSI Virtual Server):
 
-### 4.2.1  Copy the SAP-HANA-Client as SAR-file and SAPCAR utility in the host directory <sap_tools_directory>
+### 4.2.1  Copy the SAP-HANA-Client to the monitoring host
+Copy the SAP-HANA-Client to the monitoring host as SAR-file and SAPCAR utility in the host directory `<sap_tools_directory>`
 
-Note: Make sure inside the directory <sap_tools_directory>  there is only one SAP-HANA-Client as SAR-file and SAPCAR utility.
+Note: Make sure inside the directory `<sap_tools_directory>` there is only one SAP-HANA-Client as SAR-file and SAPCAR utility.
 Not all SAP-HANA-Client downloads include the required Python-HANADB-Driver.
-This version comes with the required driver: IMDB_CLIENT20_020_23-80002082.SAR  (version 2.01)
+This version is verified to deliver the required driver: IMDB_CLIENT20_020_23-80002082.SAR  (version 2.01)
 You may try your existing version, Ansible will tell you if it is successful.
 
-### 4.2.2 Activate the PackageHub Repository
+### 4.2.2 Install packages and repositories on the command line
 
-`/usr/sbin/SUSEConnect -p PackageHub/15.5/x86_64`
-
-### 4.2.3 Update all packages and restart the monitoring host
-
-`zypper update`
-
-### 4.2.4 Install the packages Ansible and git-core
-
-`zypper install ansible git-core`
-
-### 4.2.5 Clone the ansible-power-linux-sap reository from github
+On the monitoring host execute these steps to activate the repository, install packages and clone the Ansible repository:
 
 ```
-git clone https://github.com/IBM/ansible-power-linux-sap.git
-cd ansible-power-linux-sap
-```
-
-### 4.2.6 edit the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml` with your variables as described in chapter 2
-
-This document  [docs/HOWTO-gather-SAP-parameters.md](docs/HOWTO-gather-SAP-parameters.md) describes how to gather these SAP parameters.
-
-### 4.2.7 execute the Ansible playbook
-
-`ansible-playbook --connection=local -i "localhost," playbooks/sample-monitoring-sap.yml`
-Ansible actions are controlled by the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml` ,
-no changes are required in the file `playbooks/sample-monitoring-sap.yml`
-Short overview of the cli-commands on the monitoring host
-
-```
+# Activate the PackageHub Repository
 /usr/sbin/SUSEConnect -p PackageHub/15.5/x86_64
+
+# Update all packages
 zypper update
+
+# Restart the monitoring host
 shutdown -r now
 
 # after the restart:
+# Install the packages ansible and git-core
+
 zypper install ansible git-core
+
 mkdir <sap_tools_directory>
 
-# copy the SAP-HANA-Client SAR-File and SAPCAR-XXX.exe to <sap_tools_directory>
+# Copy the SAP-HANA-Client SAR-File and SAPCAR-XXX.exe to <sap_tools_directory>
+
+# Clone the ansible-power-linux-sap reository from github
 git clone https://github.com/IBM/ansible-power-linux-sap.git
 cd ansible-power-linux-sap
-
-# configure playbooks/vars/sample-monitoring-sap-parameters.yml
-# run the playbook:
-ansible-playbook --connection=local -i "localhost," playbooks/sample-monitoring-sap.yml
 ```
+### 4.2.3 Edit the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml`
+
+Edit the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml`
+with your variables as described in chapter 2. <br>
+This document  [docs/HOWTO-gather-SAP-parameters.md](docs/HOWTO-gather-SAP-parameters.md) describes how to gather these SAP parameters.
+
+### 4.2.4 Execute the Ansible playbook
+Ansible actions are controlled by the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml` ,
+no changes are required in the file `playbooks/sample-monitoring-sap.yml`. <br>
+Each execution of the Ansiblke playbook will add or delete a monitoring configuration:
+`ansible-playbook --connection=local -i "localhost," playbooks/sample-monitoring-sap.yml`
+
 
 ## 4.3.  Post installation steps
 
-### 4.3.1 Create, edit and duplicate SAP Dashboards in the IBM Cloud Monitoring Instance to visualize SAP metrics
-
+### 4.3.1 Create SAP Dashboards
+Create, edit and duplicate SAP Dashboards in the IBM Cloud Monitoring Instance to visualize SAP metrics as
 explained in the file [docs/HOWTO-SAP-Dashboards.md](docs/HOWTO-SAP-Dashboards.md)
 # 5. Gather SAP parameters
 
