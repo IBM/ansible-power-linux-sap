@@ -12,7 +12,7 @@
 
 This ansible collection simplifies IBM PowerVS LPAR configuration for installing SAP HANA and SAP NetWeaver on SLES and RHEL environments. It doesn't install SAP HANA or NETWEAVER applications but, prepares the OS with correct configurations for SAP HANA/NetWeaver installations for best performance. They can be executed on same LPAR or different LPARs.
 
-This collection has 4 modules, which are independent of each other and can be run individually.
+This collection has 5 modules, which are independent of each other and can be run individually.
 1)	**Preparing Operating System for SAP installations.**
 2)	**Creating Filesystems for SAP installations.**
 3)	**Configuring SWAP spaces.**
