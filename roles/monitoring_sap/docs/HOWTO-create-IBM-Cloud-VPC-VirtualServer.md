@@ -23,11 +23,7 @@ Choose these settings for the new host:
 - Use a network with the same security group as the SAP System.
   Manage the local network of the host as described in this [IBM Cloud Document](https://cloud.ibm.com/docs/vpc?topic=vpc-using-instance-vnics&interface=ui).
 - In the section **Networking**: Choose the same VPC
-- In the section **Network attachments with Virtual network interface**: 
+- In the section **Network attachments with Virtual network interface**:
   Add the same subnet. If necessary delete an existing network and create an interface with the same subnet and security group.
   Attaching the network interface to a subnet with a public gateway for VPC allows Internet access.
   The networks with public internet in IBM cloud are listed [here](https://cloud.ibm.com/vpc-ext/network/publicGateways).
- 
-
-
-  

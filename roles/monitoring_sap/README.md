@@ -68,7 +68,7 @@ Any additional monitoring configuration will be added with executing the same co
 
 
 ```
-# example of the variable sap_app_server as a object with several sap_app_server 
+# example of the variable sap_app_server as a object with several sap_app_server
 sap_app_server:
   - sap_app_server_nr: 01
     ip: 10.0.0.4
@@ -106,7 +106,7 @@ deleting a SAP monitoring configuration only requires the `<sap_monitoring_nr>`,
 
 ## 4.1. Prerequisites
 
-#### 4.1.1 Create an IBM Cloud Monitoring Instance 
+#### 4.1.1 Create an IBM Cloud Monitoring Instance
 Create an IBM Cloud Monitoring Instance with your IBM IAM account in the same region as the monitoring host and extract URL and Credentials
 as described in the file [docs/HOWTO-create-IBM-Cloud-monitoring-instance.md](docs/HOWTO-create-IBM-Cloud-monitoring-instance.md)
 
@@ -159,7 +159,7 @@ mkdir <sap_tools_directory>
 git clone https://github.com/IBM/ansible-power-linux-sap.git
 cd ansible-power-linux-sap
 ```
-#### 4.2.3 Edit the monitoring configuration file 
+#### 4.2.3 Edit the monitoring configuration file
 
 Edit the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml`
 with your variables as described in chapter 2. <br>
@@ -191,4 +191,3 @@ This document [docs/troubleshooting-monitoring.md](docs/troubleshooting-monitori
 
 To list existing monitoring configurations execute:
 `ps aux|grep  -E "prom|hana|sap"`
-

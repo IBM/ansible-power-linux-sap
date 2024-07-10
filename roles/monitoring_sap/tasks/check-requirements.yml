@@ -1,22 +1,21 @@
 ---
-# This playbook checks on prerequirements on OS and applications
+# This playbook checks on preretirement on OS and applications
 - name: Check OS architecture
-  fail :
-    msg: 'Required architecture is x86_64'
+  ansible.builtin.fail:
+    msg: "Required architecture is x86_64"
   when: ansible_architecture != "x86_64"
-      
+
 - name: Check distribution version architecture
-  fail :
-    msg: 'Required minimum distribution version is 15.5'
+  ansible.builtin.fail:
+    msg: "Required minimum distribution version is 15.5"
   when: ansible_distribution_version <= "15.4"
 
 - name: Check existing python version
-  stat:
+  ansible.builtin.stat:
     path: /usr/bin/python3.6
   register: python_version
 
 - name: Check required python version
-  fail :
-    msg: 'Required python version is: {{ python_version.stat.path }} '
+  ansible.builtin.fail:
+    msg: "Required python version is: {{ python_version.stat.path }} "
   when: python_version.stat.path != "/usr/bin/python3.6"
-
