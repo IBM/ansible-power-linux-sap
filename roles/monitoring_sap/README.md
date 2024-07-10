@@ -128,10 +128,8 @@ Create an IBM Cloud VPC VirtualServer as described in [docs/HOWTO-create-IBM-Clo
 Copy the SAP-HANA-Client to the monitoring host as SAR-file and SAPCAR utility in the host directory `<sap_tools_directory>`
 
 Note: Make sure inside the directory `<sap_tools_directory>` there is only one SAP-HANA-Client as SAR-file and SAPCAR utility.
-Not all SAP-HANA-Client downloads include the required Python-HANADB-Driver. 
-
-This version is verified to deliver the required driver: IMDB_CLIENT20_020_23-80002082.SAR  (version 2.01)
-
+Not all SAP-HANA-Client downloads include the required Python-HANADB-Driver. <br>
+This version is verified to deliver the required driver: IMDB_CLIENT20_020_23-80002082.SAR (version 2.01) <br>
 You may try your existing version, Ansible will tell you if it is successful.
 
 #### 4.2.2 Install packages and repositories on the command line
@@ -168,7 +166,7 @@ with your variables as described in chapter 2. <br>
 This document  [docs/HOWTO-gather-SAP-parameters.md](docs/HOWTO-gather-SAP-parameters.md) describes how to gather these SAP parameters.
 
 #### 4.2.4 Execute the Ansible playbook
-Ansible actions are controlled by the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml` ,
+Ansible actions are controlled by the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml`, <br>
 no changes are required in the file `playbooks/sample-monitoring-sap.yml`. <br>
 Each execution of the Ansiblke playbook will add or delete a monitoring configuration: <br>
 `ansible-playbook --connection=local -i "localhost," playbooks/sample-monitoring-sap.yml`
@@ -176,7 +174,7 @@ Each execution of the Ansiblke playbook will add or delete a monitoring configur
 
 ## 4.3.  Post installation steps
 
-Create, edit and duplicate SAP Dashboards in the IBM Cloud Monitoring Instance to visualize SAP metrics as
+Create, duplicate and edit SAP Dashboards in the IBM Cloud Monitoring Instance to visualize SAP metrics as
 explained in the file [docs/HOWTO-SAP-Dashboards.md](docs/HOWTO-SAP-Dashboards.md)
 # 5. Gather SAP parameters
 
@@ -190,3 +188,7 @@ This document  [docs/HOWTO-gather-SAP-parameters.md](docs/HOWTO-gather-SAP-param
 
 The Ansible run may fail. <br>
 This document [docs/troubleshooting-monitoring.md](docs/troubleshooting-monitoring.md) is listing several reasons for failing and how to scrutinize the causes.
+
+To list existing monitoring configurations execute:
+`ps aux|grep  -E "prom|hana|sap"`
+
