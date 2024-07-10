@@ -1,0 +1,14 @@
+[Unit]
+Description=Prometheus sap_host_exporter for Netweaver clusters metrics
+After=network.target
+Documentation=https://github.com/SUSE/sap_host_exporter
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/sap_host_exporter --config /etc/sap_host_exporter/%i.yaml
+ExecReload=/bin/kill -HUP
+
+[Install]
+WantedBy=multi-user.target
+DefaultInstance=default

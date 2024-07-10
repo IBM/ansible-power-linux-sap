@@ -1,0 +1,37 @@
+# copy this file to roles/monitoring_sap/vars/main.yml and put in your SAP System parameters
+# variables about the SAP System
+
+sap_monitoring_action: add
+# sap_monitoring_action: delete
+config_override: false
+sap_tools_directory: /root/sap
+
+#monitoring meta parameter
+sap_monitoring_nr: "03"
+sap_monitoring_solution_name: "PM2 6.1 (S/4 2022)"
+
+#hana parameters
+sap_hana_ip: 10.0.0.2
+sap_hana_http_port: 50213
+sap_hana_sql_systemdb_port: 30213
+sap_hana_sql_systemdb_user: monitoring-user
+sap_hana_sql_systemdb_password: password123
+
+# IBM cloud parameters
+ibmcloud_monitoring_instance_url: https://ingest.prws.us-south.monitoring.cloud.ibm.com/prometheus/remote/write  
+ibmcloud_monitoring_authorization_credentials: a123-b123-c123-12345678ab1232
+
+#netweaver_parameters
+sap_ascs_ip: 10.0.0.3
+sap_ascs_http_port: 50013
+sap_app_server:
+  - sap_app_server_nr: 01
+    ip: 10.0.0.4
+    port: 50113
+  - sap_app_server_nr: 02
+    ip: 10.0.0.5
+    port: 50113
+  - sap_app_server_nr: 03
+    ip: 10.0.0.6
+    port: 50113
+

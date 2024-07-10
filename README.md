@@ -12,11 +12,12 @@
 
 This ansible collection simplifies IBM PowerVS LPAR configuration for installing SAP HANA and SAP NetWeaver on SLES and RHEL environments. It doesn't install SAP HANA or NETWEAVER applications but, prepares the OS with correct configurations for SAP HANA/NetWeaver installations for best performance. They can be executed on same LPAR or different LPARs.
 
-This collection has 4 modules, which are independent of each other and can be run individually.
+This collection has 5 modules, which are independent of each other and can be run individually.
 1)	**Preparing Operating System for SAP installations.**
 2)	**Creating Filesystems for SAP installations.**
 3)	**Configuring SWAP spaces.**
 4)	**Installing Management Services (SQUID, NTP, NFS, DNS)**
+5)	**Creating and deleting SAP monitoring configurations**
 
 ### Ansible Roles Summary
 
@@ -34,6 +35,7 @@ Within this Ansible Collection, there are various Ansible Roles and no custom An
 | [powervs_swap_creation](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_swap_creation)| Configures swap disk |
 | [powervs_prepare_rhel_sap](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_prepare_rhel_sap)| Configure general RHEL OS settings for SAP software |
 | [powervs_prepare_sles_sap](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_prepare_sles_sap)| configure general SLES OS settings for SAP software |
+| [monitoring_sap](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/monitoring_sap)| Creates or deletes SAP monitoring configurations |
 
 
 # 3. Installation Guide

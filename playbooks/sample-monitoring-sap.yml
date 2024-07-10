@@ -1,0 +1,12 @@
+---
+- name: SAP monitoring configuration
+  hosts: all 
+  pre_tasks:
+    - name: Include variables
+      ansible.builtin.include_vars: ./vars/sample-monitoring-sap-parameters.yml
+  gather_facts: yes 
+  tasks:
+
+    - name: Execute the role monitoring_sap
+      include_role:
+        name: { role: ../roles/monitoring_sap }
