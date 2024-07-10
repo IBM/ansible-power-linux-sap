@@ -1,5 +1,11 @@
 # Release Notes
 
+<a name="v2.2.0"></a>
+# [v2.2.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v2.2.0) - 10 Jul 2024
+
+## Release Summary
+* New monitoring role for SAP supported on SLES:
+
 <a name="v2.1.1"></a>
 # [v2.1.1](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v2.1.1) - 30 May 2024
 
@@ -192,8 +198,8 @@ This release will add the following capabilities:
 ## Release Summary
 Initial beta release of IBM Power Virtual Systems SAP with RISE collection, referred to as power_linux_sap
 
-[Changes][v0.0.1]
-
+[Changes][v2.2.0]
+[v2.2.0]: https://github.com/IBM/ansible-power-linux-sap/compare/v2.1.1...v2.2.1
 [v2.1.1]: https://github.com/IBM/ansible-power-linux-sap/compare/v2.1.0...v2.1.1
 [v2.1.0]: https://github.com/IBM/ansible-power-linux-sap/compare/v2.0.0...v2.1.0
 [v2.0.0]: https://github.com/IBM/ansible-power-linux-sap/compare/v1.1.5...v2.0.0

@@ -135,3 +135,7 @@ Notes
 Version 2.1.1
 Notes
        * add missing distro condition to skip a proxy task for SLES.
+
+Version 2.2.0
+Notes
+       *  New monitoring role for SAP supported on SLES.
