@@ -139,3 +139,7 @@ Notes
 Version 2.2.0
 Notes
        *  New monitoring role for SAP supported on SLES.
+
+Version 2.2.1
+Notes
+       * fix: private ingestion endpoints for sap monitory role

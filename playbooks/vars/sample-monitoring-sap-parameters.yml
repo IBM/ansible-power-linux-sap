@@ -34,4 +34,3 @@ sap_app_server:
   - sap_app_server_nr: 03
     ip: 10.0.0.6
     port: 50113
-

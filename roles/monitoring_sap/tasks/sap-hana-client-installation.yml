@@ -13,7 +13,7 @@
     state: directory
     owner: root
     group: root
-    mode: '0750'
+    mode: "0750"
     recurse: true
 
 - name: Extract the SAP HANA Client from the SAR-file with SAPCAR
@@ -32,4 +32,3 @@
 - name: Allow execution of hdbcli to non-root users
   ansible.builtin.shell:
     cmd: "chmod -R a+rx /usr/lib64/python3.*/site-packages/hdbcli/*"
-    #warn: false
