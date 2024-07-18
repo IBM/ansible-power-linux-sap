@@ -12,7 +12,7 @@
   block:
 
     - name: Check existence of the variables defined in ./vars/sample-monitoring-sap-parameters.yml
-      fail:
+      ansible.builtin.fail:
         msg: 'variable {{ sap_monitoring_nr }} not defined in the file ./vars/sample-monitoring-sap-parameters.yml '
       when: sap_monitoring_nr is not defined
 
@@ -45,13 +45,13 @@
 
       # checks, if SAP_HANA_CLIENT DB-driver is installed on the monitoring host
     - name: Check existence of /usr/lib64/python3.6/site-packages/hdbcli/dbapi.py
-      stat:
+      ansible.builtin.stat:
         path: /usr/lib64/python3.6/site-packages/hdbcli/dbapi.py
       register: file_hana_driver
 
       # checks, if SAP_HANA_CLIENT /usr/sap/hdbclient/hdbuserstore is installed on the monitoring host
     - name: Check existence of /usr/sap/hdbclient/hdbuserstore
-      stat:
+      ansible.builtin.stat:
         path: /usr/sap/hdbclient/hdbuserstore
       register: file_hana_hdbuserstore
 
