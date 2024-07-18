@@ -45,9 +45,14 @@ remote_write:
     credentials: "d92XXXX-f8XX-4fXX-a6XX-34XXX"
 ```
 
-Use the whole URL as value of the variable <ibmcloud_monitoring_instance_url> in the monitoring configuration.
+add `private.` to the url as private ingestion endpoint <br>
+`https://ingest.prws.private.us-south.monitoring.cloud.ibm.com/prometheus/remote/write` <br>
 
-All private ingestion endpoints per region are listed in [IBM Cloud Document](https://cloud.ibm.com/docs/monitoring?topic=monitoring-prometheus_remote_write#prometheus_remote_write_endpoints)
+general form: <br>
+`https://ingest.prws.private.<REGIONtag>.monitoring.cloud.ibm.com/prometheus/remote/write` <br>
+
+Use the whole URL (version with private) as value of the variable `<ibmcloud_monitoring_instance_url>` in the monitoring configuration. <br>
+All private ingestion endpoints per region are listed in table 3 in [IBM Cloud Document](https://cloud.ibm.com/docs/monitoring?topic=monitoring-prometheus_remote_write#prometheus_remote_write_endpoints)
 
 
-Use the credentials as value of the variable <ibmcloud_monitoring_authorization_credentials>.
+Use the credentials as value of the variable `<ibmcloud_monitoring_authorization_credentials>`.

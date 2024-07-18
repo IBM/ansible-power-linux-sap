@@ -18,7 +18,7 @@ sap_hana_sql_systemdb_user: monitoring-user
 sap_hana_sql_systemdb_password: password123
 
 # IBM cloud parameters
-ibmcloud_monitoring_instance_url: https://ingest.prws.us-south.monitoring.cloud.ibm.com/prometheus/remote/write
+ibmcloud_monitoring_instance_url: https://ingest.prws.private.us-south.monitoring.cloud.ibm.com/prometheus/remote/write
 ibmcloud_monitoring_authorization_credentials: a123-b123-c123-12345678ab1232
 
 #netweaver_parameters
