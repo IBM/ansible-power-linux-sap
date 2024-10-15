@@ -1,0 +1,123 @@
+# ----------------------------------------------------------------------
+# Copyright 2021, 2022 IBM Corp. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ------------------------------------------------------------------------
+---
+# This role configures RHEL lpar for sap installation.
+
+- name: Subscribing to Full Linux® subscription for Power Systems Virtual Servers
+  when:
+    - full_linux_subscription | default(False) | bool
+    - private_proxy_ip_port is defined
+  block:
+    # Creating backup of readme file, to be restored later
+    - name: Copy /usr/share/powervs-fls/powervs-fls-readme.md file
+      ansible.builtin.copy:
+        src: /usr/share/powervs-fls/powervs-fls-readme.md
+        dest: /usr/share/powervs-fls/powervs-fls-readme.md_copy
+        mode: preserve
+
+    # Modifying readme file, to update proxy server and port
+    - name: Update cloud-init command with proxy server details
+      ansible.builtin.replace:
+        path: /usr/share/powervs-fls/powervs-fls-readme.md
+        regexp: Private.proxy.IP.address:3128
+        replace: "{{ private_proxy_ip_port }}"
+
+    # Get the cloud-init command from readme
+    - name: Get the cloud-init command from /usr/share/powervs-fls/powervs-fls-readme.md
+      ansible.builtin.command: grep {{ private_proxy_ip_port }} /usr/share/powervs-fls/powervs-fls-readme.md
+      register: cloud_init_command
+      changed_when: false
+
+    # Backing up the log file and removing it for latest use
+    - name: Backup current log file
+      ansible.builtin.copy:
+        src: /var/log/powervs-fls.log
+        dest: /var/log/powervs-fls.log.backup
+        mode: preserve
+      ignore_errors: true
+
+    - name: Delete the old log file
+      ansible.builtin.file:
+        path: /var/log/powervs-fls.log
+        state: absent
+
+    - name: Execute cloud-init command
+      ansible.builtin.shell: "{{ cloud_init_command.stdout }}"
+
+    - name: Wait until the string "Exiting RHEL subscription registration process" is in the file /var/log/powervs-fls.log before continuing
+      ansible.builtin.wait_for:
+        path: /var/log/powervs-fls.log
+        search_regex: "Exiting RHEL subscription registration process"
+      ignore_errors: true
+      register: check_for_subscription_success
+
+    - name: Getting RedHat registering server name
+      ansible.builtin.shell: grep sap_hana /usr/share/powervs-fls/powervs-fls-readme.md | awk -F"\-u" '{ print $NF }' | awk '{ print $1 }'
+      register: rhsm_host
+      changed_when: false
+
+    # Check for successful Registration
+    - name: Check for successful registration
+
+      ansible.builtin.shell: subscription-manager config | grep {{ rhsm_host.stdout }}
+      register: check_with_subscription_manager
+      ignore_errors: true
+
+    # Restoring Readme
+    - name: Restoring /usr/share/powervs-fls/powervs-fls-readme.md file
+      ansible.builtin.copy:
+        src: /usr/share/powervs-fls/powervs-fls-readme.md_copy
+        dest: /usr/share/powervs-fls/powervs-fls-readme.md
+        mode: preserve
+
+    - name: Delete the temp file /usr/share/powervs-fls/powervs-fls-readme.md_copy
+      ansible.builtin.file:
+        path: /usr/share/powervs-fls/powervs-fls-readme.md_copy
+        state: absent
+
+    - name: Fail if registration fails.
+      ansible.builtin.fail:
+        msg: "Full Linux Subscription failed, Please debug manually and take corrective action. Logs available at /var/log/powervs-fls.log"
+      when:
+        - check_with_subscription_manager.rc != 0 or check_for_subscription_success.failed | bool
+
+- name: Subscribing to RHEL and setting release to {{ rhel_subscription.release }}
+  when: rhel_subscription is defined
+  block:
+    - name: Subscribing to RHEL and setting release to {{ rhel_subscription.release }}
+      # noqa fqcn[action]
+      redhat_subscription:
+        state: present
+        username: "{{ rhel_subscription.username }}"
+        password: "{{ rhel_subscription.password }}"
+        release: "{{ rhel_subscription.release }}"
+        auto_attach: true
+        force_register: true
+
+    # Add repos for installing RHEL packages required for SAP installation
+    - name: Enable required RHEL repositories
+      # noqa fqcn[action]
+      rhsm_repository:
+        name: "{{ item }}"
+        state: enabled
+      with_items:
+        - rhel-{{ rhel_subscription.release | int }}-for-ppc64le-baseos-e4s-rpms
+        - rhel-{{ rhel_subscription.release | int }}-for-ppc64le-appstream-e4s-rpms
+        - rhel-{{ rhel_subscription.release | int }}-for-ppc64le-sap-solutions-e4s-rpms
+        - rhel-{{ rhel_subscription.release | int }}-for-ppc64le-sap-netweaver-e4s-rpms
+        - rhel-{{ rhel_subscription.release | int }}-for-ppc64le-highavailability-e4s-rpms
+
+# END of rhel_subscription block
