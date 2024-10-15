@@ -1,0 +1,34 @@
+# Tuning for SAP on SLES
+
+# following task checked for SAPTUNE profile on system and apply {{ sap_solution }} profile if not applied. Also check for saptune rpm installation
+- name: Check saptune package installation
+  # noqa fqcn[action]
+  zypper:
+    name: saptune
+    state: present
+
+- name: Check if {{ sap_solution | upper }} solution is applied or not
+  ansible.builtin.shell: "saptune solution enabled | grep -xi {{ sap_solution }}"
+  register: saptune_status
+  ignore_errors: true
+
+# Revert is any other solution is already applied, and apply {{ sap_solution | upper }}
+- name: Tune SLES for SAP {{ sap_solution | upper }}
+  ansible.builtin.shell: |
+    saptune revert all
+    saptune solution apply {{ sap_solution | upper }}
+    saptune service enablestart
+  when: saptune_status.rc != 0
+
+- name: Activate SLES tuning for SAP {{ sap_solution | upper }}
+  ansible.builtin.command: "saptune service takeover"
+
+- name: Check for saptune installation and enablement
+  ansible.builtin.command: saptune_check
+  register: saptune_check_log
+  ignore_errors: true
+
+- name: Debug fail if saptune is not setup correctly
+  ansible.builtin.debug:
+    msg: "Saptune may not be setup correctly, please verify and perform corrective action"
+  when: saptune_check_log.rc != 0
