@@ -1,0 +1,31 @@
+- name: Subscribing to RHEL and setting release to {{ rhel_subscription.release }}
+  when: rhel_subscription is defined
+  block:
+    - name: Subscribing to RHEL and setting release to {{ rhel_subscription.release }}
+      # noqa fqcn[action]
+      redhat_subscription:
+        state: present
+        username: "{{ rhel_subscription.username }}"
+        password: "{{ rhel_subscription.password }}"
+        release: "{{ rhel_subscription.release }}"
+        auto_attach: true
+        force_register: true
+
+    # Add repos for installing RHEL packages required for SAP installation
+    - name: Enable required RHEL repositories
+      # noqa fqcn[action]
+      rhsm_repository:
+        name: "{{ item }}"
+        state: enabled
+      with_items:
+        - rhel-{{ rhel_subscription.release | int }}-for-ppc64le-baseos-e4s-rpms
+        - rhel-{{ rhel_subscription.release | int }}-for-ppc64le-appstream-e4s-rpms
+        - rhel-{{ rhel_subscription.release | int }}-for-ppc64le-sap-solutions-e4s-rpms
+        - rhel-{{ rhel_subscription.release | int }}-for-ppc64le-sap-netweaver-e4s-rpms
+        - rhel-{{ rhel_subscription.release | int }}-for-ppc64le-highavailability-e4s-rpms
+
+- name: Register SUSE and enable repos
+  ansible.builtin.shell: |
+    SUSEConnect -r {{ suse_subscription.key }}  -e {{ suse_subscription.username }}
+    SUSEConnect -p sle-module-public-cloud/{{ suse_subscription.release }}/ppc64le
+  when: suse_subscription is defined
