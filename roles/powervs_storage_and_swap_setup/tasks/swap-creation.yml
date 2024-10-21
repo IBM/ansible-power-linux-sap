@@ -1,0 +1,46 @@
+# validate swap_disk_wwn provided with multipath -ll command, for its presence. fail, if does not match.
+- name: Validating the wwn values passed
+  ansible.builtin.shell: /sbin/multipath -ll | grep {{ swap_disk_wwn | lower }}
+  register: validation_check
+  ignore_errors: true
+
+- name: Check for the results
+  ansible.builtin.fail:
+    msg: "command {{ validation_check.cmd }} failed"
+  when: validation_check.rc==1
+
+# if above validation is successful, continue with core logic of removing the already present swap device and creating a new based on wwn passed
+# check for previous swap device, if any configured. If configured, remove it.
+- name: Check for any swap device, if present, need to be removed
+  ansible.builtin.shell: swapon -s | grep -v Filename | awk '{ print $1 }'
+  register: swapon_device_list
+
+- name: Delete previous swap device
+  ansible.builtin.command: swapoff {{ item }}
+  with_items: "{{ swapon_device_list.stdout_lines }}"
+  when: swapon_device_list.stdout is defined
+
+# validate if multipath alias is enabled. If enabled, set field to check for dm-X name, as 3, else it remains at default 2.
+- name: Check if multipath alias is enabled.
+  ansible.builtin.command: grep "user_friendly_names no" /etc/multipath.conf
+  register: multipath_alias
+  ignore_errors: true
+
+- name: Setting count variable based on multipath aliasing is enabled or not
+  ansible.builtin.set_fact:
+    count: 3
+  when: multipath_alias.rc == 1
+
+- name: Get dm device for wwn {{ swap_disk_wwn }}
+  ansible.builtin.shell: 'multipath -ll | grep -B 1 {{ swap_disk_wwn | lower }} | grep dm- | awk ''{print "/dev/"${{ count | default(2) }}}'' '
+  register: swap_dm_name
+
+- name: Set facts
+  ansible.builtin.set_fact:
+    swap_dm_device: "{{ swap_dm_name.stdout }}"
+
+- name: Mkswap on device  {{ swap_dm_device }}
+  ansible.builtin.command: mkswap {{ swap_dm_device }}
+
+- name: Swapon the device  {{ swap_dm_device }}
+  ansible.builtin.command: swapon {{ swap_dm_device }}
