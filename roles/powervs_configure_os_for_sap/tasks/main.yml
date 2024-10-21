@@ -90,6 +90,13 @@
   ansible.builtin.shell: echo never > /sys/kernel/mm/transparent_hugepage/enabled
   changed_when: false
 
+- name: Set RFS entries for RHEL or SLES
+  ansible.builtin.shell: |
+    echo 32768 > /proc/sys/net/core/rps_sock_flow_entries
+    for queue in /sys/class/net/{{ ansible_default_ipv4.interface }}/queues/rx-*; do
+      echo $((32768 / $(ls -1 /sys/class/net/{{ ansible_default_ipv4.interface }}/queues | wc -l))) > $queue/rps_flow_cnt
+    done
+
 - name: Tune RHEL for SAP
   ansible.builtin.include_tasks: "rhel.yml"
   when: ansible_distribution is match("RedHat*") and sap_solution is defined

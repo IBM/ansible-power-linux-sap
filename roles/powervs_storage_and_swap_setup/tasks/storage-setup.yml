@@ -1,0 +1,21 @@
+- name: Ensure lvm packages are installed
+  ansible.builtin.package:
+    name: lvm2
+    state: present
+  when: disks_configuration is defined
+
+- name: Validate Disk ids passed when disks_configuration variables is of dictionary type
+  ansible.builtin.import_tasks: disks-validation.yml
+  when: disks_configuration | type_debug == "dict"
+
+- name: Create filesystem when disks_configuration variables is a dictionary
+  ansible.builtin.import_tasks: disks-dict2list.yml
+  when: disks_configuration | type_debug == "dict"
+
+- name: Create Filesystem when disks_configuration variables is a list
+  ansible.builtin.include_tasks: file-system-creation-core.yml
+  with_items:
+    - "{{ disks_configuration }}"
+  loop_control:
+    loop_var: file_system
+  when: disks_configuration | type_debug == "list"
