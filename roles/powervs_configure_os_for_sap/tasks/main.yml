@@ -6,6 +6,13 @@
   ansible.builtin.package:
     name: device-mapper-multipath
     state: present
+  when: "ansible_distribution is match('RedHat*')"
+
+- name: Checking for multipath package
+  ansible.builtin.package:
+    name: multipath-tools
+    state: present
+  when: "ansible_distribution is match('SLES*')"
 
 # multipathd daemon is checked whether it's up or not. If not, it is started.
 - name: Ensure multipathd daemon is running
@@ -53,6 +60,13 @@
     name: NetworkManager
     state: restarted
   changed_when: false
+  when: "ansible_distribution is match('RedHat*')"
+
+- name: Restart network
+  ansible.builtin.service:
+    name: network
+    state: restarted
+  when: "ansible_distribution is match('SLES*')"
 
 # Installing irqbalance package
 - name: Installing irqbalance package
@@ -98,9 +112,9 @@
     done
 
 - name: Tune RHEL for SAP
-  ansible.builtin.include_tasks: "rhel.yml"
+  ansible.builtin.include_tasks: "rhel_saptune.yml"
   when: ansible_distribution is match("RedHat*") and sap_solution is defined
   
 - name: Tune SLES for SAP
-  ansible.builtin.include_tasks: "sles.yml"
+  ansible.builtin.include_tasks: "sles_saptune.yml"
   when: ansible_distribution is match("SLES*") and sap_solution is defined

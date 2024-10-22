@@ -1,3 +1,4 @@
+---
 # validate swap_disk_wwn provided with multipath -ll command, for its presence. fail, if does not match.
 - name: Validating the wwn values passed
   ansible.builtin.shell: /sbin/multipath -ll | grep {{ swap_disk_wwn | lower }}

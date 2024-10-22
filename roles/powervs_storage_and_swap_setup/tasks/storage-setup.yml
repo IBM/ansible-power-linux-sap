@@ -1,3 +1,4 @@
+---
 - name: Ensure lvm packages are installed
   ansible.builtin.package:
     name: lvm2

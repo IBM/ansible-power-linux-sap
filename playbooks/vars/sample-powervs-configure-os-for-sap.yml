@@ -8,9 +8,9 @@ sap_domain: "poc.cloud"
 #    release: ""
 
 # suse_subscription:
-#    username: ""
-#    key: ""
+#    email: ""
+#    activation_code: ""
 #    release: ""
 
 # for Full Linux Subscription
-# full_linux_subscription: true
+# fls: true
