@@ -1,5 +1,4 @@
 ---
-
 # Subscribing to SUSE subscription
 - name: Register SUSE and enable repos
   ansible.builtin.shell: |
