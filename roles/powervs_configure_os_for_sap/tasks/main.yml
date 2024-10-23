@@ -104,13 +104,20 @@
   ansible.builtin.shell: echo never > /sys/kernel/mm/transparent_hugepage/enabled
   changed_when: false
 
-- name: Set RFS entries for RHEL or SLES
-  ansible.builtin.shell: |
-    echo 32768 > /proc/sys/net/core/rps_sock_flow_entries
-    for queue in /sys/class/net/{{ ansible_default_ipv4.interface }}/queues/rx-*; do
-      echo $((32768 / $(ls -1 /sys/class/net/{{ ansible_default_ipv4.interface }}/queues | wc -l))) > $queue/rps_flow_cnt
-    done
+# enable RFS
+- name: Update /proc/sys/net/core/rps_sock_flow_entries
+  shell: "echo 32768 > /proc/sys/net/core/rps_sock_flow_entries"
 
+- name: Find all rx-* files in /sys/class/net/*/queues/
+  shell: "find /sys/class/net/*/queues/ -name 'rx-*' | grep -v '/lo/'"
+  register: rx_files
+
+- name: Update and persist all rx-* files
+  shell: "echo '32768' > {{ item }}/rps_flow_cnt && sync {{ item }}/rps_flow_cnt"
+  loop: "{{ rx_files.stdout_lines }}"
+  when: rx_files.stdout_lines is defined
+
+# sap tuning
 - name: Tune RHEL for SAP
   ansible.builtin.include_tasks: "rhel_saptune.yml"
   when: ansible_distribution is match("RedHat*") and sap_solution is defined

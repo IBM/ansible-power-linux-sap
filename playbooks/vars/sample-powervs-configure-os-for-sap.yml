@@ -2,15 +2,9 @@ sap_solution: HANA
 sap_domain: "poc.cloud"
 # ----------------------------- Optional parameters ------------------------------  #
 # Uncomment # if you want to use any of these Optional parameters
-# rhel_subscription:
+# byol:
 #    username: ""
 #    password: ""
-#    release: ""
-
-# suse_subscription:
-#    email: ""
-#    activation_code: ""
-#    release: ""
-
+#
 # for Full Linux Subscription
 # fls: true

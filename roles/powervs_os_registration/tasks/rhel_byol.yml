@@ -16,16 +16,16 @@
 ---
 # This role configures RHEL lpar for sap installation.
 
-- name: Subscribing to RHEL and setting release to {{ rhel_subscription.release }}
-  when: rhel_subscription is defined
+- name: Subscribing to RHEL and setting release to {{ ansible_distribution_version }}
+  when: byol is defined
   block:
-    - name: Subscribing to RHEL and setting release to {{ rhel_subscription.release }}
+    - name: Subscribing to RHEL and setting release to {{ ansible_distribution_version }}
       # noqa fqcn[action]
       redhat_subscription:
         state: present
-        username: "{{ rhel_subscription.username }}"
-        password: "{{ rhel_subscription.password }}"
-        release: "{{ rhel_subscription.release }}"
+        username: "{{ byol.username }}"
+        password: "{{ byol.password }}"
+        release: "{{ ansible_distribution_version }}"
         auto_attach: true
         force_register: true
 
@@ -36,15 +36,15 @@
         name: "{{ item }}"
         state: enabled
       with_items:
-        - rhel-{{ rhel_subscription.release | int }}-for-ppc64le-baseos-e4s-rpms
-        - rhel-{{ rhel_subscription.release | int }}-for-ppc64le-appstream-e4s-rpms
-        - rhel-{{ rhel_subscription.release | int }}-for-ppc64le-sap-solutions-e4s-rpms
-        - rhel-{{ rhel_subscription.release | int }}-for-ppc64le-sap-netweaver-e4s-rpms
-        - rhel-{{ rhel_subscription.release | int }}-for-ppc64le-highavailability-e4s-rpms
+        - rhel-{{ ansible_distribution_version | int }}-for-ppc64le-baseos-e4s-rpms
+        - rhel-{{ ansible_distribution_version | int }}-for-ppc64le-appstream-e4s-rpms
+        - rhel-{{ ansible_distribution_version | int }}-for-ppc64le-sap-solutions-e4s-rpms
+        - rhel-{{ ansible_distribution_version | int }}-for-ppc64le-sap-netweaver-e4s-rpms
+        - rhel-{{ ansible_distribution_version | int }}-for-ppc64le-highavailability-e4s-rpms
 
 - name: Check os registration status
   shell: "subscription-manager status"
   register: os_registration_status
   failed_when: false
 
-# END of rhel_subscription block
+# END of rhel subscription block

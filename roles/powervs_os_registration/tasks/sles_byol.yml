@@ -3,6 +3,6 @@
 # Subscribing to SUSE subscription
 - name: Register SUSE and enable repos
   ansible.builtin.shell: |
-    SUSEConnect -r {{ suse_subscription.activation_code }}  -e {{ suse_subscription.email }}
-    SUSEConnect -p sle-module-public-cloud/{{ suse_subscription.release }}/ppc64le
-  when: suse_subscription is defined
+    SUSEConnect -r {{ byol.password }}  -e {{ byol.username }}
+    SUSEConnect -p sle-module-public-cloud/{{ ansible_distribution_version }}/ppc64le
+  when: byol is defined
