@@ -1,4 +1,4 @@
-## Role: powervs_client_enable_services
+## Role: configure_network_management_services
 
 ### Enabling Services
 
