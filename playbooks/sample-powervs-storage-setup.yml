@@ -20,5 +20,4 @@
     - name: Include variables
       ansible.builtin.include_vars: ./vars/sample-variables-powervs-storage-setup.yml
   roles:
-   - { role: ../roles/powervs_storage_setup, when: disks_configuration is defined }
-   - { role: ../roles/powervs_swap_creation, when: swap_disk_wwn is defined }
+   - { role: ../roles/powervs_storage_and_swap_setup }
