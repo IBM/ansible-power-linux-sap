@@ -1,0 +1,84 @@
+---
+# get the OS registration status in RHEL vsi
+- when: ansible_distribution is match("RedHat*")
+  block:
+    - name: Check if OS is registered (RHEL)
+      shell: |
+        echo -e $(subscription-manager status)
+      register: os_registration_status_output
+
+    - name: Store OS registration status (RHEL)
+      set_fact:
+        os_registration_status: "{{ 'not_registered' if 'Overall Status: Current' not in os_registration_status_output.stdout }}"
+
+# get the OS registration status in SLES vsi
+- when: ansible_distribution is match("SLES*")
+  block:
+    - name: Check if OS is registered (SLES)
+      shell: |
+        echo -e $(SUSEConnect --status-text)
+      register: os_registration_status_output
+
+    - name: Store OS registration status (SLES)
+      set_fact:
+        os_registration_status: "{{ 'not_registered' if 'Not Registered' in os_registration_status_output.stdout }}"
+
+# block executed if OS is not registered
+- when: os_registration_status == 'not_registered'
+  block:
+    - name: Check if /var/lib/cloud/instance/user-data.txt file is empty or missing
+      stat:
+        path: "/var/lib/cloud/instance/user-data.txt"
+      register: user_data
+      failed_when: not user_data.stat.exists or user_data.stat.size == 0
+
+    # extract the rhel-cloud-init.sh or sles-cloud-init.sh execution command from /var/lib/cloud/instance/user-data.txt file
+    - name: Extract *cloud-init.sh execution command
+      shell: |
+        grep 'cloud-init.sh' /var/lib/cloud/instance/user-data.txt | sed 's/.*\(.\.\s\/\)/\1/'
+      register: os_registration_command
+      failed_when: os_registration_command.stdout_lines | length == 0
+
+    # execute the rhel-cloud-init.sh or sles-cloud-init.sh script
+    - name: Execute script cloud init script
+      shell: "{{ os_registration_command.stdout }}"
+
+    # recheck the os registration status after the init script execution in RHEL/SLES vsi
+    - when: ansible_distribution is match("RedHat*")
+      block:
+        - name: Re-check if OS is registered (RHEL)
+          shell: |
+            echo -e $(subscription-manager status)
+          register: os_registration_status_output
+
+        - name: Update OS registration status (RHEL)
+          set_fact:
+            os_registration_status: "{{ 'not_registered' if 'Overall Status: Current' not in os_registration_status_output.stdout }}"
+
+    - when: ansible_distribution is match("SLES*")
+      block:
+        - name: Re-check if OS is registered (SLES)
+          shell: |
+            echo -e $(SUSEConnect --status-text)
+          register: os_registration_status_output
+
+        - name: Update OS registration status (SLES)
+          set_fact:
+            os_registration_status: "{{ 'not_registered' if 'Not Registered' in os_registration_status_output.stdout }}"
+
+    # execute the following steps if the os is still not registered
+    - when: os_registration_status == 'not_registered'
+      block:
+        - name: Extract contents of /var/log/powervs-fls-dev.log
+          shell: cat /var/log/powervs-fls-dev.log
+          register: powervs_fls_dev_log
+
+        - name: Extract contents of /var/log/powervs-fls.log
+          shell: cat /var/log/powervs-fls.log
+          register: powervs_fls_log
+
+        - name: Display log contents
+          debug:
+            msg:
+              - "powervs-fls.log contents: {{ powervs_fls_log.stdout }}"
+              - "powervs-fls-dev.log contents: {{ powervs_fls_dev_log.stdout }}"

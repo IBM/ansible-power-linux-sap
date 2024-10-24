@@ -1,0 +1,49 @@
+# ----------------------------------------------------------------------
+# Copyright 2021, 2022 IBM Corp. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ------------------------------------------------------------------------
+---
+# This role configures RHEL lpar for sap installation.
+
+- name: Subscribing to RHEL and setting release to {{ ansible_distribution_version }}
+  when: byol is defined
+  block:
+    - name: Subscribing to RHEL and setting release to {{ ansible_distribution_version }}
+      # noqa fqcn[action]
+      redhat_subscription:
+        state: present
+        username: "{{ byol.username }}"
+        password: "{{ byol.password }}"
+        release: "{{ ansible_distribution_version }}"
+        auto_attach: true
+        force_register: true
+
+    # Add repos for installing RHEL packages required for SAP installation
+    - name: Enable required RHEL repositories
+      # noqa fqcn[action]
+      rhsm_repository:
+        name: "{{ item }}"
+        state: enabled
+      with_items:
+        - rhel-{{ ansible_distribution_version | int }}-for-ppc64le-baseos-e4s-rpms
+        - rhel-{{ ansible_distribution_version | int }}-for-ppc64le-appstream-e4s-rpms
+        - rhel-{{ ansible_distribution_version | int }}-for-ppc64le-sap-solutions-e4s-rpms
+        - rhel-{{ ansible_distribution_version | int }}-for-ppc64le-sap-netweaver-e4s-rpms
+        - rhel-{{ ansible_distribution_version | int }}-for-ppc64le-highavailability-e4s-rpms
+
+- name: Check os registration status
+  shell: "subscription-manager status"
+  register: os_registration_status
+  failed_when: false
+# END of rhel subscription block

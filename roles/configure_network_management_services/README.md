@@ -1,4 +1,4 @@
-## Role: powervs_client_enable_services
+## Role: configure_network_management_services
 
 ### Enabling Services
 
@@ -9,6 +9,7 @@ This role performs the following tasks:
 - Configures **DNS**.
 - Installs **NTP** packages and updates named.conf file with ntp server.
 - Installs **NFS** client packages, and mounts nfs exported directories as mentioned in variable file.
+- Set up **network proxy** on client. Modifies **/etc/bashrc** and **/etc/dnf/dnf.conf** file**
 - All above services will be **started and enabled**
 
 To execute this role the input variable **client_config** is required. The variable is defined below.

@@ -1,14 +1,17 @@
-## Role: powervs_storage_setup
+## Role: powervs_storage_and_swap_setup
 
-### Creating Filesystems for SAP installations
+### Creating Filesystems for SAP installations (task: storage-setup.yml)
 
 This module is same for both SLES and RHEL.
+This module also performs the swap space configuration which is only applicable for **only for SAP Netweaver**.
 
 This role performs the following tasks:
 - **Creates filesystems** with user defined **stripe size** using ansible **built-in** LVM logical volumes modules.
 - **Mounts** the filesystems on provided **mount points**
 - **Adds an entry to /etc/fstab** for **automount** on reboot.
 - **Optional** :Converts the input data structure of disks_configuration variable from **dictionary to a general data structure**.
+- Removes previous swap device configured (SAP Netweaver instance).
+- Creates a new swap device on disk provided with swap_disk_wwn variable (SAP Netweaver instance).
 
 A separate **task** called **disks-dict2list.yml** is used to handle disks_configuration variable values passed **as dictionary** to execute this role.
 
@@ -48,6 +51,9 @@ wwns: 600507681082018bc8000000000057f1
 .
 ]
 ```
+
+#### Note:
+For RHEL, **swap disk of size >= 24GB** is required for community role **[sap-netweaver-preconfigure](https://github.com/linux-system-roles/sap-netweaver-preconfigure)** to succeed.
 
 ## Dependencies
 

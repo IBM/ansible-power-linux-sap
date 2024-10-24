@@ -21,33 +21,5 @@
       ansible.builtin.include_vars: ./vars/sample-powervs-configure-os-for-sap.yml
 
   roles:
-   - { role: ../roles/powervs_prepare_rhel_sap, when: sap_solution is defined and ansible_distribution is match("RedHat*") }
-   - { role: ../roles/powervs_prepare_sles_sap, when: sap_solution is defined and ansible_distribution is match("SLES*") }
-
-  tasks:
-   - name: Run SAP general preconfigure
-     ansible.builtin.include_role:
-      name: sap_general_preconfigure
-     vars:
-      sap_general_preconfigure_fail_if_reboot_required: false
-     when:
-      - ansible_distribution is match("RedHat*")
-      - sap_solution is defined
-
-   - name: Run SAP HANA preconfigure
-     ansible.builtin.include_role:
-      name: sap_hana_preconfigure
-     vars:
-      sap_hana_preconfigure_fail_if_reboot_required: false
-     when:
-      - ansible_distribution is match("RedHat*")
-      - sap_solution is defined
-      - sap_solution is match("HANA")
-
-   - name: Run SAP Netweaver preconfigure
-     ansible.builtin.include_role:
-      name: sap_netweaver_preconfigure
-     when:
-      - ansible_distribution is match("RedHat*")
-      - sap_solution is defined
-      - sap_solution is match("NETWEAVER")
+   - { role: ../roles/powervs_os_registration }
+   - { role: ../roles/powervs_configure_os_for_sap, when: sap_solution is defined }

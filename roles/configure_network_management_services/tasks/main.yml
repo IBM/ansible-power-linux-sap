@@ -1,0 +1,8 @@
+---
+- name: Install services(Squid proxy,DNS,NTP,NFS) on network services host vsi
+  ansible.builtin.include_tasks: "configure_network_services_host.yml"
+  when: server_config is defined
+  
+- name: Enable network services on client vsi
+  ansible.builtin.include_tasks: "configure_network_services_client.yml"
+  when: client_config is defined
