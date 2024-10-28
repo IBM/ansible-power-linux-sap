@@ -1,4 +1,4 @@
-## role: powervs_os_registration
+## Role: powervs_os_registration
 
 ### Preparing Operating System for SAP installations for RHEL or SLES
 

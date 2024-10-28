@@ -1,4 +1,4 @@
-- name: OS registration for RHEL
+- name: Power Virtual Server Full Linux Subscription OS Registration
   ansible.builtin.include_tasks: "powervs_fls.yml"
   when: fls and byol is not defined
 
