@@ -19,6 +19,7 @@ This role will dynamically determine the subscription type to activate based on 
 - Activate a RHEL/SLES subscription if the `fls` field is set
 
 # 3. Edit parameters in the monitoring configuration file
+Edit the configuration file - `playbooks/vars/sample-variables-powervs-os-registration.yml` with the required inputs to register the OS.
 
 | Name       | Type       |Example                                     | Description                        |
 |------------|------------|--------------------------------------------|-----------------------------------|
@@ -29,7 +30,7 @@ This role will dynamically determine the subscription type to activate based on 
 
 ## 4.1 Edit the configuration file
 
-To register a PowerVS LPAR OS, you need to specify either `fls` or `byol` in the playbooks/vars/sample-variables-powervs-os-registration.yml configuration file, depending on whether you need to activate a Full Linux Subscription (FLS) or Bring Your Own License (BYOL) for RHEL/SLES.
+To register a PowerVS LPAR OS, you need to specify either `fls` or `byol` in the `playbooks/vars/sample-variables-powervs-os-registration.yml` configuration file, depending on whether you need to activate a Full Linux Subscription (FLS) or Bring Your Own License (BYOL) for RHEL/SLES.
 
 Please ensure to specify the correct option in the configuration file to ensure successful registration of your PowerVS OS.
 

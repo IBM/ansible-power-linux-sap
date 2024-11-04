@@ -59,7 +59,7 @@ wwns: 600507681082018bc8000000000057f1
 
 # 3. Edit parameters in the monitoring configuration file
 
-Edit the configuration file - playbooks/vars/sample-variables-powervs-storage-setup.yml with the required inputs for Power LPARs' swap disk and file system creation.
+Edit the configuration file - `playbooks/vars/sample-variables-powervs-storage-setup.yml` with the required inputs for Power LPARs' swap disk and file system creation.
 
 | Name  | Type  |Example  | Description |
 |-------|-------|---------|-------------|
@@ -73,7 +73,7 @@ Edit the configuration file - playbooks/vars/sample-variables-powervs-storage-se
 To create file systems, retrieve the wwns of the storage volumes from the PowerVS workspaces. 
 
 ## 4.2 Edit the network services server/client configuration file
-Provide required inputs for Power LPARs' swap disk and file system creation in the configuration file - playbooks/vars/sample-variables-powervs-storage-setup.yml
+Provide required inputs for Power LPARs' swap disk and file system creation in the configuration file - `playbooks/vars/sample-variables-powervs-storage-setup.yml`
 
 ## 4.3. Execute the Ansible playbook
 

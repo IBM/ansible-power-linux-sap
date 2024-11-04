@@ -32,7 +32,7 @@ On **RHEL**, this role installs and applies **[RHEL system roles](https://access
 All settings applied remain persistent across reboot.
 
 # 3. Edit parameters in the monitoring configuration file
-To prepare the OS for SAP system deployment edit the configuration file playbooks/vars/sample-powervs-configure-os-for-sap.yml
+To prepare the OS for SAP system deployment edit the configuration file `playbooks/vars/sample-powervs-configure-os-for-sap.yml` with following information.
 
 | Name  | Type  |Example  | Description |
 |-------|-------|---------|-------------|
@@ -51,7 +51,7 @@ sudo dnf -y install rhel-system-roles rhel-system-roles-sap
 
 ## 4.2 Edit the network services server/client configuration file
 
-Edit the configuration file playbooks/vars/sample-powervs-configure-os-for-sap.yml
+Edit the configuration file `playbooks/vars/sample-powervs-configure-os-for-sap.yml` with required inputs.
 
 ## 4.3 Execute the Ansible playbook
 
