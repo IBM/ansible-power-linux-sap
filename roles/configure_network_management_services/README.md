@@ -35,7 +35,7 @@ To configure a virtual server instance as a client for network management servic
 - Starts and enables all above-mentioned services
 
 # 3. Edit parameters in the monitoring configuration file
-To set up the network management server, edit the configuration file - playbooks/vars/sample-variables-configure-network-services-host.yml and to set up the network management services client, edit the the configuration file - playbooks/vars/sample-variables-configure-network-services-client.yml
+To set up the network management server, edit the configuration file - `playbooks/vars/sample-variables-configure-network-services-host.yml` and to set up the network management services client, edit the the configuration file - `playbooks/vars/sample-variables-configure-network-services-client.yml`.
 
 | Name  | Type  |Example  | Description |
 |-------|-------|---------|-------------|
