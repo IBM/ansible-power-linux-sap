@@ -23,7 +23,7 @@ Edit the configuration file - `playbooks/vars/sample-variables-powervs-os-regist
 
 | Name       | Type       |Example                                     | Description                        |
 |------------|------------|--------------------------------------------|-----------------------------------|
-| byol  | Object   | <br>byol:<br> &nbsp;&nbsp; username: <_username_> <br> &nbsp;&nbsp; password: <_password_> <br> | BYOL for RHEL/SLES. For RHEL provide username and password. For SLES provide email as username and activation code as password. Do not provide it for Full Linux Subscription |
+| byol  | Object   | <br>byol:<br>&nbsp;&nbsp;username:`username`<br> &nbsp;&nbsp;password:`password`<br> | BYOL for RHEL/SLES. For RHEL provide username and password. For SLES provide email as username and activation code as password. Do not provide it for Full Linux Subscription |
 | fls   | Boolean  | fls: true | if true, performs Full Linux Subscription. Do not provide if for BYOL|
 
 # 4. Installation Guide
