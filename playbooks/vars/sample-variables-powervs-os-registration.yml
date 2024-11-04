@@ -1,7 +1,7 @@
 # ----------------------------- Optional parameters ------------------------------  #
 # Uncomment # if you want to use BYOL for RHEL/SLES
 # For RHEL provide username and password.
-# For SLES provide email as username and activation code as password. 
+# For SLES provide email as username and activation code as password.
 # byol:
 #    username: ""
 #    password: ""

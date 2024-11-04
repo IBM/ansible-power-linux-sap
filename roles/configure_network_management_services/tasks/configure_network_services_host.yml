@@ -173,7 +173,7 @@
   block:
     - name: Include task to create NFS filesystem
       ansible.builtin.include_tasks: vpc_fs_creation.yml
-      with_items: "{{ server_config.nfs.nfs_file_system }}"
+      with_items: "{{ server_config.nfs.directories }}"
       when: ansible_architecture is match("x86*")
 
     - name: Install nfs package
@@ -193,8 +193,8 @@
       ansible.builtin.lineinfile:
         path: /etc/exports
         state: present
-        line: "{{ item.mount_path | trim }} *(rw,no_root_squash,no_subtree_check,insecure)"
-      with_items: "{{ server_config.nfs.nfs_file_system }}"
+        line: "{{ item | trim }} *(rw,no_root_squash,no_subtree_check,insecure)"
+      with_items: "{{ server_config.nfs.directories }}"
 
     - name: Start nfs service
       ansible.builtin.service:
@@ -204,10 +204,10 @@
       changed_when: false
 
     - name: Run showmount command to list nfs exported directory
-      ansible.builtin.shell: showmount -e localhost  | grep  {{ item.mount_path | trim }}
+      ansible.builtin.shell: showmount -e localhost  | grep  {{ item | trim }}
       register: showmount_log
       ignore_errors: true
-      with_items: "{{ server_config.nfs.nfs_file_system }}"
+      with_items: "{{ server_config.nfs.directories }}"
       changed_when: false
 
     - name: Warning message if directory was not exported successfully

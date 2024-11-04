@@ -18,6 +18,6 @@
   hosts: all
   pre_tasks:
     - name: Include variables
-      ansible.builtin.include_vars: ./vars/sample-variables-powervs-client-enable-services.yml
+      ansible.builtin.include_vars: ./vars/sample-variables-configure-network-services-client.yml
   roles:
    - { role: ../roles/configure_network_management_services, when: client_config is defined }

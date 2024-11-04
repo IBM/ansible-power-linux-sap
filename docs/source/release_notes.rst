@@ -143,3 +143,7 @@ Notes
 Version 2.2.1
 Notes
        * fix: private ingestion endpoints for sap monitory role
+
+Version 3.0.0
+Notes
+       * feat: FLS for RHEL/SLES and code refactoring
