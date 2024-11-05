@@ -148,9 +148,8 @@ Version 3.0.0
 Notes
        * Previous roles powervs_prepare_rhel_sap and powervs_prepare_sles_sap are now powervs_os_registration and powervs_configure_os_for_sap
        * Ansible role powervs_os_registration supports Full Linux Subscription and BYOL for RHEL/SLES.
-       * Ansible role powervs_configure_os_for_sap sets up RHEL and SLES for SAP deployment, enabling required services and configurations. 
+       * Ansible role powervs_configure_os_for_sap sets up RHEL and SLES for SAP deployment, enabling required services and configurations.
        * Previous roles powervs_storage_setup and powervs_swap_creation now combined to one role powervs_storage_and_swap_setup
        * Ansible role powervs_storage_and_swap_setup configures disk and manages swap space on both SLES and RHEL systems.
        * Previous roles powervs_client_enable_services and powervs_install_services now combined to one role configure_network_management_services
        * Ansible role configure_network_management_services installs and configures network services on SLES and RHEL, based on the instance's role as client or server.
-

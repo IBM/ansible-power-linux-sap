@@ -106,14 +106,14 @@
 
 # enable RFS
 - name: Update /proc/sys/net/core/rps_sock_flow_entries
-  shell: "echo 32768 > /proc/sys/net/core/rps_sock_flow_entries"
+  ansible.legacy.shell: "echo 32768 > /proc/sys/net/core/rps_sock_flow_entries"
 
 - name: Find all rx-* files in /sys/class/net/*/queues/
-  shell: "find /sys/class/net/*/queues/ -name 'rx-*' | grep -v '/lo/'"
+  ansible.legacy.shell: "find /sys/class/net/*/queues/ -name 'rx-*' | grep -v '/lo/'"
   register: rx_files
 
 - name: Update and persist all rx-* files
-  shell: "echo '32768' > {{ item }}/rps_flow_cnt && sync {{ item }}/rps_flow_cnt"
+  ansible.legacy.shell: "echo '32768' > {{ item }}/rps_flow_cnt && sync {{ item }}/rps_flow_cnt"
   loop: "{{ rx_files.stdout_lines }}"
   when: rx_files.stdout_lines is defined
 
