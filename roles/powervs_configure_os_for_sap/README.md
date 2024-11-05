@@ -2,7 +2,7 @@
 
 1. [Introduction](README.md#1-Introduction)
 2. [Role Description](README.md#2-Role-description)
-3. [Configuration Variables](README.md#3-Edit-parameters-in-the-monitoring-configuration-file)
+3. [Configuration Variables](README.md#3-Edit-parameters-in-the-configuration-file)
 4. [Installation Guide](README.md#4-Installation-Guide)
 
 # 1. Introduction
@@ -31,7 +31,7 @@ On **RHEL**, this role installs and applies **[RHEL system roles](https://access
 
 All settings applied remain persistent across reboot.
 
-# 3. Edit parameters in the monitoring configuration file
+# 3. Edit parameters in the configuration file
 To prepare the OS for SAP system deployment edit the configuration file `playbooks/vars/sample-powervs-configure-os-for-sap.yml` with following information.
 
 | Name  | Type  |Example  | Description |

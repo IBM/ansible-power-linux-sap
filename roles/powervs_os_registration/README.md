@@ -2,7 +2,7 @@
 
 1. [Introduction](README.md#1-Introduction)
 2. [Role Description](README.md#2-Role-description)
-3. [Configuration Variables](README.md#3-Edit-parameters-in-the-monitoring-configuration-file)
+3. [Configuration Variables](README.md#3-Edit-parameters-in-the-configuration-file)
 4. [Installation Guide](README.md#4-Installation-Guide)
 
 # 1. Introduction
@@ -18,7 +18,7 @@ This role will dynamically determine the subscription type to activate based on 
 - Activate a Full Linux Subscription if the `byol` field is set
 - Activate a RHEL/SLES subscription if the `fls` field is set
 
-# 3. Edit parameters in the monitoring configuration file
+# 3. Edit parameters in the configuration file
 Edit the configuration file - `playbooks/vars/sample-variables-powervs-os-registration.yml` with the required inputs to register the OS.
 
 | Name       | Type       |Example                                     | Description                        |

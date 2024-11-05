@@ -2,7 +2,7 @@
 - name: Install Network management services (Squid proxy,DNS,NTP,NFS) to configure as Server
   ansible.builtin.include_tasks: "configure_network_services_host.yml"
   when: server_config is defined
-  
+
 - name: Install Network management services (Squid proxy,DNS,NTP,NFS) to configure as Client
   ansible.builtin.include_tasks: "configure_network_services_client.yml"
   when: client_config is defined

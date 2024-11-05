@@ -99,7 +99,7 @@
     name: rpcbind
     state: started
     enabled: true
-  
+
 - name: Set transparent_hugepage to never
   ansible.builtin.shell: echo never > /sys/kernel/mm/transparent_hugepage/enabled
   changed_when: false
@@ -121,7 +121,7 @@
 - name: Tune RHEL for SAP
   ansible.builtin.include_tasks: "rhel_saptune.yml"
   when: ansible_distribution is match("RedHat*") and sap_solution is defined
-  
+
 - name: Tune SLES for SAP
   ansible.builtin.include_tasks: "sles_saptune.yml"
   when: ansible_distribution is match("SLES*") and sap_solution is defined

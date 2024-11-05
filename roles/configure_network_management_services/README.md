@@ -2,7 +2,7 @@
 
 1. [Introduction](README.md#1-Introduction)
 2. [Role Description](README.md#2-Role-description)
-3. [Configuration Variables](README.md#3-Edit-parameters-in-the-monitoring-configuration-file)
+3. [Configuration Variables](README.md#3-Edit-parameters-in-the-configuration-file)
 4. [Installation Guide](README.md#4-Installation-Guide)
 
 # 1. Introduction
@@ -34,7 +34,7 @@ To configure a virtual server instance as a client for network management servic
 - Sets up network proxy on client, modifying /etc/bashrc and /etc/dnf/dnf.conf files
 - Starts and enables all above-mentioned services
 
-# 3. Edit parameters in the monitoring configuration file
+# 3. Edit parameters in the configuration file
 To set up the network management server, edit the configuration file - `playbooks/vars/sample-variables-configure-network-services-host.yml` and to set up the network management services client, edit the the configuration file - `playbooks/vars/sample-variables-configure-network-services-client.yml`.
 
 | Name  | Type  |Example  | Description |
@@ -44,7 +44,7 @@ To set up the network management server, edit the configuration file - `playbook
 
 # 4. Installation Guide
 
-## 4.1 Prerequisites 
+## 4.1 Prerequisites
 To enable services on the network management server, in addition to setting the boolean flags, additional information must be planned and provided. For DNS, specify the target DNS server IPs. For NFS service setup, provide the directories that need to be created when editing the configuration file.
 The network management services client setup the network management server information:
 - copy the IP and port of Squid Proxy server

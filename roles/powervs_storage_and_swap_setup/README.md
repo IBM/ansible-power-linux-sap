@@ -2,7 +2,7 @@
 
 1. [Introduction](README.md#1-Introduction)
 2. [Role Description](README.md#2-Role-description)
-3. [Configuration Variables](README.md#3-Edit-parameters-in-the-monitoring-configuration-file)
+3. [Configuration Variables](README.md#3-Edit-parameters-in-the-configuration-file)
 4. [Installation Guide](README.md#4-Installation-Guide)
 
 # 1. Introduction
@@ -57,7 +57,7 @@ wwns: 600507681082018bc8000000000057f1
 ]
 ```
 
-# 3. Edit parameters in the monitoring configuration file
+# 3. Edit parameters in the configuration file
 
 Edit the configuration file - `playbooks/vars/sample-variables-powervs-storage-setup.yml` with the required inputs for Power LPARs' swap disk and file system creation.
 
@@ -69,8 +69,8 @@ Edit the configuration file - `playbooks/vars/sample-variables-powervs-storage-s
 
 # 4. Installation Guide
 
-## 4.1 Prerequisites 
-To create file systems, retrieve the wwns of the storage volumes from the PowerVS workspaces. 
+## 4.1 Prerequisites
+To create file systems, retrieve the wwns of the storage volumes from the PowerVS workspaces.
 
 ## 4.2 Edit the network services server/client configuration file
 Provide required inputs for Power LPARs' swap disk and file system creation in the configuration file - `playbooks/vars/sample-variables-powervs-storage-setup.yml`

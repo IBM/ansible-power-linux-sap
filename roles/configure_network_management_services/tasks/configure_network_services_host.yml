@@ -171,11 +171,6 @@
 - name: Setting up NFS Service
   when: server_config.nfs.enable|default(False)|bool
   block:
-    - name: Include task to create NFS filesystem
-      ansible.builtin.include_tasks: vpc_fs_creation.yml
-      with_items: "{{ server_config.nfs.directories }}"
-      when: ansible_architecture is match("x86*")
-
     - name: Install nfs package
       ansible.builtin.package:
         name: nfs-utils
