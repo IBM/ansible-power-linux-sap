@@ -36,7 +36,7 @@ Please ensure to specify the correct option in the configuration file to ensure 
 
 ## 4.2 Execute the Ansible playbook
 
-To prpeare the OS for SAP system, execute the ansible playbook:
+To register a PowerVS LPAR OS, execute the ansible playbook:
 `ansible-playbook --connection=local -i "localhost," playbooks/sample-powervs-os-registration.yml`
 
 # Notes
