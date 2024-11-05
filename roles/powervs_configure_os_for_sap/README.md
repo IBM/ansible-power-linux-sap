@@ -36,7 +36,7 @@ To prepare the OS for SAP system deployment edit the configuration file `playboo
 
 | Name  | Type  |Example  | Description |
 |-------|-------|---------|-------------|
-| sap_solution  | String  |sap_solution: "HANA"  | SAP Solution to be installed on Power Virtual Server |
+| sap_solution  | String  |sap_solution: "HANA"  | SAP Solution to be installed on Power Virtual Server. Other option is sap_solution: "NETWEAVER". |
 | sap_domain    | String  |sap_domain: "poc.cloud"  | SAP network domain name                              |
 
 # 4. Installation Guide
