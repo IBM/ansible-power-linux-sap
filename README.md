@@ -29,13 +29,11 @@ Within this Ansible Collection, there are various Ansible Roles and no custom An
 
 | Name | Summary |
 | :--- | :--- |
-| [powervs_install_services](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_install_services)| Installs and configures Squid, NTP, NFS and DNS services as a server|
-| [powervs_client_enable_services](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_client_enable_services) | Configures proxy, connects to NTP and DNS services and mounts the provided NFS path. |
-| [powervs_storage_setup](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_storage_setup)| Configures storage |
-| [powervs_swap_creation](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_swap_creation)| Configures swap disk |
-| [powervs_prepare_rhel_sap](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_prepare_rhel_sap)| Configure general RHEL OS settings for SAP software |
-| [powervs_prepare_sles_sap](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_prepare_sles_sap)| configure general SLES OS settings for SAP software |
-| [monitoring_sap](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/monitoring_sap)| Creates or deletes SAP monitoring configurations |
+| [configure_network_management_services](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/configure_network_management_services)| Installs and configures network services on SLES and RHEL |
+| [monitoring_sap](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/monitoring_sap)| Configures/deletes a SAP monitoring instance on a IBM Cloud Virtual Server |
+| [powervs_configure_os_for_sap](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_configure_os_for_sap)| Configure general RHEL/SLES OS settings for SAP software |
+| [powervs_os_registration](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_os_registration)| Full Linux Subscription and BYOL support for RHEL/SLES  |
+| [powervs_storage_and_swap_setup](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_storage_and_swap_setup)| Configures disk and manages swap space on both SLES and RHEL systems |
 
 
 # 3. Installation Guide
