@@ -1,0 +1,212 @@
+---
+####################################
+# Block: Install Squid Proxy
+####################################
+- name: Install Squid Proxy
+  when: server_config.squid.enable | default(false) | bool
+  block:
+    - name: Install squid
+      ansible.builtin.package:
+        name: squid
+        state: latest
+
+    - name: Replace squid.conf file
+      ansible.builtin.copy:
+        src: "{{ role_path }}/files/squid.conf"
+        dest: /etc/squid/squid.conf
+        mode: "0640"
+
+    - name: Start squid service
+      ansible.builtin.service:
+        name: squid
+        state: restarted
+        enabled: true
+
+####################################
+# Install BIND Service
+####################################
+- name: Setting up the BIND Service
+  when: server_config.dns.enable|default(False)|bool
+  block:
+    - name: Install bind
+      ansible.builtin.package:
+        name: bind
+
+        state: latest
+
+    - name: Modify acl allowed_clients in /etc/named.conf file
+      ansible.builtin.blockinfile:
+        marker_begin: "BEGIN_ACL"
+        marker_end: "END_ACL"
+        path: /etc/named.conf
+        block: |
+          acl allowed_clients {
+            localhost;
+            any;
+          };
+        insertbefore: ^options
+
+    - name: Modify listen-on line in /etc/named.conf file to accept any IP in RHEL
+      ansible.builtin.replace:
+        path: /etc/named.conf
+        regexp: "^(.*)listen-on port(.*)"
+        replace: "listen-on { any; };"
+      when: ansible_distribution is match("RedHat*")
+    - name: Comment listen-on-v6 line in /etc/named.conf file in RHEL
+      ansible.builtin.replace:
+        path: /etc/named.conf
+        regexp: "^(.*)listen-on-v6(.*)"
+        replace: "listen-on-v6 { any; };"
+      when: ansible_distribution is match("RedHat*")
+    - name: Set dnssec-validation to no in /etc/named.conf file in RHEL
+      ansible.builtin.replace:
+        path: /etc/named.conf
+        regexp: "(.*)dnssec-validation(.*)"
+        replace: "dnssec-validation no;"
+      when: ansible_distribution is match("RedHat*")
+
+    - name: Set dnssec-validation to no in /etc/named.conf file in SLES
+      ansible.builtin.lineinfile:
+        path: /etc/named.conf
+        line: "dnssec-validation no;"
+        insertafter: "^(.*)dnssec-validation(.*)"
+      when: ansible_distribution is match("SLES*")
+
+    - name: Modify forwarders in /etc/named.conf file
+      ansible.builtin.blockinfile:
+        path: /etc/named.conf
+        block: |
+          forwarders {
+              {{ server_config.dns.dns_servers }}
+          };
+        insertafter: ^options
+
+    - name: Modify allow-query in /etc/named.conf file for RHEL
+      ansible.builtin.replace:
+        path: /etc/named.conf
+        regexp: "^(.*)allow-query(.*)"
+        replace: allow-query { allowed_clients; };
+      when: ansible_distribution is match("RedHat*")
+
+    - name: Modify allow-query in /etc/named.conf file for SLES
+      ansible.builtin.replace:
+        path: /etc/named.conf
+        regexp: "^(.*)#allow-query(.*)"
+        replace: allow-query { allowed_clients; };
+      when: ansible_distribution is match("SLES*")
+
+    - name: Modify /etc/named.conf file to include "forward only"
+      ansible.builtin.lineinfile:
+        path: /etc/named.conf
+        line: forward only;
+        insertafter: "^(.*)allow-query(.*)"
+
+    - name: Modify /etc/named.conf file to include "recursion yes"
+      ansible.builtin.lineinfile:
+        path: /etc/named.conf
+        line: recursion yes;
+        insertafter: "^(.*)allow-query(.*)"
+      when: ansible_distribution is match("SLES*")
+
+    - name: Enable named service
+      ansible.builtin.service:
+        name: named
+        state: restarted
+        enabled: true
+      changed_when: false
+
+####################################
+# Install Chrony
+####################################
+- name: Setting up the Chrony Service
+  when: server_config.ntp.enable|default(False)|bool
+  block:
+    - name: Installing chrony
+      ansible.builtin.package:
+        name: chrony
+        state: latest
+
+    - name: Edit iburst line in /etc/chrony.conf file
+      ansible.builtin.replace:
+        path: /etc/chrony.conf
+        regexp: "^(.*)local stratum 10$"
+        replace: "local stratum 10"
+
+    - name: Edit allowed subnets in /etc/chrony.conf file
+      ansible.builtin.replace:
+        path: /etc/chrony.conf
+        regexp: "^#allow(.*)"
+        replace: "allow 10.0.0.0/8\n
+          allow 192.168.0.0/16\n
+          allow 172.16.0.0/12"
+
+    - name: Remove whitespace prefix from allowed subnet entry in /etc/chrony.conf file
+      ansible.builtin.replace:
+        path: /etc/chrony.conf
+        regexp: "^ allow"
+        replace: "allow"
+
+    - name: Comment out Port 0 line from /etc/chrony.conf file
+      ansible.builtin.replace:
+        path: /etc/chrony.conf
+        regexp: "^port 0"
+        replace: "#port 0"
+
+    - name: Add Manual at EOF in /etc/chrony.conf
+      ansible.builtin.lineinfile:
+        path: /etc/chrony.conf
+        line: manual
+        insertbefore: EOF
+
+    - name: Start chronyd service
+      ansible.builtin.service:
+        name: chronyd
+        state: restarted
+        enabled: true
+      changed_when: false
+
+####################################
+# Install NFS Service
+####################################
+- name: Setting up NFS Service
+  when: server_config.nfs.enable|default(False)|bool
+  block:
+    - name: Install nfs package
+      ansible.builtin.package:
+        name: nfs-utils
+        state: latest
+      ignore_errors: true
+
+    - name: Create /etc/exports file. if not present
+      ansible.builtin.file:
+        path: /etc/exports
+        state: touch
+        mode: "0644"
+      changed_when: false
+
+    - name: Export directory as NFS
+      ansible.builtin.lineinfile:
+        path: /etc/exports
+        state: present
+        line: "{{ item | trim }} *(rw,no_root_squash,no_subtree_check,insecure)"
+      with_items: "{{ server_config.nfs.directories }}"
+
+    - name: Start nfs service
+      ansible.builtin.service:
+        name: nfs-server.service
+        state: restarted
+        enabled: true
+      changed_when: false
+
+    - name: Run showmount command to list nfs exported directory
+      ansible.builtin.shell: showmount -e localhost  | grep  {{ item | trim }}
+      register: showmount_log
+      ignore_errors: true
+      with_items: "{{ server_config.nfs.directories }}"
+      changed_when: false
+
+    - name: Warning message if directory was not exported successfully
+      ansible.builtin.debug:
+        msg: "INFO: The command {{ item.cmd }} returned error.  Please ensure all NFS exports had been successful"
+      when: item.rc != 0
+      loop: "{{ showmount_log.results }}"

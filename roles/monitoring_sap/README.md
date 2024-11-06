@@ -155,7 +155,7 @@ mkdir <sap_tools_directory>
 
 # Copy the SAP-HANA-Client SAR-File and SAPCAR-XXX.exe to <sap_tools_directory>
 
-# Clone the ansible-power-linux-sap reository from github
+# Clone the ansible-power-linux-sap repository from github
 git clone https://github.com/IBM/ansible-power-linux-sap.git
 cd ansible-power-linux-sap
 ```
@@ -168,7 +168,7 @@ This document  [docs/HOWTO-gather-SAP-parameters.md](docs/HOWTO-gather-SAP-param
 #### 4.2.4 Execute the Ansible playbook
 Ansible actions are controlled by the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml`, <br>
 no changes are required in the file `playbooks/sample-monitoring-sap.yml`. <br>
-Each execution of the Ansiblke playbook will add or delete a monitoring configuration: <br>
+Each execution of the Ansible playbook will add or delete a monitoring configuration: <br>
 `ansible-playbook --connection=local -i "localhost," playbooks/sample-monitoring-sap.yml`
 
 

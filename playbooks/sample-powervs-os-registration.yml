@@ -14,11 +14,11 @@
 # limitations under the License.
 # ------------------------------------------------------------------------
 ---
-- name: Configure OS for network, storage and SAP.
+- name: Register OS on Power LPARs.
   hosts: all
   pre_tasks:
     - name: Include variables
-      ansible.builtin.include_vars: ./vars/sample-powervs-configure-os-for-sap.yml
+      ansible.builtin.include_vars: ./vars/sample-variables-powervs-os-registration.yml
 
   roles:
-   - { role: ../roles/powervs_configure_os_for_sap, when: sap_solution is defined }
+   - { role: ../roles/powervs_os_registration }

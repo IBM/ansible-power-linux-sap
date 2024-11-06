@@ -1,5 +1,8 @@
 # Release Notes
 
+<a name="v3.0.0"></a>
+# [v3.0.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v3.0.0) - 05 Nov 2024
+
 <a name="v2.2.1"></a>
 # [v2.2.1](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v2.2.1) - 18 Jul 2024
 
@@ -204,7 +207,8 @@ This release will add the following capabilities:
 ## Release Summary
 Initial beta release of IBM Power Virtual Systems SAP with RISE collection, referred to as power_linux_sap
 
-[Changes][v2.2.1]
+[Changes][v3.0.0]
+[v3.0.0]: https://github.com/IBM/ansible-power-linux-sap/compare/v3.0.0...v2.2.1
 [v2.2.1]: https://github.com/IBM/ansible-power-linux-sap/compare/v2.2.1...v2.2.0
 [v2.2.0]: https://github.com/IBM/ansible-power-linux-sap/compare/v2.1.1...v2.2.1
 [v2.1.1]: https://github.com/IBM/ansible-power-linux-sap/compare/v2.1.0...v2.1.1

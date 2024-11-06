@@ -14,11 +14,10 @@
 # limitations under the License.
 # ------------------------------------------------------------------------
 ---
-- name: Configure OS for network, storage and SAP.
+- name: Install and configure network services
   hosts: all
   pre_tasks:
     - name: Include variables
-      ansible.builtin.include_vars: ./vars/sample-powervs-configure-os-for-sap.yml
-
+      ansible.builtin.include_vars: ./vars/sample-variables-configure-network-services-host.yml
   roles:
-   - { role: ../roles/powervs_configure_os_for_sap, when: sap_solution is defined }
+   - { role: ../roles/configure_network_management_services, when: server_config is defined }
