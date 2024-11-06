@@ -6,6 +6,9 @@ description: Collection of Ansible Roles for RHEL/SLES OS to prepare LPARs for i
 authors:
   - Sahitya Jain <sahityajain(at)in.ibm.com>
   - Suraj Bharadwaj <suraj.bharadwaj(at)ibm.com>
+  - Anastasiia Biliak <anastasiia.biliak@ibm.com>
+  - Achim Haaser <Achim.Haaser1@ibm.com>
+  - Stafania Saju <Stafania.Saju@ibm.com>
 
 license_file: "LICENSE"
 tags:
