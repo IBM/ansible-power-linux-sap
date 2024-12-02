@@ -88,11 +88,19 @@
     state: latest
 
 # to Ensure that NFS and rpcbind daemon are up.
-- name: Ensure NFS client is running
+- name: Ensure NFS client is running (RHEL)
+  ansible.builtin.service:
+    name: nfs-client.target
+    state: started
+    enabled: true
+  when: "ansible_distribution is match('RedHat*')"
+
+- name: Ensure NFS client is running (SLES)
   ansible.builtin.service:
     name: nfs
     state: started
     enabled: true
+  when: "ansible_distribution is match('SLES*')"
 
 - name: Ensure rpcbind is running
   ansible.builtin.service:
@@ -105,17 +113,8 @@
   changed_when: false
 
 # enable RFS
-- name: Update /proc/sys/net/core/rps_sock_flow_entries
-  ansible.legacy.shell: "echo 32768 > /proc/sys/net/core/rps_sock_flow_entries"
-
-- name: Find all rx-* files in /sys/class/net/*/queues/
-  ansible.legacy.shell: "find /sys/class/net/*/queues/ -name 'rx-*' | grep -v '/lo/'"
-  register: rx_files
-
-- name: Update and persist all rx-* files
-  ansible.legacy.shell: "echo '32768' > {{ item }}/rps_flow_cnt && sync {{ item }}/rps_flow_cnt"
-  loop: "{{ rx_files.stdout_lines }}"
-  when: rx_files.stdout_lines is defined
+- name: Tune RHEL for SAP
+  ansible.builtin.include_tasks: "rfs.yml"
 
 # sap tuning
 - name: Tune RHEL for SAP
