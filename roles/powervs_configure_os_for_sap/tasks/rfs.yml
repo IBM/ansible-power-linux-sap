@@ -1,10 +1,5 @@
 ---
 # Ensure RFS configuration persists
-- name: Ensure rps_sock_flow_entries is set at runtime
-  ansible.posix.sysctl:
-    name: net.core.rps_sock_flow_entries
-    value: 32768
-    state: present
 
 - name: Persist rps_sock_flow_entries in sysctl.conf
   ansible.builtin.lineinfile:
