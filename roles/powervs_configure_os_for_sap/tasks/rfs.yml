@@ -1,60 +1,48 @@
 ---
 # Ensure RFS configuration persists
-- name: Configure RFS with 32768
-  hosts: all
-  become: yes
-  tasks:
-    - name: Update rps_sock_flow_entries runtime value
-      ansible.builtin.shell: sysctl -w net.core.rps_sock_flow_entries=32768
-      changed_when: false
+- name: Ensure rps_sock_flow_entries is set at runtime
+  ansible.posix.sysctl:
+    name: net.core.rps_sock_flow_entries
+    value: 32768
+    state: present
 
-    - name: Persist rps_sock_flow_entries in sysctl.conf
-      lineinfile:
-        path: /etc/sysctl.conf
-        regexp: '^net.core.rps_sock_flow_entries'
-        line: 'net.core.rps_sock_flow_entries=32768'
+- name: Persist rps_sock_flow_entries in sysctl.conf
+  ansible.builtin.lineinfile:
+    path: /etc/sysctl.conf
+    regexp: "^net.core.rps_sock_flow_entries"
+    line: "net.core.rps_sock_flow_entries=32768"
+    state: present
 
-    - name: Reload sysctl configuration
-      ansible.builtin.shell: sysctl -p
+- name: Reload sysctl configuration
+  ansible.builtin.shell: sysctl -p
+  register: sysctl_reload
+  changed_when: "'net.core.rps_sock_flow_entries' in sysctl_reload.stdout"
 
-    - name: Create custom systemd unit for RFS configuration
-      copy:
-        dest: /etc/systemd/system/rfs-config.service
-        content: |
-          [Unit]
-          Description=Set RPS flow control settings
-          After=network-online.target
-          Wants=network-online.target
+- name: Ensure custom systemd unit for RFS configuration exists
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/rfs-config.service
+    content: |
+      [Unit]
+      Description=Set RPS flow control settings
+      After=network-online.target
+      Wants=network-online.target
 
-          [Service]
-          Type=oneshot
-          ExecStart=/bin/bash -c "sleep 5; for file in $(find /sys/class/net/*/queues/ -name 'rx-*' | grep -v '/lo/'); do echo 32768 > $file/rps_flow_cnt; done"
+      [Service]
+      Type=oneshot
+      ExecStart=/bin/bash -c "sleep 5; for file in $(find /sys/class/net/*/queues/ -name 'rx-*' | grep -v '/lo/'); do echo 32768 > $file/rps_flow_cnt; done"
 
-          [Install]
-          WantedBy=multi-user.target
+      [Install]
+      WantedBy=multi-user.target
+    owner: root
+    group: root
+    mode: "0644"
 
-    - name: Reload systemd manager configuration
-      ansible.builtin.shell: systemctl daemon-reload
+- name: Reload systemd manager
+  ansible.builtin.systemd:
+    daemon_reload: true
 
-    - name: Enable and start RFS configuration service
-      systemd:
-        name: rfs-config.service
-        enabled: yes
-        state: restarted
-
-    - name: Verify sysctl value after service start
-      ansible.builtin.shell: sysctl net.core.rps_sock_flow_entries
-      register: sysctl_value
-
-    - name: Debug sysctl value
-      debug:
-        var: sysctl_value.stdout
-
-    - name: Verify RFS runtime configuration
-      ansible.builtin.shell: |
-        find /sys/class/net/*/queues/ -name 'rx-*' | grep -v '/lo/' | xargs -I{} cat {}/rps_flow_cnt
-      register: rfs_runtime_values
-
-    - name: Debug RFS runtime values
-      debug:
-        var: rfs_runtime_values.stdout_lines
+- name: Enable and start RFS configuration service
+  ansible.builtin.systemd:
+    name: rfs-config.service
+    enabled: true
+    state: restarted
