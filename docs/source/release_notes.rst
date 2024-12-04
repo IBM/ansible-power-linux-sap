@@ -153,3 +153,8 @@ Notes
        * Ansible role powervs_storage_and_swap_setup configures disk and manages swap space on both SLES and RHEL systems.
        * Previous roles powervs_client_enable_services and powervs_install_services now combined to one role configure_network_management_services
        * Ansible role configure_network_management_services installs and configures network services on SLES and RHEL, based on the instance's role as client or server.
+
+Version 3.1.0
+Notes
+       * RFS configuration setup
+       * NFS client check fix

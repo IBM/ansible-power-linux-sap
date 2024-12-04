@@ -20,8 +20,7 @@
   when: byol is defined
   block:
     - name: Subscribing to RHEL and setting release to {{ ansible_distribution_version }}
-      # noqa fqcn[action]
-      redhat_subscription:
+      community.general.redhat_subscription:
         state: present
         username: "{{ byol.username }}"
         password: "{{ byol.password }}"
@@ -31,8 +30,7 @@
 
     # Add repos for installing RHEL packages required for SAP installation
     - name: Enable required RHEL repositories
-      # noqa fqcn[action]
-      rhsm_repository:
+      community.general.rhsm_repository:
         name: "{{ item }}"
         state: enabled
       with_items:
