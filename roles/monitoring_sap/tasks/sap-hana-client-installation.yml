@@ -2,7 +2,7 @@
 # The role will install the SAP-HANA-client and SAP hdbcli which is used by hanadb_exporter
 
 - name: Install python3-pip
-  ansible.builtin.zypper:
+  community.general.zypper:
     name: python3-pip
     state: present
   tags: python3-pip

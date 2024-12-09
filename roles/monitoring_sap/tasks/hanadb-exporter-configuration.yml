@@ -1,7 +1,7 @@
 ---
 # This playbook deploys prometheus-hanadb_exporter configuration on the monitoring host
 - name: Install prometheus-hanadb_exporter
-  ansible.builtin.zypper:
+  community.general.zypper:
     name: prometheus-hanadb_exporter
     state: present
   tags: prometheus-hanadb_exporter
@@ -15,11 +15,11 @@
     force: false
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
 
 - name: Create a sap-hana-keystore for the <sap_monitoring_nr>
   ansible.builtin.shell:
-    cmd: '/usr/sap/hdbclient/hdbuserstore SET MONITORING{{ sap_monitoring_nr }}KEY {{ sap_hana_ip }}:{{ sap_hana_sql_systemdb_port }}@SYSTEMDB {{ sap_hana_sql_systemdb_user }} {{ sap_hana_sql_systemdb_password }}'
+    cmd: "/usr/sap/hdbclient/hdbuserstore SET MONITORING{{ sap_monitoring_nr }}KEY {{ sap_hana_ip }}:{{ sap_hana_sql_systemdb_port }}@SYSTEMDB {{ sap_hana_sql_systemdb_user }} {{ sap_hana_sql_systemdb_password }}"
 
 - name: Check sap-hana-keystore for 'MONITORING{{ sap_monitoring_nr }}KEY'
   ansible.builtin.shell:
@@ -33,7 +33,7 @@
     dest: /etc/hanadb_exporter/config-{{ sap_monitoring_nr }}-SQL.json
     owner: root
     group: root
-    mode: '0600'
+    mode: "0600"
   tags: hanadb_exporter
 
 - name: Start the systemd daemon of hanadb_exporter

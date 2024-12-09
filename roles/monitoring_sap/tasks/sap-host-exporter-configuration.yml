@@ -2,7 +2,7 @@
 # This playbook contains all sap_host_exporter (HANA, ASCS, ABAP) configuration.
 
 - name: Install prometheus-sap_host_exporter
-  ansible.builtin.zypper:
+  community.general.zypper:
     name: prometheus-sap_host_exporter
     state: present
   tags: prometheus-sap_host_exporter
@@ -13,7 +13,7 @@
     dest: /etc/sap_host_exporter/sap_host_exporter-{{ sap_monitoring_nr }}-HANA.yaml
     owner: root
     group: root
-    mode: '0600'
+    mode: "0600"
   tags: prometheus-sap_host_exporter HANA
 
 - name: Configure sap_host_exporter file ASCS
@@ -22,7 +22,7 @@
     dest: /etc/sap_host_exporter/sap_host_exporter-{{ sap_monitoring_nr }}-ASCS.yaml
     owner: root
     group: root
-    mode: '0600'
+    mode: "0600"
   tags: prometheus-sap_host_exporter ASCS
 
 - name: Configure sap_host_exporter DI
@@ -31,7 +31,7 @@
     dest: /etc/sap_host_exporter/sap_host_exporter-{{ sap_monitoring_nr }}-DI-{{ item.sap_app_server_nr }}.yaml
     owner: root
     group: root
-    mode: '0600'
+    mode: "0600"
   loop_control:
     loop_var: item
   loop: "{{ sap_app_server }}"
@@ -43,7 +43,7 @@
     dest: /etc/systemd/system/sap_host_exporter@.service
     owner: root
     group: root
-    mode: '0640'
+    mode: "0640"
 
 - name: Force systemd to reread configs
   ansible.builtin.systemd:

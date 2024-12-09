@@ -2,8 +2,7 @@
 
 # following task checked for SAPTUNE profile on system and apply {{ sap_solution }} profile if not applied. Also check for saptune rpm installation
 - name: Check saptune package installation
-  # noqa fqcn[action]
-  zypper:
+  community.general.zypper:
     name: saptune
     state: present
 

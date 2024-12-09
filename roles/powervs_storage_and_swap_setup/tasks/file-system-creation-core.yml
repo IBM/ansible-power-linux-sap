@@ -68,16 +68,14 @@
 
 # Creating volume group.
 - name: Create LVM volume group {{ file_system.name }}vg on {{ wwn_to_dm_list }}
-  lvg:
-    # noqa fqcn[action]
+  community.general.lvg:
     vg: "{{ file_system.name }}vg"
     pvs: "{{ wwn_to_dm_list }}"
     state: present
 
 # Making use of --stripesize as 64K as default, unless passed explicitly in extra vars
 - name: Create Logical Volume {{ file_system.name }}lv
-  lvol:
-    # noqa fqcn[action]
+  community.general.lvol:
     vg: "{{ file_system.name }}vg"
     lv: "{{ file_system.name }}lv"
     size: 100%VG
@@ -91,15 +89,13 @@
     mode: "0755"
 
 - name: Create filesystem
-  filesystem:
-    # noqa fqcn[action]
+  community.general.filesystem:
     fstype: xfs
     dev: "/dev/mapper/{{ file_system.name }}vg-{{ file_system.name }}lv"
     opts: -K
 
 - name: Mount lv {{ file_system.name }}lv on {{ file_system.mount }}
-  mount:
-    # noqa fqcn[action]
+  ansible.posix.mount:
     path: "{{ file_system.mount }}"
     src: "/dev/mapper/{{ file_system.name }}vg-{{ file_system.name }}lv"
     fstype: xfs
