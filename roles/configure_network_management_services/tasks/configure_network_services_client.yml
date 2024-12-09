@@ -75,7 +75,7 @@
       when: client_config.squid.no_proxy_hosts is defined
 
     # If no_proxy is absent(status obtained from previous register value), then no_proxy will add be added.
-    - name: Insert no_proxy entriy in in /etc/bashrc or /etc/bash.bashrc file if not present
+    - name: Insert no_proxy entry in in /etc/bashrc or /etc/bash.bashrc file if not present
       ansible.builtin.lineinfile:
         path: "{{ bash_file }}"
         regexp: "^(.*)no_proxy(.*)$"
