@@ -1,43 +1,45 @@
 ---
-# Ensure RFS configuration persists
+# Enable Receive Flow Steering (RFS)
 
-- name: Persist rps_sock_flow_entries in sysctl.conf
-  ansible.builtin.lineinfile:
-    path: /etc/sysctl.conf
-    regexp: "^net.core.rps_sock_flow_entries"
-    line: "net.core.rps_sock_flow_entries=32768"
-    state: present
+- name: Find udev rule files in /etc/udev/rules.d/ and /lib/udev/rules.d/
+  ansible.builtin.find:
+    paths:
+      - /etc/udev/rules.d/
+      - /lib/udev/rules.d/
+    recurse: true
+    patterns: "*.rules"
+  register: udev_rule_files
 
-- name: Reload sysctl configuration
-  ansible.builtin.shell: sysctl -p
-  register: sysctl_reload
-  changed_when: "'net.core.rps_sock_flow_entries' in sysctl_reload.stdout"
+- name: Slurp udev rule file contents
+  ansible.builtin.slurp:
+    src: "{{ item.path }}"
+  loop: "{{ udev_rule_files.files }}"
+  register: udev_rule_contents
+  when: udev_rule_files.matched > 0
 
-- name: Ensure custom systemd unit for RFS configuration exists
+- name: Check if rps_flow_cnt is present in any udev rule
+  ansible.builtin.set_fact:
+    rule_present: "{{ udev_rule_contents.results | selectattr('content', 'search', 'rps_flow_cnt') | list | length > 0 }}"
+
+- name: Add udev rule if not present
   ansible.builtin.copy:
-    dest: /etc/systemd/system/rfs-config.service
+    dest: "/etc/udev/rules.d/70-ibmveth-rfs.rules"
     content: |
-      [Unit]
-      Description=Set RPS flow control settings
-      After=network-online.target
-      Wants=network-online.target
-
-      [Service]
-      Type=oneshot
-      ExecStart=/bin/bash -c "sleep 5; for file in $(find /sys/class/net/*/queues/ -name 'rx-*' | grep -v '/lo/'); do echo 32768 > $file/rps_flow_cnt; done"
-
-      [Install]
-      WantedBy=multi-user.target
+      SUBSYSTEM=="net",ACTION=="add",DRIVERS=="ibmveth",RUN{program}+="/bin/bash -c 'echo 32768 > /sys/$DEVPATH/queues/rx-0/rps_flow_cnt';"
     owner: root
     group: root
     mode: "0644"
+  when: not rule_present
+  register: add_rule_result
 
-- name: Reload systemd manager
-  ansible.builtin.systemd:
-    daemon_reload: true
+- name: Reload udev rules
+  ansible.builtin.command:
+    cmd: udevadm trigger --type=devices --action=add
+  when: add_rule_result.changed
 
-- name: Enable and start RFS configuration service
-  ansible.builtin.systemd:
-    name: rfs-config.service
-    enabled: true
-    state: restarted
+- name: Ensure net.core.rps_sock_flow_entries is set to 32768
+  ansible.posix.sysctl:
+    name: net.core.rps_sock_flow_entries
+    value: "32768"
+    state: present
+    reload: true

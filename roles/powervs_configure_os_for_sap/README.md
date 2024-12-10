@@ -1,15 +1,16 @@
 # Sections
 
-1. [Introduction](README.md#1-Introduction)
-2. [Role Description](README.md#2-Role-description)
-3. [Configuration Variables](README.md#3-Edit-parameters-in-the-configuration-file)
-4. [Installation Guide](README.md#4-Installation-Guide)
+1. [Introduction](#introduction)
+1. [Role Description](#role-description)
+1. [Role Dependencies](#role-dependencies)
+1. [Role Variables](#role-variables)
+1. [Installation Guide](#installation-guide)
 
-# 1. Introduction
+# Introduction
 
 The `powervs_configure_os_for_sap` Ansible role is designed to prepare the operating system for SAP system deployment on RHEL and SLES platforms. This role ensures that the necessary services and configurations are enabled to support SAP system requirements.
 
-# 2. Role Description
+# Role Description
 
 **SAP System Preparation**
 
@@ -21,9 +22,10 @@ This role performs the following tasks to prepare the operating system for SAP s
 - Sets MTU value to 9000 for SAP network interfaces
 - Enables TSO for SAP network interfaces
 - Sets transparent_hugepage to never
+- Configures Receive Flow Steering
 - Executes RHEL/SLES specific Ansible roles
 
-On **RHEL**, this role installs and applies **[RHEL system roles](https://access.redhat.com/articles/3050101)**, which streamline system configurations for SAP workloads:
+On **RHEL**, this role installs and applies **[RHEL system roles for SAP](https://access.redhat.com/articles/3050101)**, which streamline system configurations for SAP workloads:
 
 - **`sap_general_preconfigure`**: Provides baseline OS settings for all SAP applications.
 - **`sap_hana_preconfigure`**: Adds SAP HANA-specific tuning, optimizing memory and I/O.
@@ -31,17 +33,26 @@ On **RHEL**, this role installs and applies **[RHEL system roles](https://access
 
 All settings applied remain persistent across reboot.
 
-# 3. Edit parameters in the configuration file
-To prepare the OS for SAP system deployment edit the configuration file `playbooks/vars/sample-powervs-configure-os-for-sap.yml` with following information.
+# Role Dependencies
 
-| Name  | Type  |Example  | Description |
-|-------|-------|---------|-------------|
-| sap_solution  | String  |sap_solution: "HANA"  | SAP Solution to be installed on Power Virtual Server. Other option is sap_solution: "NETWEAVER". |
-| sap_domain    | String  |sap_domain: "poc.cloud"  | SAP network domain name                              |
+Install the below collections.
 
-# 4. Installation Guide
+|Collection|Version|
+|----------|-------|
+|redhat.sap_install| >= 1.3.7|
+|community.general| >= 10.0.1|
+|ansible.posix| >= 1.5.4|
 
-## 4.1 Prerequisites
+# Role Variables
+
+| Name          | Type   |Example  | Description |
+|---------------|--------|---------|-------------|
+| sap_solution  | String |sap_solution: "HANA"  | SAP Solution to be installed on Power Virtual Server. Other option is sap_solution: "NETWEAVER". |
+| sap_domain    | String |sap_domain: "poc.cloud"  | SAP network domain name                              |
+
+# Installation Guide
+
+## Prerequisites
 
 In case of RHEL systems, install the following packages
 
@@ -49,11 +60,11 @@ In case of RHEL systems, install the following packages
 sudo dnf -y install rhel-system-roles rhel-system-roles-sap
 ```
 
-## 4.2 Edit the network services server/client configuration file
+## Edit the configuration file
 
 Edit the configuration file `playbooks/vars/sample-powervs-configure-os-for-sap.yml` with required inputs.
 
-## 4.3 Execute the Ansible playbook
+## Execute the Ansible playbook
 
 To prpeare the OS for SAP system, execute the ansible playbook:
 `ansible-playbook --connection=local -i "localhost," playbooks/sample-powervs-configure-os-for-sap.yml`
@@ -61,10 +72,6 @@ To prpeare the OS for SAP system, execute the ansible playbook:
 # Notes
 
 Ansible playbook may report **Failure/Warning**, if scripts analyze reboot is required for settings applied by it. User should reboot their LPAR, in that case.
-
-# Dependencies
-
-None.
 
 # License
 

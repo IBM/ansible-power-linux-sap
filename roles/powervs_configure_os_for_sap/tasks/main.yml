@@ -1,126 +1,19 @@
 ---
-### This role preconfigures LPAR for SAP installation requirement. Based on sap_solution input, saptune configures the system for HANA or NETWEAVER.
+## This role pre-configures LPAR for SAP HANA or NETWEAVER based on value set for sap_solution variable.
 
-# making sure all requisite filesets are installed.
-- name: Checking for multipath package
-  ansible.builtin.package:
-    name: device-mapper-multipath
-    state: present
-  when: "ansible_distribution is match('RedHat*')"
+- name: Ensure required variable is defined
+  ansible.builtin.assert:
+    that:
+      - "{{ sap_solution is defined }}"
+      - "{{ sap_domain is defined }}"
+    fail_msg: |
+      The variable 'sap_solution' is not defined. Please define it in your inventory, group_vars, or as an extra variable.
+      The variable 'sap_domain' is not defined. Please define it in your inventory, group_vars, or as an extra variable.
 
-- name: Checking for multipath package
-  ansible.builtin.package:
-    name: multipath-tools
-    state: present
-  when: "ansible_distribution is match('SLES*')"
-
-# multipathd daemon is checked whether it's up or not. If not, it is started.
-- name: Ensure multipathd daemon is running
-  ansible.builtin.service:
-    name: multipathd
-    state: started
-    enabled: true
-
-# For modification on network interfaces, create a dictionary of interfaces
-- name: Create interfaces dictionary
-  ansible.builtin.set_fact:
-    interfaces: "{{ interfaces | default({}) | combine({item: hostvars[inventory_hostname]['ansible_' + item]}) }}"
-  with_items: "{{ ansible_interfaces | replace('-', '_') }}"
-
-# Make the above changes persistent across reboot. - SLES
-- name: Set jumbo frames permanently so it is valid after reboots for all networks except eth0 and lo
-  ansible.builtin.lineinfile:
-    dest: "/etc/sysconfig/network/ifcfg-{{ item.key }}"
-    regexp: "^MTU"
-    line: "MTU='9000'"
-  with_dict: "{{ interfaces }}"
-  when:
-    - "item.value.ipv4.address is defined"
-    - "host_ip is not defined or item.value.ipv4.address != host_ip"
-    - "item.key != 'lo'"
-    - "item.value.mtu != 9000"
-    - "ansible_distribution is match('SLES*')"
-
-# Set jumbo frame changes persistent across reboot. - SLES
-- name: Set ETHTOOL_OPTIONS TSO ON permanently so it is valid after reboot for all networks except eth0 and lo
-  ansible.builtin.lineinfile:
-    dest: "/etc/sysconfig/network/ifcfg-{{ item.key }}"
-    regexp: "^ETHTOOL_OPTIONS"
-    line: "ETHTOOL_OPTIONS='-K {{ item.key }} tso on'"
-  with_dict: "{{ interfaces }}"
-  when:
-    - "item.value.ipv4.address is defined"
-    - "host_ip is not defined or item.value.ipv4.address != host_ip"
-    - "item.key != 'lo'"
-    - "ansible_distribution is match('SLES*')"
-
-# Reinforce changes in current boot
-- name: Restart network
-  ansible.builtin.service:
-    name: NetworkManager
-    state: restarted
-  changed_when: false
-  when: "ansible_distribution is match('RedHat*')"
-
-- name: Restart network
-  ansible.builtin.service:
-    name: network
-    state: restarted
-  when: "ansible_distribution is match('SLES*')"
-
-# Installing irqbalance package
-- name: Installing irqbalance package
-  ansible.builtin.package:
-    name: irqbalance
-    state: present
-
-- name: Enabling and starting irqbalance
-  ansible.builtin.service:
-    name: irqbalance.service
-    state: restarted
-    enabled: true
-  changed_when: false
-
-# install NFS client
-- name: Install NFS client package
-  ansible.builtin.package:
-    name: nfs-utils
-    state: latest
-
-# to Ensure that NFS and rpcbind daemon are up.
-- name: Ensure NFS client is running (RHEL)
-  ansible.builtin.service:
-    name: nfs-client.target
-    state: started
-    enabled: true
-  when: "ansible_distribution is match('RedHat*')"
-
-- name: Ensure NFS client is running (SLES)
-  ansible.builtin.service:
-    name: nfs
-    state: started
-    enabled: true
-  when: "ansible_distribution is match('SLES*')"
-
-- name: Ensure rpcbind is running
-  ansible.builtin.service:
-    name: rpcbind
-    state: started
-    enabled: true
-
-- name: Set transparent_hugepage to never
-  ansible.builtin.shell: echo never > /sys/kernel/mm/transparent_hugepage/enabled
-  changed_when: false
-
-# enable RFS
 - name: Tune RHEL for SAP
-  ansible.builtin.include_tasks: "rfs.yml"
-
-# sap tuning
-- name: Tune RHEL for SAP
-  ansible.builtin.include_tasks: "rhel_saptune.yml"
+  ansible.builtin.include_tasks: "rhel.yml"
   when: ansible_distribution is match("RedHat*") and sap_solution is defined
 
 - name: Tune SLES for SAP
-  ansible.builtin.include_tasks: "sles_saptune.yml"
+  ansible.builtin.include_tasks: "sles.yml"
   when: ansible_distribution is match("SLES*") and sap_solution is defined
