@@ -12,8 +12,8 @@
 
 - name: Tune RHEL for SAP
   ansible.builtin.include_tasks: "rhel.yml"
-  when: ansible_distribution is match("RedHat*") and sap_solution is defined
+  when: ansible_distribution is match("RedHat*")
 
 - name: Tune SLES for SAP
   ansible.builtin.include_tasks: "sles.yml"
-  when: ansible_distribution is match("SLES*") and sap_solution is defined
+  when: ansible_distribution is match("SLES*")
