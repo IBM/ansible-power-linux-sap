@@ -2,37 +2,25 @@
 
 
 # Sections
- 1. [Introduction](README.md#1-introduction)
- 2. [Roles Description](README.md#2-roles-description)
- 3. [Installation Guide](README.md#3-installation-guide)
- 4. [Execution Details](README.md#4-execution-details)
- 5. [Requirements, Dependencies and Testing](README.md#5-requirements-dependencies-and-testing)
-
-
  1. [Introduction](#introduction)
  1. [Role Description](#role-description)
  1. [Role Dependencies](#role-dependencies)
- 1. [Role Variables](#role-variables)
  1. [Installation Guide](#installation-guide)
+ 1. [Execution Details](#execution-details)
+ 1. [Requirements, Dependencies and Testing](#requirements-dependencies-and-testing)
 
 # Introduction
 
 This ansible collection simplifies IBM PowerVS LPAR configuration for installing SAP HANA and SAP NetWeaver on SLES and RHEL environments. It doesn't install SAP HANA or NETWEAVER applications but, prepares the OS with correct configurations for SAP HANA/NetWeaver installations for best performance. They can be executed on same LPAR or different LPARs.
 
 This collection has 5 modules, which are independent of each other and can be run individually.
-1)	**Preparing Operating System for SAP installations.**
-2)	**Creating Filesystems for SAP installations.**
-3)	**Configuring SWAP spaces.**
-4)	**Installing Management Services (SQUID, NTP, NFS, DNS)**
-5)	**Creating and deleting SAP monitoring configurations**
+1.	**Preparing Operating System for SAP installations.**
+1.	**Creating Filesystems for SAP installations.**
+1.	**Installing and Configuring Management Services (SQUID, NTP, NFS, DNS)**
+1.	**Creating and deleting SAP monitoring configurations**
+1.  **OS registrations**
 
-### Ansible Roles Summary
-
-## Contents
-
-Within this Ansible Collection, there are various Ansible Roles and no custom Ansible Modules.
-
-### Ansible Roles
+# Roles Description
 
 | Name | Summary |
 | :--- | :--- |
@@ -42,8 +30,19 @@ Within this Ansible Collection, there are various Ansible Roles and no custom An
 | [powervs_os_registration](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_os_registration)| Full Linux Subscription and BYOL support for RHEL/SLES  |
 | [powervs_storage_and_swap_setup](https://github.com/IBM/ansible-power-linux-sap/tree/main/roles/powervs_storage_and_swap_setup)| Configures disk and manages swap space on both SLES and RHEL systems |
 
+# Role Dependencies
 
-# 3. Installation Guide
+Install the below collections.
+
+|Collection|Version|
+|----------|-------|
+|redhat.sap_install| >= 1.3.7|
+|community.general| >= 10.0.1|
+|ansible.posix| >= 1.5.4|
+|ansible.utils| >= 4.1.0|
+
+
+# Installation Guide
 
 Install **[collection](https://galaxy.ansible.com/ibm/power_linux_sap)** from Ansible Galaxy using below command
 
@@ -55,7 +54,7 @@ To install RHEL system roles, follow the steps provided [here](https://access.re
 
 ***
 
-# 4. Execution Details
+# Execution Details
 
 Sample playbooks are provided in the playbooks directory of collection.
 
@@ -68,9 +67,9 @@ Sample playbooks are provided in the playbooks directory of collection.
 ```ansible-playbook -i "<target-host>," sample-powervs-configure-os-for-sap.yml```
 
 
-# 5. Requirements, Dependencies and Testing
+# Requirements, Dependencies and Testing
 
-### 5.1 Operating System requirements
+### Operating System requirements
 
 Designed for Linux operating systems, RHEL and SLES.
 
@@ -79,11 +78,11 @@ This role has not been tested and amended for SAP NetWeaver Application Server i
 Assumptions for executing this role include:
 - Registered OS license and OS package repositories are available (from the relevant content delivery network of the OS vendor)
 
-### 5.2 Python requirements
+### Python requirements
 
 Python 3 from the execution/controller host.
 
-### 5.3 Testing on execution/controller host
+### Testing on execution/controller host
 
 **Tests with Ansible Core release versions:**
 
