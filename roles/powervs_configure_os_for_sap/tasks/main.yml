@@ -1,7 +1,7 @@
 ---
 ## This role pre-configures LPAR for SAP HANA or NETWEAVER based on value set for sap_solution variable.
 
-- name: Ensure required variable is defined
+- name: Ensure required variables are defined
   ansible.builtin.assert:
     that:
       - "{{ sap_solution is defined }}"
