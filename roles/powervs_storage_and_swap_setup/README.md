@@ -1,15 +1,16 @@
 # Sections
 
-1. [Introduction](README.md#1-Introduction)
-2. [Role Description](README.md#2-Role-description)
-3. [Configuration Variables](README.md#3-Edit-parameters-in-the-configuration-file)
-4. [Installation Guide](README.md#4-Installation-Guide)
+1. [Introduction](#introduction)
+1. [Role Description](#role-description)
+1. [Role Dependencies](#role-dependencies)
+1. [Role Variables](#role-variables)
+1. [Installation Guide](#installation-guide)
 
-# 1. Introduction
+# Introduction
 
 The `powervs_storage_and_swap_setup` Ansible role performs various tasks related to disk configuration and swap space management for both SLES and RHEL systems. It is specifically tailored for SAP Netweaver instances, which require additional configuration steps.
 
-# 2. Role Description
+# Role Description
 
 This role is responsible for the following tasks:
 
@@ -57,9 +58,16 @@ wwns: 600507681082018bc8000000000057f1
 ]
 ```
 
-# 3. Edit parameters in the configuration file
+# Role Dependencies
 
-Edit the configuration file - `playbooks/vars/sample-variables-powervs-storage-setup.yml` with the required inputs for Power LPARs' swap disk and file system creation.
+Install the below collections.
+
+|Collection|Version|
+|----------|-------|
+|community.general| >= 10.0.1|
+|ansible.posix| >= 1.5.4|
+
+# Role Variables
 
 | Name  | Type  |Example  | Description |
 |-------|-------|---------|-------------|
@@ -67,25 +75,21 @@ Edit the configuration file - `playbooks/vars/sample-variables-powervs-storage-s
 |swap_disk_wwn|String|swap_disk_wwn: "60050768108002DC6800000000029801"| the identifier of the disk that will be used to create a new swap device |
 |disks_configuration|Object|disks_configuration:<br>&nbsp;&nbsp;- name: data<br>&nbsp;&nbsp;&nbsp;&nbsp; mount: /hana/data<br>&nbsp;&nbsp;&nbsp;&nbsp; wwns:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    - 600507681082018bc8000000000057e4<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    - 600507681082018bc8000000000057e8<br>&nbsp;&nbsp;- name: log<br>&nbsp;&nbsp;&nbsp;&nbsp; mount: /hana/log<br>&nbsp;&nbsp;&nbsp;&nbsp; wwns:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    - 600507681082018bc8000000000057d9<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    - 600507681082018bc8000000000057ed7<br>&nbsp;&nbsp;- name: shared<br>&nbsp;&nbsp;&nbsp;&nbsp; mount: /hana/shared<br>&nbsp;&nbsp;&nbsp;&nbsp; wwns:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    - 600507681082018bc8000000000057f1<br>| **_disk_configuration_** is a list of volume identifiers along with how they must be mounted **_disks_configuration[\*].name_**: Identifier for the logical volume and volume group.<br> **_disks_configuration[\*].mount_**: The directory path where the filesystem is mounted on the operating system.<br> **_disks_configuration[\*].wwns_**:  World Wide Names used to uniquely identify storage devices. Can be obtained using multipath -ll |
 
-# 4. Installation Guide
+# Installation Guide
 
-## 4.1 Prerequisites
+## Prerequisites
 To create file systems, retrieve the wwns of the storage volumes from the PowerVS workspaces.
 
-## 4.2 Edit the network services server/client configuration file
+## Edit the configuration file
 Provide required inputs for Power LPARs' swap disk and file system creation in the configuration file - `playbooks/vars/sample-variables-powervs-storage-setup.yml`
 
-## 4.3. Execute the Ansible playbook
+## Execute the Ansible playbook
 
 To do the storage setup, execute the ansible playbook:
 `ansible-playbook --connection=local -i "localhost," playbooks/sample-powervs-storage-setup.yml`
 
 # Note:
 For RHEL, **swap disk of size >= 24GB** is required for community role **[sap-netweaver-preconfigure](https://github.com/linux-system-roles/sap-netweaver-preconfigure)** to succeed.
-
-# Dependencies
-
-None.
 
 # License
 

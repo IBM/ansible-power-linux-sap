@@ -1,0 +1,45 @@
+---
+# Enable Receive Flow Steering (RFS)
+
+- name: Find udev rule files in /etc/udev/rules.d/ and /lib/udev/rules.d/
+  ansible.builtin.find:
+    paths:
+      - /etc/udev/rules.d/
+      - /lib/udev/rules.d/
+    recurse: true
+    patterns: "*.rules"
+  register: udev_rule_files
+
+- name: Slurp udev rule file contents
+  ansible.builtin.slurp:
+    src: "{{ item.path }}"
+  loop: "{{ udev_rule_files.files }}"
+  register: udev_rule_contents
+  when: udev_rule_files.matched > 0
+
+- name: Check if rps_flow_cnt is present in any udev rule
+  ansible.builtin.set_fact:
+    rule_present: "{{ udev_rule_contents.results | selectattr('content', 'search', 'rps_flow_cnt') | list | length > 0 }}"
+
+- name: Add udev rule if not present
+  ansible.builtin.copy:
+    dest: "/etc/udev/rules.d/70-ibmveth-rfs.rules"
+    content: |
+      SUBSYSTEM=="net",ACTION=="add",DRIVERS=="ibmveth",RUN{program}+="/bin/bash -c 'echo 32768 > /sys/$DEVPATH/queues/rx-0/rps_flow_cnt';"
+    owner: root
+    group: root
+    mode: "0644"
+  when: not rule_present
+  register: add_rule_result
+
+- name: Reload udev rules
+  ansible.builtin.command:
+    cmd: udevadm trigger --type=devices --action=add
+  when: add_rule_result.changed
+
+- name: Ensure net.core.rps_sock_flow_entries is set to 32768
+  ansible.posix.sysctl:
+    name: net.core.rps_sock_flow_entries
+    value: "32768"
+    state: present
+    reload: true

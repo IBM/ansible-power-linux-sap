@@ -8,7 +8,14 @@
  4. [Execution Details](README.md#4-execution-details)
  5. [Requirements, Dependencies and Testing](README.md#5-requirements-dependencies-and-testing)
 
-# 1. Introduction
+
+ 1. [Introduction](#introduction)
+ 1. [Role Description](#role-description)
+ 1. [Role Dependencies](#role-dependencies)
+ 1. [Role Variables](#role-variables)
+ 1. [Installation Guide](#installation-guide)
+
+# Introduction
 
 This ansible collection simplifies IBM PowerVS LPAR configuration for installing SAP HANA and SAP NetWeaver on SLES and RHEL environments. It doesn't install SAP HANA or NETWEAVER applications but, prepares the OS with correct configurations for SAP HANA/NetWeaver installations for best performance. They can be executed on same LPAR or different LPARs.
 
@@ -90,7 +97,7 @@ Python 3 from the execution/controller host.
 
 **Tests with Operating System release versions:**
 
-- RHEL 8.2, 8.4 and 8.8 for SAP
+- RHEL 8.2, 8.4, 8.8, 9.2 for SAP
 - SLES 12, 15 for SAP
 
 ## License

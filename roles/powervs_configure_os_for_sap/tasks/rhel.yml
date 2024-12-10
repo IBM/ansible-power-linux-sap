@@ -1,0 +1,82 @@
+##########################################
+# Tune RHEL for SAP
+##########################################
+# 1. Install and Configure packages
+# 2. Configure Network settings
+# 3. Set transparent_hugepage never
+# 4. Execute RHEL linux system roles SAP: SAP general preconfigure, HANA/NETWEAVER preconfigure
+
+- name: Install and Configure packages
+  block:
+    - name: Install required packages
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - device-mapper-multipath
+        - irqbalance
+        - nfs-utils
+
+    - name: Start and enable services
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+      with_items:
+        - multipathd
+        - irqbalance.service
+        - nfs-client.target
+        - rpcbind
+
+- name: Configure network settings
+  block:
+    - name: Create interfaces dictionary
+      ansible.builtin.set_fact:
+        interfaces: "{{ interfaces | default({}) | combine({item: hostvars[inventory_hostname]['ansible_' + item]}) }}"
+      with_items: "{{ ansible_interfaces | replace('-', '_') }}"
+
+    - name: Set jumbo frames permanently so it is valid after reboots for all networks except eth0 and lo
+      ansible.builtin.lineinfile:
+        dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item.key }}"
+        regexp: "^MTU"
+        line: "MTU='9000'"
+      with_dict: "{{ interfaces }}"
+      when:
+        - "item.value.ipv4.address is defined"
+        - "item.key != 'lo'"
+        - "item.value.mtu != 9000"
+      register: mtu_changes
+
+    - name: Restart network
+      ansible.builtin.service:
+        name: NetworkManager
+        state: restarted
+      when:
+        - mtu_changes.changed
+
+    - name: Enable Receive Flow Steering (RFS)
+      ansible.builtin.include_tasks: "rfs.yml"
+
+- name: Set transparent_hugepage to never
+  ansible.builtin.shell: echo never > /sys/kernel/mm/transparent_hugepage/enabled
+  changed_when: false
+
+- name: Run SAP general preconfigure
+  ansible.builtin.include_role:
+    name: redhat.sap_install.sap_general_preconfigure
+  vars:
+    sap_general_preconfigure_fail_if_reboot_required: false
+
+- name: Run SAP HANA preconfigure
+  ansible.builtin.include_role:
+    name: redhat.sap_install.sap_hana_preconfigure
+  vars:
+    sap_hana_preconfigure_fail_if_reboot_required: false
+  when:
+    - sap_solution is match("HANA")
+
+- name: Run SAP Netweaver preconfigure
+  ansible.builtin.include_role:
+    name: redhat.sap_install.sap_netweaver_preconfigure
+  when:
+    - sap_solution is match("NETWEAVER")
