@@ -7,6 +7,7 @@
       ansible.builtin.shell: |
         echo -e $(subscription-manager status)
       register: os_registration_status_output
+      changed_when: false
 
     - name: Store OS registration status (RHEL)
       ansible.builtin.set_fact:
@@ -20,6 +21,7 @@
       ansible.builtin.shell: |
         echo -e $(SUSEConnect --status-text)
       register: os_registration_status_output
+      changed_when: false
 
     - name: Store OS registration status (SLES)
       ansible.builtin.set_fact:
@@ -45,6 +47,7 @@
         grep 'cloud-init.sh' /var/lib/cloud/instance/user-data.txt | sed 's/.*\(.\.\s\/\)/\1/'
       register: os_registration_command
       failed_when: os_registration_command.stdout_lines | length == 0
+      changed_when: false
 
     # execute the rhel-cloud-init.sh or sles-cloud-init.sh script
     - name: Execute script cloud init script
@@ -58,6 +61,7 @@
           ansible.builtin.shell: |
             echo -e $(subscription-manager status)
           register: os_registration_status_output
+          changed_when: false
 
         - name: Update OS registration status (RHEL)
           ansible.builtin.set_fact:
@@ -70,6 +74,7 @@
           ansible.builtin.shell: |
             echo -e $(SUSEConnect --status-text)
           register: os_registration_status_output
+          changed_when: false
 
         - name: Update OS registration status (SLES)
           ansible.builtin.set_fact:
@@ -82,10 +87,12 @@
         - name: Extract contents of /var/log/powervs-fls-dev.log
           ansible.builtin.shell: cat /var/log/powervs-fls-dev.log
           register: powervs_fls_dev_log
+          changed_when: false
 
         - name: Extract contents of /var/log/powervs-fls.log
           ansible.builtin.shell: cat /var/log/powervs-fls.log
           register: powervs_fls_log
+          changed_when: false
 
         - name: Display log contents
           ansible.builtin.debug:

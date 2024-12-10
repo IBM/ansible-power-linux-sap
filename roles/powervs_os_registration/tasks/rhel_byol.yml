@@ -44,4 +44,5 @@
   ansible.builtin.shell: "subscription-manager status"
   register: os_registration_status
   failed_when: false
+  changed_when: false
 # END of rhel subscription block
