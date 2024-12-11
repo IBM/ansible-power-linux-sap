@@ -54,16 +54,13 @@
 
 # Create a list based on multipath output.
 - ansible.builtin.set_fact:
-    empty_list: "{{ empty_list | default([]) }}"
-# noqa name[missing]
+    empty_list: "{{ empty_list | default([]) }}" # noqa name[missing]
 
 - ansible.builtin.set_fact:
-    wwn_to_dm_list: "{{ empty_list | default([]) }}"
-# noqa name[missing]
+    wwn_to_dm_list: "{{ empty_list | default([]) }}" # noqa name[missing]
 
 - ansible.builtin.set_fact:
-    wwn_to_dm_list: "{{ wwn_to_dm_list | default([]) + item.stdout_lines }}"
-  # noqa name[missing]
+    wwn_to_dm_list: "{{ wwn_to_dm_list | default([]) + item.stdout_lines }}" # noqa name[missing]
   loop: "{{ wwn_dm_list.results }}"
 
 # Creating volume group.

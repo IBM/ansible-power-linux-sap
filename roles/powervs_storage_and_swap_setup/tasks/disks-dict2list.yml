@@ -14,21 +14,18 @@
   changed_when: false
 
 - ansible.builtin.set_fact:
-    # noqa name[missing]
-    tmp_wwn_list: "{{ tmp_wwn_list | default([]) + item.stdout_lines }}"
+    tmp_wwn_list: "{{ tmp_wwn_list | default([]) + item.stdout_lines }}" # noqa name[missing]
   loop: "{{ loop_for_wwn.results }}"
 
 - ansible.builtin.debug:
-    # noqa name[missing]
-    var: loop_for_wwn.results
+    var: loop_for_wwn.results # noqa name[missing]
 
 - name: Debug
   ansible.builtin.debug:
     var: tmp_wwn_list
 
 - ansible.builtin.debug:
-    # noqa name[missing]
-    var: "{{ tmp_wwn_list | type_debug }}"
+    var: "{{ tmp_wwn_list | type_debug }}" # noqa name[missing]
 
 - name: Set fact create a dict with pv and its type
   ansible.builtin.set_fact:
@@ -38,34 +35,28 @@
     - "{{ tmp_wwn_list }}"
 
 - ansible.builtin.debug:
-    # noqa name[missing]
-    var: pv_listing_dm
+    var: pv_listing_dm # noqa name[missing]
 
 - name: Create a file /root/tmp_file with pv listing content.
   ansible.builtin.copy:
-    # noqa risky-file-permissions
-    content: "{{ pv_listing_dm }}"
+    content: "{{ pv_listing_dm }}" # noqa risky-file-permissions
     dest: "/root/tmp_file"
   changed_when: false
 
-- ansible.builtin.raw: "cat /root/tmp_file | tr [{},] '\n' | tee /root/tmp_file_mod"
-  # noqa name[missing]
+- ansible.builtin.raw: "cat /root/tmp_file | tr [{},] '\n' | tee /root/tmp_file_mod" # noqa name[missing]
   changed_when: false
 
 - ansible.builtin.raw: "cat /root/tmp_file_mod | sed 's/ //g' | sed 's/\"//g' | grep {{ item }} | sed 's/:{{ item }}//g' | tr '\n' ',' | sed 's/,$//g'"
-  # noqa name[missing]
-  register: tmp_wwn_var
+  register: tmp_wwn_var # noqa name[missing]
   loop: "{{ disks_configuration.names | map('trim') | list }}"
   changed_when: false
 
 - ansible.builtin.set_fact:
-    # noqa name[missing]
-    wwn_list: "{{ wwn_list | default([]) + item.stdout_lines }}"
+    wwn_list: "{{ wwn_list | default([]) + item.stdout_lines }}" # noqa name[missing]
   loop: "{{ tmp_wwn_var.results }}"
 
 - ansible.builtin.debug:
-    # noqa name[missing]
-    var: wwn_list
+    var: wwn_list # noqa name[missing]
 
 - name: Set fact create stripes list dictionary
   ansible.builtin.set_fact:
@@ -77,8 +68,7 @@
     - "{{ wwn_list }}"
 
 - ansible.builtin.debug:
-    # noqa name[missing]
-    var: disks_config_mod
+    var: disks_config_mod # noqa name[missing]
 
 - name: Execution of fs_creation role starts here. Iterate for each list created above
   ansible.builtin.include_tasks: file-system-creation-core.yml

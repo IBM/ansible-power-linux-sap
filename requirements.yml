@@ -5,7 +5,7 @@ collections:
     type: galaxy
 
   - name: community.general
-    version: ">=10.0.1"
+    version: ">=10.1.0"
     type: galaxy
 
   - name: ansible.utils

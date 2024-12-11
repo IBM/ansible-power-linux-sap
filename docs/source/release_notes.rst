@@ -158,3 +158,8 @@ Version 3.1.0
 Notes
        * RFS configuration setup
        * NFS client check fix
+
+Version 3.1.1
+Notes
+       * Minimum community.general version 10.1.0
+       * Skip pause for services only if status changed

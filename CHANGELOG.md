@@ -1,10 +1,27 @@
 # Release Notes
 
+<a name="v3.1.1"></a>
+# [v3.1.1](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v3.1.1) - 11 Dec 2024
+
+## Release Summary
+* fix: Requires community.general version 10.1.0 to use community.general.filesystem
+
+
 <a name="v3.1.0"></a>
 # [v3.1.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v3.1.0) - 05 Dec 2024
 
+## Release Summary
+* fix: Checks for NFS client on RHEL
+* fix: RFS settings on RHEL and SLES
+
 <a name="v3.0.0"></a>
 # [v3.0.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v3.0.0) - 05 Nov 2024
+
+## Release Summary
+* Breaking changes: Previous roles powervs_prepare_rhel_sap and powervs_prepare_sles_sap are now powervs_os_registration and powervs_configure_os_for_sap
+Previous roles powervs_storage_setup and powervs_swap_creation now combined to one role powervs_storage_and_swap_setup
+Previous roles powervs_client_enable_services and powervs_install_services now combined to one role configure_network_management_services
+Please take a look at the READMEs for the updated variable names.
 
 <a name="v2.2.1"></a>
 # [v2.2.1](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v2.2.1) - 18 Jul 2024
@@ -210,7 +227,8 @@ This release will add the following capabilities:
 ## Release Summary
 Initial beta release of IBM Power Virtual Systems SAP with RISE collection, referred to as power_linux_sap
 
-[Changes][v3.1.0]
+[Changes][v3.1.1]
+[v3.1.0]: https://github.com/IBM/ansible-power-linux-sap/compare/v3.1.1...v3.1.0
 [v3.1.0]: https://github.com/IBM/ansible-power-linux-sap/compare/v3.1.0...v3.0.0
 [v3.0.0]: https://github.com/IBM/ansible-power-linux-sap/compare/v3.0.0...v2.2.1
 [v2.2.1]: https://github.com/IBM/ansible-power-linux-sap/compare/v2.2.1...v2.2.0

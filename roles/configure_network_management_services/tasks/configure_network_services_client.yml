@@ -103,10 +103,12 @@
       ansible.builtin.lineinfile:
         path: /etc/resolv.conf
         line: nameserver {{ client_config.dns.dns_server_ip }}
+      register: nameserver_configured
 
     - name: Pause for 60 sec
       ansible.builtin.pause:
         seconds: 60
+      when: nameserver_configured.changed
 
     - name: Check for name resolution using dig command
       ansible.builtin.command: dig -i www.google.com +short
@@ -143,10 +145,12 @@
         state: restarted
         enabled: true
       changed_when: false
+      register: chrony_configured
 
     - name: Pause for 60 sec
       ansible.builtin.pause:
         seconds: 60
+      when: chrony_configured.changed
 
     - name: Verify Chrony configuration grepping for Leap status Normal using chronyc tracking
       ansible.builtin.command: chronyc tracking | grep Leap | grep Normal
