@@ -43,7 +43,7 @@ Install the below collections.
 
 |Collection|Version|
 |----------|-------|
-|community.general| >= 10.0.1|
+|community.general| >= 10.1.0|
 
 # # Role Variables
 
