@@ -41,9 +41,9 @@ Install the below collections.
 
 |Collection|Version|
 |----------|-------|
-|ansible.utils| >= 4.1.0|
-|community.general| >= 10.1.0|
-|ansible.posix| >= 1.5.4|
+|ansible.utils| 4.1.0|
+|community.general| 10.1.0|
+|ansible.posix| 1.5.4|
 
 # Role Variables
 

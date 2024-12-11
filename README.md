@@ -37,9 +37,9 @@ Install the below collections.
 |Collection|Version|
 |----------|-------|
 |redhat.sap_install| >= 1.3.7|
-|community.general| >= 10.1.0|
-|ansible.posix| >= 1.5.4|
-|ansible.utils| >= 4.1.0|
+|community.general| 10.1.0|
+|ansible.posix| 1.5.4|
+|ansible.utils| 4.1.0|
 
 
 # Installation Guide

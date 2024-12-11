@@ -64,8 +64,8 @@ Install the below collections.
 
 |Collection|Version|
 |----------|-------|
-|community.general| >= 10.1.0|
-|ansible.posix| >= 1.5.4|
+|community.general| 10.1.0|
+|ansible.posix| 1.5.4|
 
 # Role Variables
 
