@@ -80,7 +80,8 @@
       loop:
         - repos-activation
         - sap-hana-client-installation
-      when: not file_hana_driver.stat.exists or not file_hana_hdbuserstore.stat.exists
+      when: (not file_hana_driver.stat.exists) or
+            (not file_hana_hdbuserstore.stat.exists)
 
     - name: Add one SAP System to the monitoring configuration
       ansible.builtin.include_tasks: "{{ task }}.yml"
