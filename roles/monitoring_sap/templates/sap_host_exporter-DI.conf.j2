@@ -1,6 +1,6 @@
 # The listening TCP/IP address and port.
 address: "0.0.0.0"
-port: "5{{ sap_monitoring_nr }}{{ item.sap_app_server_nr + 4 }}"
+port: "5{{ sap_monitoring_nr }}{{ item.sap_app_server_nr|int + 4 }}"
 log-level: "info"
 # sap_monitoring_solution_name: {{ sap_monitoring_solution_name }}
 # DI instance

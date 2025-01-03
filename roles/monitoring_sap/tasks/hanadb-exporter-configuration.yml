@@ -20,12 +20,14 @@
 - name: Create a sap-hana-keystore for the <sap_monitoring_nr>
   ansible.builtin.shell:
     cmd: "/usr/sap/hdbclient/hdbuserstore SET MONITORING{{ sap_monitoring_nr }}KEY {{ sap_hana_ip }}:{{ sap_hana_sql_systemdb_port }}@SYSTEMDB {{ sap_hana_sql_systemdb_user }} {{ sap_hana_sql_systemdb_password }}"
+    changed_when: false
 
 - name: Check sap-hana-keystore for 'MONITORING{{ sap_monitoring_nr }}KEY'
   ansible.builtin.shell:
     cmd: "/usr/sap/hdbclient/hdbuserstore LIST | grep MONITORING{{ sap_monitoring_nr }}KEY"
   register: command_result
   failed_when: "'MONITORING' + sap_monitoring_nr not in command_result.stdout"
+  changed_when: false
 
 - name: Configure hanadb_exporter configuration file
   ansible.builtin.template:

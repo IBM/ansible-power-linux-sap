@@ -14,7 +14,7 @@
     owner: root
     group: root
     mode: "0600"
-  tags: prometheus-sap_host_exporter HANA
+  tags: prometheus-sap_host_exporter
 
 - name: Configure sap_host_exporter file ASCS
   ansible.builtin.template:
@@ -23,7 +23,7 @@
     owner: root
     group: root
     mode: "0600"
-  tags: prometheus-sap_host_exporter ASCS
+  tags: prometheus-sap_host_exporter
 
 - name: Configure sap_host_exporter DI
   ansible.builtin.template:
@@ -35,7 +35,7 @@
   loop_control:
     loop_var: item
   loop: "{{ sap_app_server }}"
-  tags: prometheus-sap_host_exporter DI
+  tags: prometheus-sap_host_exporter
 
 - name: Configure systemd-daemon to sap_host_exporter
   ansible.builtin.template:
@@ -69,4 +69,4 @@
   loop_control:
     loop_var: daemon_item
   loop: "{{ sap_app_server }}"
-  tags: prometheus-sap_host_exporter DI
+  tags: prometheus-sap_host_exporter
