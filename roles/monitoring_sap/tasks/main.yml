@@ -8,18 +8,16 @@
 ########################################################################################
 
 - name: Delete the SAP monitoring configuration with the specific <sap_monitoring_nr>
-
   when: sap_monitoring_action == "delete"
   block:
 
-    - name: Check existence of the SAP and monitoring variables
+    - name: Assert required variable is defined for removing one SAP monitoring configuration
       ansible.builtin.fail:
         msg: 'variable {{ sap_monitoring_nr }} is not defined but required'
       when: sap_monitoring_nr is not defined
 
     - name: Delete one SAP monitoring configuration
       ansible.builtin.include_tasks: sap-monitoring-configuration-deletion.yml
-
 
 ############################################################
 #  Block: Add a SAP System to the monitoring configuration
@@ -29,21 +27,22 @@
   when: sap_monitoring_action == "add"
   block:
 
-    - name: Ensure required variables are defined
+    - name: Assert required variables are defined for adding one SAP monitoring configuration
       ansible.builtin.assert:
         that:
-          - "{{ sap_monitoring_nr is defined}}"
-          - "{{ sap_tools_directory is defined}}"
-          - "{{ ibmcloud_monitoring_instance_url is defined}}"
-          - "{{ ibmcloud_monitoring_authorization_credentials is defined}}"
-          - "{{ sap_hana_ip is defined}}"
-          - "{{ sap_hana_http_port is defined}}"
-          - "{{ sap_hana_sql_systemdb_port is defined}}"
-          - "{{ sap_hana_sql_systemdb_user is defined}}"
-          - "{{ sap_hana_sql_systemdb_password is defined}}"
-          - "{{ sap_ascs_ip is defined}}"
-          - "{{ sap_ascs_http_port is defined}}"
-          - "{{ sap_app_server is defined}}"
+          - "sap_monitoring_nr is defined"
+          - "sap_monitoring_action is defined"
+          - "sap_tools_directory is defined"
+          - "ibmcloud_monitoring_instance_url is defined"
+          - "ibmcloud_monitoring_authorization_credentials is defined"
+          - "sap_hana_ip is defined"
+          - "sap_hana_http_port is defined"
+          - "sap_hana_sql_systemdb_port is defined"
+          - "sap_hana_sql_systemdb_user is defined"
+          - "sap_hana_sql_systemdb_password is defined"
+          - "sap_ascs_ip is defined"
+          - "sap_ascs_http_port is defined"
+          - "sap_app_server is defined"
         fail_msg: "The variable is not defined but required."
 
     - name: Check existing SAP monitoring configurations on the same <sap_monitoring_nr>
@@ -56,7 +55,8 @@
         msg:
           - "The <sap_monitoring_nr> {{ sap_monitoring_nr }} is already in use with a SAP monitoring configuration."
           - "In case you want to override the existing monitoring configuration, set the parameter <config_override> to true."
-      when: prometheus_agent_yml.stat.exists and not config_override
+      when: (prometheus_agent_yml.stat.exists) and
+            (not config_override)
 
     - name: Check requirements on OS and applications
       ansible.builtin.include_tasks: check-requirements.yml
@@ -88,7 +88,6 @@
       loop_control:
         loop_var: task
       loop:
-        - check-requirements
         - port-connectivity-check
         - sap-host-exporter-configuration
         - hanadb-exporter-configuration
