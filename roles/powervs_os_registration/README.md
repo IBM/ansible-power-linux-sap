@@ -32,7 +32,7 @@ Install the below collections.
 
 | Name       | Type       |Example                                     | Description                        |
 |------------|------------|--------------------------------------------|-----------------------------------|
-| byol  | Object   | <br>byol:<br>&nbsp;&nbsp;username:`username`<br> &nbsp;&nbsp;password:`password`<br> &nbsp;&nbsp;password:`server_proxy_hostname`<br> &nbsp;&nbsp;password:`server_proxy_port`<br>| BYOL for RHEL/SLES. For RHEL provide username and password. If your machine does not have public internet access, you also need to provide a hostname and port of a proxy server with a valid route to the registration servers. For SLES provide email as username and activation code as password. Do not provide it for Full Linux Subscription |
+| byol  | Object   | <br>byol:<br>&nbsp;&nbsp;username:`username`<br> &nbsp;&nbsp;password:`password`<br> &nbsp;&nbsp;server_proxy_hostname:`server_proxy_hostname`<br> &nbsp;&nbsp;server_proxy_port:`server_proxy_port`<br>| BYOL for RHEL/SLES. For RHEL provide username and password. If your machine does not have public internet access, you also need to provide a hostname and port of a proxy server with a valid route to the registration servers. For SLES provide email as username and activation code as password. Do not provide it for Full Linux Subscription |
 | fls   | Boolean  | fls: true | if true, performs Full Linux Subscription. Do not provide if for BYOL|
 
 # Installation Guide
