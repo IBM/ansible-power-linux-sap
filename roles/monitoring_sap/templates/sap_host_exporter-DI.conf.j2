@@ -1,7 +1,7 @@
 # The listening TCP/IP address and port.
 address: "0.0.0.0"
-port: "5{{ sap_monitoring_nr }}{{ item.sap_app_server_nr|int + 4 }}"
+port: "5{{ sap_monitoring_nr }}0{{ ((sap_app_server[0].sap_app_server_nr) | int +4) }}"
 log-level: "info"
 # sap_monitoring_solution_name: {{ sap_monitoring_solution_name }}
 # DI instance
-sap-control-url: "http://{{ item.ip }}:{{ item.port }}"
+sap-control-url: "http://{{ (sap_app_server[0].ip) }}:{{ (sap_app_server[0].port) }}"

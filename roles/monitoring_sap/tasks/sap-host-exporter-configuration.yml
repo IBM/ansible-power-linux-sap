@@ -28,7 +28,7 @@
 - name: Configure sap_host_exporter DI
   ansible.builtin.template:
     src: sap_host_exporter-DI.conf.j2
-    dest: /etc/sap_host_exporter/sap_host_exporter-{{ sap_monitoring_nr }}-DI-{{ item.sap_app_server_nr }}.yaml
+    dest: /etc/sap_host_exporter/sap_host_exporter-{{ sap_monitoring_nr }}-DI-{{ sap_app_server[0].sap_app_server_nr }}.yaml
     owner: root
     group: root
     mode: "0600"
