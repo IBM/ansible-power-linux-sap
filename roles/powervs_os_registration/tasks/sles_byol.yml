@@ -3,5 +3,9 @@
 - name: Register SUSE and enable repos
   ansible.builtin.shell: |
     SUSEConnect -r {{ byol.password }}  -e {{ byol.username }}
+  when: byol is defined
+
+- name: Enable Repos
+  ansible.builtin.shell: |
     SUSEConnect -p sle-module-public-cloud/{{ ansible_distribution_version }}/ppc64le
   when: byol is defined
