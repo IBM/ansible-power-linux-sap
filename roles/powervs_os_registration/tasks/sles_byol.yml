@@ -1,17 +1,19 @@
 ---
 # Subscribing to SUSE subscription
-- name: Register SUSE
-  ansible.builtin.shell: |
-    SUSEConnect -r {{ byol.password }}  -e {{ byol.username }}
-  environment:
-    http_proxy: "{{ byol.server_proxy_hostname + ':' + byol.server_proxy_port | default(omit) }}"
-    https_proxy: "{{ byol.server_proxy_hostname + ':' + byol.server_proxy_port | default(omit) }}"
+- name: Register Suse and enable repos
   when: byol is defined
+  vars:
+    use_proxy: "{{ byol.server_proxy_hostname is defined and byol.server_proxy_port is defined }}"
+    proxy_str: "{{ byol.server_proxy_hostname + ':' + byol.server_proxy_port if (byol.server_proxy_hostname is defined and byol.server_proxy_port is defined) else omit }}"
+    proxy_env:
+      http_proxy: "{{ proxy_str }}"
+      https_proxy: "{{ proxy_str }}"
+  environment: "{{ proxy_env if use_proxy else {} }}"
+  block:
+    - name: Register SUSE
+      ansible.builtin.shell: |
+        SUSEConnect -r {{ byol.password }}  -e {{ byol.username }}
 
-- name: Enable Repos
-  ansible.builtin.shell: |
-    SUSEConnect -p sle-module-public-cloud/{{ ansible_distribution_version }}/ppc64le
-  environment:
-    http_proxy: "{{ byol.server_proxy_hostname + ':' + byol.server_proxy_port | default(omit) }}"
-    https_proxy: "{{ byol.server_proxy_hostname + ':' + byol.server_proxy_port | default(omit) }}"
-  when: byol is defined
+    - name: Enable Repos
+      ansible.builtin.shell: |
+        SUSEConnect -p sle-module-public-cloud/{{ ansible_distribution_version }}/ppc64le
