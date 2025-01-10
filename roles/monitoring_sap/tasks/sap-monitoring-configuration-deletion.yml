@@ -5,47 +5,47 @@
     msg: "SAP monitoring number to delete: {{ sap_monitoring_nr }}"
   when: sap_monitoring_action == "delete"
 
-- name: Stop and disable systemd daemon prometheus@<sap_monitoring_nr>
+- name: Stop and disable systemd daemon prometheus@{{ sap_monitoring_nr }}
   ansible.builtin.systemd:
     name: prometheus@{{ sap_monitoring_nr }}
     state: stopped
     enabled: false
-  ignore_errors: True
+  ignore_errors: true
 
 - name: Stop and disable systemd daemon prometheus-hanadb_exporter@config-{{ sap_monitoring_nr }}-SQL
   ansible.builtin.systemd:
     name: prometheus-hanadb_exporter@config-{{ sap_monitoring_nr }}-SQL
     state: stopped
     enabled: false
-  ignore_errors: True
+  ignore_errors: true
 
 - name: Stop and disable systemd daemon sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-ASCS
   ansible.builtin.systemd:
     name: sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-ASCS
     state: stopped
     enabled: false
-  ignore_errors: True
+  ignore_errors: true
 
 - name: Stop and disable systemd daemon sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-HANA
   ansible.builtin.systemd:
     name: sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-HANA
     state: stopped
     enabled: false
-  ignore_errors: True
+  ignore_errors: true
 
 - name: Disable systemd daemon sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-DI-*
   ansible.builtin.shell: rm -f /etc/systemd/system/multi-user.target.wants/sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-DI-*.service
   args:
     executable: /bin/bash
     warn: false
-  ignore_errors: True
+  ignore_errors: true
 
 - name: Stop systemd daemon sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-DI-*
   ansible.builtin.shell: systemctl stop sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-DI*
   args:
     executable: /bin/bash
     warn: false
-  ignore_errors: True
+  ignore_errors: true
 
 # module systemd: globbing for start, but not for disable
 #  systemctl status sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-DI*
@@ -57,24 +57,29 @@
   ansible.builtin.file:
     path: /etc/prometheus/{{ sap_monitoring_nr }}.yml
     state: absent
+  ignore_errors: true
 
 - name: Delete file /etc/hanadb_exporter/config-{{ sap_monitoring_nr }}-SQL.json
   ansible.builtin.file:
     path: /etc/hanadb_exporter/config-{{ sap_monitoring_nr }}-SQL.json
     state: absent
+  ignore_errors: true
 
 - name: Delete file /etc/sap_host_exporter/sap_host_exporter-{{ sap_monitoring_nr }}-ASCS.yaml
   ansible.builtin.file:
     path: /etc/sap_host_exporter/sap_host_exporter-{{ sap_monitoring_nr }}-ASCS.yaml
     state: absent
+  ignore_errors: true
 
 - name: Delete file /etc/sap_host_exporter/sap_host_exporter-{{ sap_monitoring_nr }}-HANA.yaml
   ansible.builtin.file:
     path: /etc/sap_host_exporter/sap_host_exporter-{{ sap_monitoring_nr }}-HANA.yaml
     state: absent
+  ignore_errors: true
 
 - name: Delete file /etc/sap_host_exporter/sap_host_exporter-{{ sap_monitoring_nr }}-DI-*.yaml
   ansible.builtin.shell: rm -f /etc/sap_host_exporter/sap_host_exporter-{{ sap_monitoring_nr }}-DI-*.y*ml
   args:
     executable: /bin/bash
     warn: false
+  ignore_errors: true

@@ -7,7 +7,7 @@
 #  Block: Delete one SAP monitoring configuration with the specific  <sap_monitoring_nr>
 ########################################################################################
 
-- name: Delete the SAP monitoring configuration with the specific <sap_monitoring_nr>
+- name: Delete the SAP monitoring configuration with the specific <sap_monitoring_nr> {{ sap_monitoring_nr }}
   when: sap_monitoring_action == "delete"
   block:
 
@@ -16,7 +16,7 @@
         msg: 'variable {{ sap_monitoring_nr }} is not defined but required'
       when: sap_monitoring_nr is not defined
 
-    - name: Delete one SAP monitoring configuration
+    - name: Delete one SAP monitoring configuration with <sap_monitoring_nr> {{ sap_monitoring_nr }}
       ansible.builtin.include_tasks: sap-monitoring-configuration-deletion.yml
 
 ############################################################
@@ -45,12 +45,16 @@
           - "sap_app_server is defined"
         fail_msg: "The variable is not defined but required."
 
-    - name: Check existing SAP monitoring configurations on the same <sap_monitoring_nr>
+    - name: Verify format of the <sap_monitoring_nr>
+      ansible.builtin.set_fact:
+        sap_monitoring_nr: "{{ '%02d' % (sap_monitoring_nr | int) }}"
+
+    - name: Check existing SAP monitoring prometheus configurations on the same <sap_monitoring_nr> {{ sap_monitoring_nr }}
       ansible.builtin.stat:
         path: /etc/prometheus/{{ sap_monitoring_nr }}.yml
       register: prometheus_agent_yml
 
-    - name: Check existing SAP monitoring configurations on the same <sap_monitoring_nr>
+    - name: Check existing SAP monitoring prometheus configurations on the same <sap_monitoring_nr> {{ sap_monitoring_nr }}
       ansible.builtin.fail:
         msg:
           - "The <sap_monitoring_nr> {{ sap_monitoring_nr }} is already in use with a SAP monitoring configuration."
@@ -83,7 +87,7 @@
       when: (not file_hana_driver.stat.exists) or
             (not file_hana_hdbuserstore.stat.exists)
 
-    - name: Add one SAP System to the monitoring configuration
+    - name: Add one SAP System to the monitoring configuration <sap_monitoring_nr> {{ sap_monitoring_nr }}
       ansible.builtin.include_tasks: "{{ task }}.yml"
       loop_control:
         loop_var: task

@@ -28,11 +28,12 @@
 - name: Configure sap_host_exporter DI
   ansible.builtin.template:
     src: sap_host_exporter-DI.conf.j2
-    dest: /etc/sap_host_exporter/sap_host_exporter-{{ sap_monitoring_nr }}-DI-{{ sap_app_server[0].sap_app_server_nr }}.yaml
+    dest: /etc/sap_host_exporter/sap_host_exporter-{{ sap_monitoring_nr }}-DI-{{ '%02d' % ansible_loop.index }}.yaml
     owner: root
     group: root
     mode: "0600"
   loop_control:
+    extended: true
     loop_var: item
   loop: "{{ sap_app_server }}"
   tags: prometheus-sap_host_exporter
@@ -52,21 +53,22 @@
 - name: Start daemon sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-HANA
   ansible.builtin.systemd:
     name: sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-HANA
-    state: started
+    state: restarted
     enabled: true
 
 - name: Start daemon sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-ASCS
   ansible.builtin.systemd:
     name: sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-ASCS
-    state: started
+    state: restarted
     enabled: true
 
-- name: Start daemon all sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-DI
+- name: Start daemon of all sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-DI
   ansible.builtin.systemd:
-    name: sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-DI-{{ daemon_item.sap_app_server_nr }}
-    state: started
+    name: sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-DI-{{ '%02d' % ansible_loop.index }}
+    state: restarted
     enabled: true
   loop_control:
+    extended: true
     loop_var: daemon_item
   loop: "{{ sap_app_server }}"
   tags: prometheus-sap_host_exporter

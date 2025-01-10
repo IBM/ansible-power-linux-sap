@@ -11,7 +11,7 @@
 # Introduction
 
 This ansible role is configuring or deleting one SAP monitoring on a IBM Cloud Virtual Server. <br>
-A maximum of 99 SAP monitoring configurations can be deployed targeting 99 different SAP Systems located in the same security group. In this release the number of Applications Servers is limited to one Application Server, monitoring HA SAP Systems is not covered. <br> 
+A maximum of 99 SAP monitoring configurations can be deployed targeting 99 different SAP Systems located in the same security group. In this release the number of Applications Servers is limited to one Application Server, monitoring HA SAP Systems is not covered. <br>
 Each deployment has to use a different `<sap_monitoring_nr>` in the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml` <br>
 The Ansible role is only a part of the monitoring workflow model as described in [docs/Introduction-details.md](docs/Introduction-details.md).
 
@@ -75,7 +75,7 @@ Any additional monitoring configuration will be added with executing the same co
 | # variable group: application server parameters |                                                                                     |                                                                                                                                            |
 | sap_ascs_ip                                     | 10.0.0.3                                                                            | IPv4 address of first (primary) Application Server                                                                                         |
 | sap_ascs_http_port                              | 50013                                                                               | HTTP Port of SAP service ASCS on Application Server                                                                                        |
-| sap_app_server                                  | Example:see the following code box        | 
+| sap_app_server                                  | Example:see the following code box        |
 DI-server as a JSON object list with incremental number, IPV4 and Port |
 
 

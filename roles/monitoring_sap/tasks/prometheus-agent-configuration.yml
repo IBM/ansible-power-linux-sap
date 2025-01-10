@@ -44,8 +44,8 @@
     group: prometheus
     mode: "0640"
 
-- name: Start systemd daemon prometheus@<sap_monitoring_nr>
+- name: Start systemd daemon prometheus@{{ sap_monitoring_nr }}
   ansible.builtin.systemd:
     name: prometheus@{{ sap_monitoring_nr }}
-    state: started
+    state: restarted
     enabled: true
