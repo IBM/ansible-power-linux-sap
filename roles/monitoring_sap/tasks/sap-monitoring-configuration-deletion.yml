@@ -34,17 +34,11 @@
   ignore_errors: true
 
 - name: Disable systemd daemon sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-DI-*
-  ansible.builtin.shell: rm -f /etc/systemd/system/multi-user.target.wants/sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-DI-*.service
-  args:
-    executable: /bin/bash
-    warn: false
+  ansible.builtin.shell: /usr/bin/rm -f /etc/systemd/system/multi-user.target.wants/sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-DI-*.service
   ignore_errors: true
 
 - name: Stop systemd daemon sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-DI-*
   ansible.builtin.shell: systemctl stop sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-DI*
-  args:
-    executable: /bin/bash
-    warn: false
   ignore_errors: true
 
 # module systemd: globbing for start, but not for disable
@@ -78,8 +72,5 @@
   ignore_errors: true
 
 - name: Delete file /etc/sap_host_exporter/sap_host_exporter-{{ sap_monitoring_nr }}-DI-*.yaml
-  ansible.builtin.shell: rm -f /etc/sap_host_exporter/sap_host_exporter-{{ sap_monitoring_nr }}-DI-*.y*ml
-  args:
-    executable: /bin/bash
-    warn: false
+  ansible.builtin.shell: /usr/bin/rm -f /etc/sap_host_exporter/sap_host_exporter-{{ sap_monitoring_nr }}-DI-*.y*ml
   ignore_errors: true
