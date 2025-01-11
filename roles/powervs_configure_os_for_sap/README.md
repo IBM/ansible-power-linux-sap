@@ -62,7 +62,7 @@ sudo dnf -y install rhel-system-roles rhel-system-roles-sap
 
 ## Edit the configuration file
 
-Edit the configuration file `playbooks/vars/sample-powervs-configure-os-for-sap.yml` with required inputs.
+Edit the configuration file `playbooks/vars/sample-variables-powervs-configure-os-for-sap.yml` with required inputs.
 
 ## Execute the Ansible playbook
 

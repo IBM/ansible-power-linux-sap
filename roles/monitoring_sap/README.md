@@ -12,7 +12,7 @@
 
 This ansible role is configuring or deleting one SAP monitoring on a IBM Cloud Virtual Server. <br>
 A maximum of 99 SAP monitoring configurations can be deployed targeting 99 different SAP Systems located in the same security group. Monitoring HA SAP Systems is not covered in this release.<br>
-Each deployment has to use a different `<sap_monitoring_nr>` in the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml` <br>
+Each deployment has to use a different `<sap_monitoring_nr>` in the configuration file `playbooks/vars/sample-variables-monitoring-sap-parameters.yml` <br>
 The Ansible role is only a part of the monitoring workflow model as described in [docs/Introduction-details.md](docs/Introduction-details.md).
 
 # Role Description
@@ -187,13 +187,13 @@ cd ansible-power-linux-sap
 
 #### 5.2.3 Edit the monitoring configuration file
 
-Edit the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml`
+Edit the configuration file `playbooks/vars/sample-variables-monitoring-sap-parameters.yml`
 with your variables as described in chapter 2. <br>
 This document  [docs/HOWTO-gather-SAP-parameters.md](docs/HOWTO-gather-SAP-parameters.md) describes how to gather these SAP parameters.
 
 #### 5.2.4 Execute the Ansible playbook
 
-Ansible actions are controlled by the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml`, <br>
+Ansible actions are controlled by the configuration file `playbooks/vars/sample-variables-monitoring-sap-parameters.yml`, <br>
 no changes are required in the file `playbooks/sample-monitoring-sap.yml`. <br>
 Each execution of the Ansible playbook will add or delete a monitoring configuration: <br>
 `ansible-playbook --connection=local -i "localhost," playbooks/sample-monitoring-sap.yml`
@@ -207,7 +207,7 @@ explained in the file [docs/HOWTO-SAP-Dashboards.md](docs/HOWTO-SAP-Dashboards.m
 
 Each monitoring configuration requires the parameters of your targeted SAP System
 
-in the configuration file `playbooks/vars/sample-monitoring-sap-parameters.yml`. <br>
+in the configuration file `playbooks/vars/sample-variables-monitoring-sap-parameters.yml`. <br>
 
 This document  [docs/HOWTO-gather-SAP-parameters.md](docs/HOWTO-gather-SAP-parameters.md) describes how to gather these SAP parameters.
 
