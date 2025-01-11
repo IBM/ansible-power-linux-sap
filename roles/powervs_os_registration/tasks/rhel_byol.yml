@@ -24,6 +24,8 @@
         state: present
         username: "{{ byol.username }}"
         password: "{{ byol.password }}"
+        server_proxy_hostname: "{{ byol.server_proxy_hostname | default(omit) }}"
+        server_proxy_port: "{{ byol.server_proxy_port | default(omit) }}"
         release: "{{ ansible_distribution_version }}"
         auto_attach: true
         force_register: true

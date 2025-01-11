@@ -19,7 +19,7 @@
 
 - name: Check if rps_flow_cnt is present in any udev rule
   ansible.builtin.set_fact:
-    rule_present: "{{ udev_rule_contents.results | selectattr('content', 'search', 'rps_flow_cnt') | list | length > 0 }}"
+    rule_present: "{{ udev_rule_contents.results | selectattr('content', 'defined') | map(attribute='content') | map('b64decode') | select('search', 'rps_flow_cnt') | list | length > 0 }}"
 
 - name: Add udev rule if not present
   ansible.builtin.copy:
@@ -37,9 +37,16 @@
     cmd: udevadm trigger --type=devices --action=add
   when: add_rule_result.changed
 
+- name: Gather current value of net.core.rps_sock_flow_entries
+  ansible.builtin.command:
+    cmd: sysctl -n net.core.rps_sock_flow_entries
+  register: current_value
+  changed_when: false
+
 - name: Ensure net.core.rps_sock_flow_entries is set to 32768
   ansible.posix.sysctl:
     name: net.core.rps_sock_flow_entries
     value: "32768"
     state: present
     reload: true
+  when: current_value.stdout != '32768'
