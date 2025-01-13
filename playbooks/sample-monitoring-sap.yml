@@ -3,7 +3,7 @@
   hosts: all
   pre_tasks:
     - name: Include variables
-      ansible.builtin.include_vars: ./vars/sample-monitoring-sap-parameters.yml
+      ansible.builtin.include_vars: ./vars/sample-variables-monitoring-sap-parameters.yml
   gather_facts: yes
   tasks:
 

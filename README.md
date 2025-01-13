@@ -17,7 +17,7 @@ This collection has 5 modules, which are independent of each other and can be ru
 1.	**Preparing Operating System for SAP installations.**
 1.	**Creating Filesystems for SAP installations.**
 1.	**Installing and Configuring Management Services (SQUID, NTP, NFS, DNS)**
-1.	**Creating and deleting SAP monitoring configurations**
+1.	**Creating and Deleting SAP monitoring configurations**
 1.  **OS registrations**
 
 # Roles Description

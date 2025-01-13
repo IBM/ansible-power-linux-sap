@@ -14,16 +14,17 @@ remote_write:
 scrape_configs:
   - job_name: "hanadb_exporter"
     static_configs:
-       - targets: ['localhost:5{{ sap_monitoring_nr }}02']
+      - targets: ['localhost:5{{ sap_monitoring_nr }}02']
     relabel_configs:
       - target_label: domain
         replacement: 'SAP'
 
   - job_name: "sap_host_exporter"
     static_configs:
-       - targets: ['localhost:5{{ sap_monitoring_nr }}03','localhost:5{{ sap_monitoring_nr }}04','localhost:5{{ sap_monitoring_nr }}05']
-    # 05 – n : as many as existing Application server
-
+      - targets: ['localhost:5{{ sap_monitoring_nr }}03','localhost:5{{ sap_monitoring_nr }}04']
+{% for i in sap_app_server %}
+      - targets: ['localhost:5{{ sap_monitoring_nr }}{{ '%02d' % (loop.index + 4) }}']
+{% endfor %}
     relabel_configs:
       - target_label: domain
         replacement: 'SAP'

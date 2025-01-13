@@ -17,7 +17,7 @@
     group: root
     mode: "0644"
 
-- name: Create a sap-hana-keystore for the <sap_monitoring_nr>
+- name: Create a sap-hana-keystore for the <sap_monitoring_nr> {{ sap_monitoring_nr }}
   ansible.builtin.shell:
     cmd: "/usr/sap/hdbclient/hdbuserstore SET MONITORING{{ sap_monitoring_nr }}KEY {{ sap_hana_ip }}:{{ sap_hana_sql_systemdb_port }}@SYSTEMDB {{ sap_hana_sql_systemdb_user }} {{ sap_hana_sql_systemdb_password }}"
 
@@ -26,6 +26,7 @@
     cmd: "/usr/sap/hdbclient/hdbuserstore LIST | grep MONITORING{{ sap_monitoring_nr }}KEY"
   register: command_result
   failed_when: "'MONITORING' + sap_monitoring_nr not in command_result.stdout"
+  changed_when: false
 
 - name: Configure hanadb_exporter configuration file
   ansible.builtin.template:
@@ -40,5 +41,5 @@
   ansible.builtin.systemd:
     name: prometheus-hanadb_exporter@config-{{ sap_monitoring_nr }}-SQL
     enabled: true
-    state: started
+    state: restarted
   tags: hanadb_exporter

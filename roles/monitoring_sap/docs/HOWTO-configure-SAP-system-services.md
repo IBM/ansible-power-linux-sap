@@ -9,6 +9,7 @@ SDEFAULT -GetQueueStatistic -ABAPGetWPTable -EnqGetStatistic -GetProcessList - G
 ```
 
 Configure this setting for the following instances:
+
 - HANA on the HANA-DB Server
 - ASCS on the Application Server
 - DI on all corresponding Application Servers
@@ -22,10 +23,15 @@ Show OS user of the sapstart service
 `ps aux|grep sapstart`
 
 Switch to sapstart OS user
-`su - <OS-user of SAPstartsrv>`<OS-user of SAPstartsrv>
+`su - <OS-user of SAPstartsrv>`
 
-List the configured webmethods (using the instance numbers extracted with lssap)
-`sapcontrol -nr instance-nr -function ParameterValue service/protectedwebmethods`
+List the instance_numbers and status of all SapStart services
+
+`sapcontrol -nr sapstart -function GetSystemInstanceList`
+
+List the configured webmethods (using the instance numbers extracted with lssap or sapcontrol)
+
+`sapcontrol -nr <instance-nr> -function ParameterValue service/protectedwebmethods`
 
 If this shows the result:
 `SDEFAULT -GetQueueStatistic -ABAPGetWPTable -EnqGetStatistic -GetProcessList - GetEnvironment –ABAPGetSystemWPTable`
@@ -33,13 +39,19 @@ then no other configuration is required.
 Any other result requires to add one line to the configuration file.
 
 Show the configuration files
-`sapcontrol -nr instance-nr -function ListConfigFiles`
+`sapcontrol -nr <instance-nr> -function ListConfigFiles`
 
 3 config files of the instance are listed,
 edit the file that does not list DEFAULT.PFL or secinfo
 (it is listed as well with `ps aux | grep -I sapstart `)
 
-Add these lines:
+Before changing the configuration of the specific serive it is best to stop the service:
+
+`sapcontrol -nr  instance_nr sapstart -function StopSystem`
+
+
+Add these lines as hithero owner of the configuration file:
+
 (The config text must be put in one single line or change the line if an entry already exists)
 “'service/protectedwebmethods'” after the SETENV parameters (the line service is one line only):
 
@@ -50,7 +62,7 @@ service/protectedwebmethods = SDEFAULT -GetQueueStatistic -ABAPGetWPTable -EnqGe
 
 Save the config file without changing the file name.
 Restart the corresponding services:
-`sapcontrol -nr sapstart -function RestartService`
+`sapcontrol -nr <instance-nr> sapstart -function RestartService`
 
 This may take some time, to check the status:
 `sapcontrol -nr sapstart -function GetSystemInstanceList`
@@ -66,7 +78,7 @@ sapcontrol -nr service -function StartService instance_name
 ```
 
 List again the configured webmethods (using the instance numbers extracted with lssap)
-`sapcontrol -nr instance-nr -function ParameterValue service/protectedwebmethods`
+`sapcontrol -nr <instance-nr> -function ParameterValue service/protectedwebmethods`
 
 This is the desired result:
 `SDEFAULT -GetQueueStatistic -ABAPGetWPTable -EnqGetStatistic -GetProcessList - GetEnvironment -ABAPGetSystemWPTable`
