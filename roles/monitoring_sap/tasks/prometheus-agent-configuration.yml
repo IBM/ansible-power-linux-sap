@@ -2,7 +2,7 @@
 # This playbook contains  prometheus-agent configuration on the monitoring host
 
 - name: Install golang-github-prometheus-prometheus
-  ansible.builtin.zypper:
+  community.general.zypper:
     name: golang-github-prometheus-prometheus
     state: present
   tags: golang-github-prometheus-prometheus

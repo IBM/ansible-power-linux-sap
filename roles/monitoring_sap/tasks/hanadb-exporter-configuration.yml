@@ -1,7 +1,7 @@
 ---
 # This playbook deploys prometheus-hanadb_exporter configuration on the monitoring host
 - name: Install prometheus-hanadb_exporter
-  ansible.builtin.zypper:
+  community.general.zypper:
     name: prometheus-hanadb_exporter
     state: present
   tags: prometheus-hanadb_exporter

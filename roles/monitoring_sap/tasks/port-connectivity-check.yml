@@ -5,7 +5,7 @@
     msg: "SAP monitoring configuration using the sap_monitoring_nr: {{ sap_monitoring_nr }}"
 
 - name: Install netcat-openbsd
-  ansible.builtin.zypper:
+  community.general.zypper:
     name: netcat-openbsd
     state: present
   tags: netcat-openbsd

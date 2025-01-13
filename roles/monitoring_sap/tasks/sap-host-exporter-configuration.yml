@@ -2,7 +2,7 @@
 # This playbook contains all sap_host_exporter (HANA, ASCS, ABAP) configuration.
 
 - name: Install prometheus-sap_host_exporter
-  ansible.builtin.zypper:
+  community.general.zypper:
     name: prometheus-sap_host_exporter
     state: present
   tags: prometheus-sap_host_exporter
