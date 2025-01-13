@@ -4,7 +4,7 @@
   when: byol is defined
   vars:
     use_proxy: "{{ byol.server_proxy_hostname is defined and byol.server_proxy_port is defined }}"
-    proxy_str: "{{ byol.server_proxy_hostname + ':' + byol.server_proxy_port if (byol.server_proxy_hostname is defined and byol.server_proxy_port is defined) else omit }}"
+    proxy_str: "{{ byol.server_proxy_hostname + ':' + byol.server_proxy_port if use_proxy else omit }}"
     proxy_env:
       http_proxy: "{{ proxy_str }}"
       https_proxy: "{{ proxy_str }}"
