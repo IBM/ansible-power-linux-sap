@@ -1,6 +1,12 @@
+- name: Validate one of FLS or BYOL is used for os registration but not both
+  ansible.builtin.assert:
+    that:
+      - (fls is defined and fls and byol is not defined) or ((fls is not defined or not fls) and byol is defined)
+    fail_msg: "Define either fls or byol but not both."
+
 - name: Power Virtual Server Full Linux Subscription OS Registration
   ansible.builtin.include_tasks: "powervs_fls.yml"
-  when: fls and byol is not defined
+  when: fls is defined and fls and byol is not defined
 
 - name: OS registration for RHEL (BYOL)
   ansible.builtin.include_tasks: "rhel_byol.yml"
