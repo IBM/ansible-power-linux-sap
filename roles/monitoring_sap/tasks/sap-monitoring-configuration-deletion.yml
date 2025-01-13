@@ -38,7 +38,7 @@
   ignore_errors: true
 
 - name: Stop systemd daemon sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-DI-*
-  ansible.builtin.shell: systemctl stop sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-DI*
+  ansible.builtin.shell: systemctl stop sap_host_exporter@sap_host_exporter-{{ sap_monitoring_nr }}-DI* # noqa: command-instead-of-module
   ignore_errors: true
 
 # module systemd: globbing for start, but not for disable
