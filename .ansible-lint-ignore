@@ -1,1 +1,1 @@
-roles/monitoring_sap/tasks/sap-monitoring-configuration-deletion.yml command-instead-of-module
+roles/monitoring_sap/tasks/sap-monitoring-configuration-deletion.yml command-instead-of-modul

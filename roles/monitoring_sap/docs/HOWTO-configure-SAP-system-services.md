@@ -5,7 +5,7 @@ To avoid user/passwords inside the sap_host_exporter configuration,
 these SAPstart services need to be set with the Parameter:
 
 ```
-SDEFAULT -GetQueueStatistic -ABAPGetWPTable -EnqGetStatistic -GetProcessList - GetEnvironment -BAPGetSystemWPTable
+SDEFAULT -GetQueueStatistic -ABAPGetWPTable -EnqGetStatistic -GetProcessList -GetEnvironment -BAPGetSystemWPTable
 ```
 
 Configure this setting for the following instances:
@@ -34,7 +34,7 @@ List the configured webmethods (using the instance numbers extracted with lssap 
 `sapcontrol -nr <instance-nr> -function ParameterValue service/protectedwebmethods`
 
 If this shows the result: <br>
-`SDEFAULT -GetQueueStatistic -ABAPGetWPTable -EnqGetStatistic -GetProcessList - GetEnvironment –ABAPGetSystemWPTable` <br>
+`SDEFAULT -GetQueueStatistic -ABAPGetWPTable -EnqGetStatistic -GetProcessList -GetEnvironment –ABAPGetSystemWPTable` <br>
 then no other configuration is required.
 Any other result requires to add one line to the configuration file.
 
@@ -80,4 +80,4 @@ List again the configured webmethods (using the instance numbers extracted with 
 `sapcontrol -nr <instance-nr> -function ParameterValue service/protectedwebmethods`
 
 This is the desired result: <br>
-`SDEFAULT -GetQueueStatistic -ABAPGetWPTable -EnqGetStatistic -GetProcessList - GetEnvironment -ABAPGetSystemWPTable`
+`SDEFAULT -GetQueueStatistic -ABAPGetWPTable -EnqGetStatistic -GetProcessList -GetEnvironment -ABAPGetSystemWPTable`
