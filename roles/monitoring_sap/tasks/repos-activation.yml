@@ -2,7 +2,7 @@
 # The role common will activate SLES OS Repos and install the prometheus packages
 
 - name: Install netcat-openbsd
-  community.general.zypper:
+  ansible.builtin.zypper:
     name: netcat-openbsd
     state: present
   tags: netcat-openbsd
