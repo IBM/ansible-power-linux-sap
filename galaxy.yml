@@ -26,6 +26,6 @@ tags:
 
 dependencies: {}
 repository: "https://github.com/IBM/ansible-power-linux-sap"
-documentation: "https://github.com/IBM/ansible-power-linux-sap/README.md"
+documentation: "https://github.com/IBM/ansible-power-linux-sap/blob/main/README.md"
 homepage: "https://github.com/IBM/ansible-power-linux-sap"
 issues: "https://github.com/IBM/ansible-power-linux-sap/issues"
