@@ -163,3 +163,10 @@ Version 3.1.1
 Notes
        * Minimum community.general version 10.1.0
        * Skip pause for services only if status changed
+
+Version 3.2.0
+Notes
+       * Enhanced matching for rps_flw_cnt rule
+       * Check rps_sock_flow_entries value using sysctl command and then modify the value if not equal to 32768
+       * Refactor monitoring roles for sap, add assertions
+       * Introduce new optional variables for proxy for rhel and sles os registration

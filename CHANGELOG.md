@@ -1,6 +1,17 @@
 # Release Notes
 
+<a name="v3.2.0"></a>
+
+# [v3.2.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v3.2.0) - 14 Jan 2025
+
+## Release Summary
+* fix: enhanced matching for rps_flw_cnt rule
+* fix: check rps_sock_flow_entries value using sysctl command and then modify the value if not equal to 32768
+* fix: refactor monitoring roles for sap, add assertions
+* feat: introduce new optional variables for proxy for rhel and sles os registration
+
 <a name="v3.1.1"></a>
+
 # [v3.1.1](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v3.1.1) - 11 Dec 2024
 
 ## Release Summary
@@ -8,6 +19,7 @@
 
 
 <a name="v3.1.0"></a>
+
 # [v3.1.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v3.1.0) - 05 Dec 2024
 
 ## Release Summary
@@ -15,6 +27,7 @@
 * fix: RFS settings on RHEL and SLES
 
 <a name="v3.0.0"></a>
+
 # [v3.0.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v3.0.0) - 05 Nov 2024
 
 ## Release Summary
@@ -24,18 +37,21 @@ Previous roles powervs_client_enable_services and powervs_install_services now c
 Please take a look at the READMEs for the updated variable names.
 
 <a name="v2.2.1"></a>
+
 # [v2.2.1](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v2.2.1) - 18 Jul 2024
 
 ## Release Summary
 * fix: private ingestion endpoints for sap monitory role
 
 <a name="v2.2.0"></a>
+
 # [v2.2.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v2.2.0) - 10 Jul 2024
 
 ## Release Summary
 * New monitoring role for SAP supported on SLES
 
 <a name="v2.1.1"></a>
+
 # [v2.1.1](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v2.1.1) - 30 May 2024
 
 ## Release Summary
@@ -44,6 +60,7 @@ Please take a look at the READMEs for the updated variable names.
 [Changes][v2.1.1]
 
 <a name="v2.1.0"></a>
+
 # [v2.1.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v2.1.0) - 18 May 2024
 
 ## Release Summary
@@ -54,6 +71,7 @@ Please take a look at the READMEs for the updated variable names.
 
 
 <a name="v2.0.0"></a>
+
 # [v2.0.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v2.0.0) - 16 May 2024
 
 ## Release Summary
@@ -66,6 +84,7 @@ Please take a look at the READMEs for the updated variable names.
 
 
 <a name="v1.1.5"></a>
+
 # [v1.1.5](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.1.5) - 16 Feb 2024
 
 ## Release Summary
@@ -76,6 +95,7 @@ Please take a look at the READMEs for the updated variable names.
 
 
 <a name="v1.1.4"></a>
+
 # [v1.1.4](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.1.4) - 13 Oct 2023
 
 ## Release Summary
@@ -88,6 +108,7 @@ Please take a look at the READMEs for the updated variable names.
 
 
 <a name="v1.1.3"></a>
+
 # [v.1.1.3](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.1.3) - 21 Aug 2023
 
 ## Release Summary
@@ -97,6 +118,7 @@ Please take a look at the READMEs for the updated variable names.
 
 
 <a name="v1.1.2"></a>
+
 # [v1.1.2](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.1.2) - 03 Jul 2023
 
 ## Release Summary
@@ -106,6 +128,7 @@ Please take a look at the READMEs for the updated variable names.
 
 
 <a name="v1.1.0"></a>
+
 # [v1.1.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.1.0) - 28 Jun 2023
 
 ## Release Summary
@@ -115,6 +138,7 @@ Please take a look at the READMEs for the updated variable names.
 
 
 <a name="v1.0.11"></a>
+
 # [v1.0.11](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.0.11) - 09 Jun 2023
 
 ## Release Summary
@@ -127,6 +151,7 @@ Please take a look at the READMEs for the updated variable names.
 
 
 <a name="v1.0.10"></a>
+
 # [v1.0.10](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.0.10) - 30 Jan 2023
 
 ## Release Summary
@@ -136,6 +161,7 @@ Please take a look at the READMEs for the updated variable names.
 
 
 <a name="v1.0.9"></a>
+
 # [v1.0.9](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.0.9) - 05 Jan 2023
 
 ## Release Summary
@@ -146,6 +172,7 @@ Please take a look at the READMEs for the updated variable names.
 
 
 <a name="v1.0.8"></a>
+
 # [v1.0.8](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.0.8) - 14 Oct 2022
 
 ## Release Summary
@@ -156,6 +183,7 @@ Please take a look at the READMEs for the updated variable names.
 
 
 <a name="v1.0.7"></a>
+
 # [v1.0.7](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.0.7) - 22 Sep 2022
 
 ## Release Summary
@@ -165,6 +193,7 @@ Please take a look at the READMEs for the updated variable names.
 
 
 <a name="v1.0.6"></a>
+
 # [v1.0.6](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.0.6) - 14 Sep 2022
 
 ## Release Summary
@@ -175,6 +204,7 @@ Please take a look at the READMEs for the updated variable names.
 
 
 <a name="v1.0.4"></a>
+
 # [v1.0.4](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.0.4) - 26 Aug 2022
 
 ## Release Summary
@@ -185,6 +215,7 @@ Please take a look at the READMEs for the updated variable names.
 
 
 <a name="v1.0.3"></a>
+
 # [v1.0.3](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.0.3) - 25 Aug 2022
 
 ## Release Summary
@@ -200,6 +231,7 @@ This release will add the following capabilities:
 
 
 <a name="v1.0.2"></a>
+
 # [v1.0.2](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.0.2) - 06 Jul 2022
 
 ## Release Summary
@@ -209,6 +241,7 @@ This release will add the following capabilities:
 
 
 <a name="v1.0.0"></a>
+
 # [v1.0.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v1.0.0) - 06 Jul 2022
 
 ## Release Summary
@@ -222,13 +255,15 @@ This release will add the following capabilities:
 
 
 <a name="v0.0.1"></a>
+
 # [Initial Release (v0.0.1)](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v0.0.1) - 17 Jun 2022
 
 ## Release Summary
 Initial beta release of IBM Power Virtual Systems SAP with RISE collection, referred to as power_linux_sap
 
-[Changes][v3.1.1]
-[v3.1.0]: https://github.com/IBM/ansible-power-linux-sap/compare/v3.1.1...v3.1.0
+[Changes][v3.2.0]
+[v3.2.0]: https://github.com/IBM/ansible-power-linux-sap/compare/v3.2.0...v3.1.1
+[v3.1.1]: https://github.com/IBM/ansible-power-linux-sap/compare/v3.1.1...v3.1.0
 [v3.1.0]: https://github.com/IBM/ansible-power-linux-sap/compare/v3.1.0...v3.0.0
 [v3.0.0]: https://github.com/IBM/ansible-power-linux-sap/compare/v3.0.0...v2.2.1
 [v2.2.1]: https://github.com/IBM/ansible-power-linux-sap/compare/v2.2.1...v2.2.0
