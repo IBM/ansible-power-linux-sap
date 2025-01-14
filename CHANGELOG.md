@@ -2,7 +2,7 @@
 
 <a name="v3.2.0"></a>
 
-# [v3.2.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v3.1.1) - 14 Jan 2025
+# [v3.2.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v3.2.0) - 14 Jan 2025
 
 ## Release Summary
 * fix: enhanced matching for rps_flw_cnt rule
