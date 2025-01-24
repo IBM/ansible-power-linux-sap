@@ -1,5 +1,12 @@
 # Release Notes
 
+<a name="v3.2.1"></a>
+
+# [v3.2.1](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v3.2.1) - 24 Jan 2025
+
+## Release Summary
+* fix: Add the custom DNS entry to the beginning of /etc/resolv.conf
+
 <a name="v3.2.0"></a>
 
 # [v3.2.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v3.2.0) - 14 Jan 2025
@@ -261,7 +268,8 @@ This release will add the following capabilities:
 ## Release Summary
 Initial beta release of IBM Power Virtual Systems SAP with RISE collection, referred to as power_linux_sap
 
-[Changes][v3.2.0]
+[Changes][v3.2.1]
+[v3.2.1]: https://github.com/IBM/ansible-power-linux-sap/compare/v3.2.0...v3.2.1
 [v3.2.0]: https://github.com/IBM/ansible-power-linux-sap/compare/v3.1.1...v3.2.0
 [v3.1.1]: https://github.com/IBM/ansible-power-linux-sap/compare/v3.1.0...v3.1.1
 [v3.1.0]: https://github.com/IBM/ansible-power-linux-sap/compare/v3.0.0...v3.1.0

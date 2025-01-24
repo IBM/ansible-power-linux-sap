@@ -103,6 +103,8 @@
       ansible.builtin.lineinfile:
         path: /etc/resolv.conf
         line: nameserver {{ client_config.dns.dns_server_ip }}
+        insertbefore: "^nameserver.*$"
+        firstmatch: true
       register: nameserver_configured
 
     - name: Pause for 60 sec
@@ -116,10 +118,10 @@
       changed_when: false
       ignore_errors: true
 
-    - name: Verify if dig command returned an IP
+    - name: Fail if dig did not return an IP
       ansible.builtin.fail:
         msg: "DNS is not working, please verify setting"
-      when: dig_output.stdout is not ansible.utils.ipv4
+      when: dig_output.stdout | regex_search('^\\d+\\.\\d+\\.\\d+\\.\\d+$', multiline=True) is not ansible.utils.ipv4
       ignore_errors: true
 
 ####################################

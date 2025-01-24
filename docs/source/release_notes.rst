@@ -170,3 +170,7 @@ Notes
        * Check rps_sock_flow_entries value using sysctl command and then modify the value if not equal to 32768
        * Refactor monitoring roles for sap, add assertions
        * Introduce new optional variables for proxy for rhel and sles os registration
+
+Version 3.2.1
+Notes
+       * Fix the custom DNS entry by adding to the top of /etc/resolv.conf file
