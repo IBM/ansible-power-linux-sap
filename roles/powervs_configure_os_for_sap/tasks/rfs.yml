@@ -50,3 +50,33 @@
     state: present
     reload: true
   when: current_value.stdout != '32768'
+
+- name: Gather network facts
+  ansible.builtin.setup:
+    gather_subset:
+      - network
+
+- name: Detect network interface drivers
+  ansible.builtin.command: ethtool -i {{ item }}
+  loop: "{{ ansible_facts.interfaces | difference(['lo']) }}"
+  register: ethtool_results
+  changed_when: false
+  failed_when: false
+
+- name: Check if ibmveth driver is present
+  ansible.builtin.set_fact:
+    ibmveth_present: "{{ ethtool_results.results | selectattr('stdout', 'search', 'driver: ibmveth') | list | length > 0 }}"
+
+- name: Set rx_copybreak for current session
+  ansible.builtin.shell: echo 4096 > /sys/module/ibmveth/parameters/rx_copybreak
+  when: ibmveth_present
+
+- name: Persist rx_copybreak across reboot
+  ansible.builtin.copy:
+    dest: /etc/modprobe.d/ibmveth.conf
+    content: |
+      options ibmveth rx_copybreak=4096
+    owner: root
+    group: root
+    mode: "0644"
+  when: ibmveth_present
