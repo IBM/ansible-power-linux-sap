@@ -67,11 +67,11 @@
   ansible.builtin.set_fact:
     ibmveth_present: "{{ ethtool_results.results | selectattr('stdout', 'search', 'driver: ibmveth') | list | length > 0 }}"
 
-- name: Set rx_copybreak for current session
+- name: Set rx_copybreak for veth interface
   ansible.builtin.shell: echo 4096 > /sys/module/ibmveth/parameters/rx_copybreak
   when: ibmveth_present
 
-- name: Persist rx_copybreak across reboot
+- name: Persist rx_copybreak across reboot for veth interface
   ansible.builtin.copy:
     dest: /etc/modprobe.d/ibmveth.conf
     content: |
