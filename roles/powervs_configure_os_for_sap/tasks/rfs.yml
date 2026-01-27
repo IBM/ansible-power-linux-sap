@@ -65,13 +65,28 @@
 
 - name: Check if ibmveth driver is present
   ansible.builtin.set_fact:
-    ibmveth_present: "{{ ethtool_results.results | selectattr('stdout', 'search', 'driver: ibmveth') | list | length > 0 }}"
+    ibmveth_present: >-
+      {{
+        ethtool_results.results
+        | map(attribute='stdout_lines')
+        | flatten
+        | select('equalto', 'driver: ibmveth')
+        | list
+        | length > 0
+      }}
 
-- name: Set rx_copybreak for veth interface
+- name: Check if rx_copybreak sysfs parameter exists for ibmveth interface
+  ansible.builtin.stat:
+    path: /sys/module/ibmveth/parameters/rx_copybreak
+  register: rx_copybreak_stat
+
+- name: Set rx_copybreak for current session for ibmveth interface
   ansible.builtin.shell: echo 4096 > /sys/module/ibmveth/parameters/rx_copybreak
-  when: ibmveth_present
+  when:
+    - ibmveth_present
+    - rx_copybreak_stat.stat.exists
 
-- name: Persist rx_copybreak across reboot for veth interface
+- name: Persist rx_copybreak across reboot
   ansible.builtin.copy:
     dest: /etc/modprobe.d/ibmveth.conf
     content: |
