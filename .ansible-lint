@@ -18,3 +18,4 @@ skip_list:
   - name[template]
   - risky-shell-pipe
   - command-instead-of-shell
+  - var-naming[no-role-prefix]
