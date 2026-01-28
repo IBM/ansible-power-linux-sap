@@ -79,12 +79,23 @@
   ansible.builtin.stat:
     path: /sys/module/ibmveth/parameters/rx_copybreak
   register: rx_copybreak_stat
+  when: ibmveth_present
+
+- name: Read current rx_copybreak value
+  ansible.builtin.command: cat /sys/module/ibmveth/parameters/rx_copybreak
+  register: rx_copybreak_current
+  changed_when: false
+  failed_when: false
+  when:
+    - ibmveth_present
+    - rx_copybreak_stat.stat.exists
 
 - name: Set rx_copybreak for current session for ibmveth interface
   ansible.builtin.shell: echo 4096 > /sys/module/ibmveth/parameters/rx_copybreak
   when:
     - ibmveth_present
     - rx_copybreak_stat.stat.exists
+    - rx_copybreak_current.stdout | trim != "4096"
 
 - name: Persist rx_copybreak across reboot
   ansible.builtin.copy:
