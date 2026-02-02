@@ -1,5 +1,5 @@
 ---
-# Enable Receive Flow Steering (RFS)
+# Enable Receive Flow Steering (RFS) and ibmveth rx_copybreak
 
 - name: Find udev rule files in /etc/udev/rules.d/ and /lib/udev/rules.d/
   ansible.builtin.find:
@@ -16,6 +16,10 @@
   loop: "{{ udev_rule_files.files }}"
   register: udev_rule_contents
   when: udev_rule_files.matched > 0
+
+# -------------------------------------------------------------------
+# RFS
+# -------------------------------------------------------------------
 
 - name: Check if rps_flow_cnt is present in any udev rule
   ansible.builtin.set_fact:
@@ -51,6 +55,10 @@
     reload: true
   when: current_value.stdout != '32768'
 
+# -------------------------------------------------------------------
+# ibmveth rx_copybreak
+# -------------------------------------------------------------------
+
 - name: Gather network facts
   ansible.builtin.setup:
     gather_subset:
@@ -72,13 +80,16 @@
         | length > 0
       }}
 
-- name: Read current ibmveth module rx_copybreak value
+# ---------------- Runtime (current session) ----------------
+
+- name: Read current ibmveth rx_copybreak runtime value
   ansible.builtin.command: cat /sys/module/ibmveth/parameters/rx_copybreak
   register: rx_copybreak_current
   changed_when: false
   failed_when: false
+  when: rx_copybreak_supported
 
-- name: Set ibmveth module rx_copybreak to 4096
+- name: Update ibmveth rx_copybreak for current session
   ansible.builtin.command: tee /sys/module/ibmveth/parameters/rx_copybreak
   args:
     stdin: "4096"
@@ -88,14 +99,31 @@
     - rx_copybreak_current.stdout | trim != '4096'
   become: yes
 
-- name: Persist ibmveth rx_copybreak value across reboot
-  ansible.builtin.lineinfile:
-    path: /etc/modprobe.d/ibmveth.conf
-    regexp: '^options\s+ibmveth\s+rx_copybreak='
-    line: "options ibmveth rx_copybreak=4096"
-    create: yes
+# ---------------- Persistence (next boot) ----------------
+
+- name: Check if rx_copybreak=4096 udev rule exists anywhere
+  ansible.builtin.set_fact:
+    rx_rule_present: >-
+      {{
+        (udev_rule_contents.results | default([]))
+        | selectattr('content', 'defined')
+        | map(attribute='content')
+        | map('b64decode')
+        | select('search', 'rx_copybreak[^0-9]*4096')
+        | list
+        | length > 0
+      }}
+  when: rx_copybreak_supported
+
+- name: Enforce ibmveth rx_copybreak udev rule
+  ansible.builtin.copy:
+    dest: /etc/udev/rules.d/70-ibmveth-rx.rules
+    content: |
+      SUBSYSTEM=="net", ACTION=="add", DRIVERS=="ibmveth", RUN{program}+="/bin/bash -c 'echo 4096 > /sys/module/ibmveth/parameters/rx_copybreak'"
     owner: root
     group: root
     mode: "0644"
-  when: rx_copybreak_supported
-  become: yes
+  when:
+    - rx_copybreak_supported
+    - not (rx_rule_present | default(false))
+  register: rx_rule_added
