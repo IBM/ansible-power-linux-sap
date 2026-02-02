@@ -1,5 +1,13 @@
 # Release Notes
 
+
+<a name="v3.2.2"></a>
+
+# [v3.2.2](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v3.2.2) - 02 Feb 2026
+
+## Release Summary
+* feat: Tunings for veth apdators RX_COPYBREAK in Power Virtual Servers (multiqueue support)
+
 <a name="v3.2.1"></a>
 
 # [v3.2.1](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v3.2.1) - 24 Jan 2025

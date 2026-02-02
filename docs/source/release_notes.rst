@@ -174,3 +174,7 @@ Notes
 Version 3.2.1
 Notes
        * Fix the custom DNS entry by adding to the top of /etc/resolv.conf file
+
+Version 3.2.2
+Notes
+       * Tunings for veth apdators RX_COPYBREAK in Power Virtual Servers (multiqueue support)

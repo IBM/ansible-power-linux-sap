@@ -1,6 +1,6 @@
 namespace: "ibm"
 name: "power_linux_sap"
-version: 3.2.1
+version: 3.2.2
 readme: "README.md"
 description: Collection of Ansible Roles for RHEL/SLES OS to prepare LPARs for installing SAP on Power Systems.
 authors:
@@ -10,6 +10,7 @@ authors:
   - Achim Haaser <Achim.Haaser1@ibm.com>
   - Stafania Saju <Stafania.Saju@ibm.com>
   - Ludwig Mueller <Ludwig.Mueller@ibm.com>
+  - Trilochan Pandey <tripan56@in.ibm.com>
 
 license_file: "LICENSE"
 tags:
