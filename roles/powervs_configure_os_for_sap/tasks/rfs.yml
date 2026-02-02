@@ -1,5 +1,9 @@
 ---
-# Enable Receive Flow Steering (RFS)
+# Enable Receive Flow Steering (RFS) and ibmveth rx_copybreak
+
+# -------------------------------------------------------------------
+# UDEV RULE DISCOVERY
+# -------------------------------------------------------------------
 
 - name: Find udev rule files in /etc/udev/rules.d/ and /lib/udev/rules.d/
   ansible.builtin.find:
@@ -17,11 +21,15 @@
   register: udev_rule_contents
   when: udev_rule_files.matched > 0
 
+# -------------------------------------------------------------------
+# RFS CONFIGURATION
+# -------------------------------------------------------------------
+
 - name: Check if rps_flow_cnt is present in any udev rule
   ansible.builtin.set_fact:
     rule_present: "{{ udev_rule_contents.results | selectattr('content', 'defined') | map(attribute='content') | map('b64decode') | select('search', 'rps_flow_cnt') | list | length > 0 }}"
 
-- name: Add udev rule if not present
+- name: Add udev rule for rps_flow_cnt if not present
   ansible.builtin.copy:
     dest: "/etc/udev/rules.d/70-ibmveth-rfs.rules"
     content: |
@@ -40,7 +48,7 @@
 - name: Gather current value of net.core.rps_sock_flow_entries
   ansible.builtin.command:
     cmd: sysctl -n net.core.rps_sock_flow_entries
-  register: current_value
+  register: rps_current_value
   changed_when: false
 
 - name: Ensure net.core.rps_sock_flow_entries is set to 32768
@@ -49,4 +57,110 @@
     value: "32768"
     state: present
     reload: true
-  when: current_value.stdout != '32768'
+  when: rps_current_value.stdout != '32768'
+
+# -------------------------------------------------------------------
+# RX_COPYBREAK SUPPORT CHECK
+# -------------------------------------------------------------------
+
+- name: Gather network facts
+  ansible.builtin.setup:
+    gather_subset:
+      - network
+
+- name: Check if rx_copybreak parameter exists
+  ansible.builtin.stat:
+    path: "/sys/class/net/{{ item }}/device/driver/module/parameters/rx_copybreak"
+  loop: "{{ ansible_facts.interfaces | difference(['lo']) }}"
+  register: rx_copybreak_check
+
+- name: Determine rx_copybreak support
+  ansible.builtin.set_fact:
+    rx_copybreak_supported: >-
+      {{
+        rx_copybreak_check.results
+        | selectattr('stat.exists')
+        | list
+        | length > 0
+      }}
+
+# -------------------------------------------------------------------
+# RX_COPYBREAK RUNTIME (CURRENT SESSION)
+# -------------------------------------------------------------------
+
+- name: Read current rx_copybreak runtime value
+  ansible.builtin.command: cat /sys/module/ibmveth/parameters/rx_copybreak
+  register: rx_copybreak_current
+  changed_when: false
+  failed_when: false
+  when: rx_copybreak_supported
+
+- name: Set rx_copybreak runtime value to 4096 for ibmveth
+  ansible.builtin.command: tee /sys/module/ibmveth/parameters/rx_copybreak
+  args:
+    stdin: "4096"
+  when:
+    - rx_copybreak_supported
+    - rx_copybreak_current.stdout | trim != '4096'
+  become: yes
+
+# -------------------------------------------------------------------
+# RX_COPYBREAK PERSISTENCE (NEXT BOOT)
+# -------------------------------------------------------------------
+
+- name: Read kernel command line
+  ansible.builtin.command: cat /proc/cmdline
+  register: kernel_cmdline
+  changed_when: false
+  when: rx_copybreak_supported
+
+- name: Detect any ibmveth.rx_copybreak in kernel
+  ansible.builtin.set_fact:
+    rx_kernel_present: "{{ 'ibmveth.rx_copybreak=' in kernel_cmdline.stdout }}"
+  when: rx_copybreak_supported
+
+- name: Check if rx_copybreak udev rule already exists
+  ansible.builtin.set_fact:
+    rx_rule_present: >-
+      {{
+        (udev_rule_contents.results | default([]))
+        | selectattr('content', 'defined')
+        | map(attribute='content')
+        | map('b64decode')
+        | select('search', 'rx_copybreak[^0-9]*4096')
+        | list
+        | length > 0
+      }}
+  when: rx_copybreak_supported
+
+# ---------------- Kernel update ----------------
+
+- name: Remove existing ibmveth.rx_copybreak kernel args
+  ansible.builtin.command: >
+    grubby --update-kernel=ALL --remove-args="ibmveth.rx_copybreak"
+  when:
+    - rx_copybreak_supported
+    - rx_kernel_present
+
+- name: Add ibmveth.rx_copybreak=4096 kernel arg for ibmveth
+  ansible.builtin.command: >
+    grubby --update-kernel=ALL --args="ibmveth.rx_copybreak=4096"
+  when:
+    - rx_copybreak_supported
+    - rx_kernel_present
+
+# ---------------- Udev update ----------------
+
+- name: Enforce rx_copybreak udev rule (only when kernel does not define it)
+  ansible.builtin.copy:
+    dest: /etc/udev/rules.d/70-ibmveth-rx.rules
+    content: |
+      SUBSYSTEM=="net", ACTION=="add", DRIVERS=="ibmveth", \
+      RUN{program}+="/bin/bash -c 'echo 4096 > /sys/module/ibmveth/parameters/rx_copybreak'"
+    owner: root
+    group: root
+    mode: "0644"
+  when:
+    - rx_copybreak_supported
+    - not rx_kernel_present
+    - not rx_rule_present
