@@ -29,7 +29,7 @@
   ansible.builtin.set_fact:
     rule_present: "{{ udev_rule_contents.results | selectattr('content', 'defined') | map(attribute='content') | map('b64decode') | select('search', 'rps_flow_cnt') | list | length > 0 }}"
 
-- name: Add udev rule if not present
+- name: Add udev rule for rps_flow_cnt if not present
   ansible.builtin.copy:
     dest: "/etc/udev/rules.d/70-ibmveth-rfs.rules"
     content: |
@@ -48,7 +48,7 @@
 - name: Gather current value of net.core.rps_sock_flow_entries
   ansible.builtin.command:
     cmd: sysctl -n net.core.rps_sock_flow_entries
-  register: current_value
+  register: rps_current_value
   changed_when: false
 
 - name: Ensure net.core.rps_sock_flow_entries is set to 32768
@@ -57,7 +57,7 @@
     value: "32768"
     state: present
     reload: true
-  when: current_value.stdout != '32768'
+  when: rps_current_value.stdout != '32768'
 
 # -------------------------------------------------------------------
 # RX_COPYBREAK SUPPORT CHECK
