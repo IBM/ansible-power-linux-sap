@@ -178,3 +178,8 @@ Notes
 Version 3.2.2
 Notes
        * Tunings for veth apdators RX_COPYBREAK in Power Virtual Servers (multiqueue support)
+
+
+Version 3.2.3
+Notes
+       * Set transparent_hugepage to madvise
