@@ -50,6 +50,10 @@ Install **[collection](https://galaxy.ansible.com/ibm/power_linux_sap)** from An
 
 A folder will be created in root directory : ```/root/.ansible/collections/ansible_collections/ibm/power_linux_sap/```
 
+Install the required dependencies using the requirements.yml file:
+
+```ansible-galaxy collection install -r '/root/.ansible/collections/ansible_collections/ibm/power_linux_sap/requirements.yml'```
+
 To install RHEL system roles, follow the steps provided [here](https://access.redhat.com/articles/6857351#installation)
 
 ***

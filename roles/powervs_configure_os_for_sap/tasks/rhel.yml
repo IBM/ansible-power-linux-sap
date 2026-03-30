@@ -3,7 +3,7 @@
 ##########################################
 # 1. Install and Configure packages
 # 2. Configure Network settings
-# 3. Set transparent_hugepage never
+# 3. Set transparent_hugepage madvise
 # 4. Execute RHEL linux system roles SAP: SAP general preconfigure, HANA/NETWEAVER preconfigure
 
 - name: Install and Configure packages
@@ -57,8 +57,8 @@
     - name: Enable Receive Flow Steering (RFS)
       ansible.builtin.include_tasks: "rfs.yml"
 
-- name: Set transparent_hugepage to never
-  ansible.builtin.shell: echo never > /sys/kernel/mm/transparent_hugepage/enabled
+- name: Set transparent_hugepage to madvise
+  ansible.builtin.shell: echo madvise > /sys/kernel/mm/transparent_hugepage/enabled
   changed_when: false
 
 - name: Run SAP general preconfigure

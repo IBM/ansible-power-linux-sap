@@ -1,6 +1,13 @@
 # Release Notes
 
 
+<a name="v3.2.3"></a>
+
+# [v3.2.3](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v3.2.3) - 30 Mar 2026
+
+## Release Summary
+* feat: Set transparent_hugepage to madvise
+
 <a name="v3.2.2"></a>
 
 # [v3.2.2](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v3.2.2) - 02 Feb 2026
@@ -276,7 +283,9 @@ This release will add the following capabilities:
 ## Release Summary
 Initial beta release of IBM Power Virtual Systems SAP with RISE collection, referred to as power_linux_sap
 
-[Changes][v3.2.1]
+[Changes][v3.2.3]
+[v3.2.3]: https://github.com/IBM/ansible-power-linux-sap/compare/v3.2.2...v3.2.3
+[v3.2.2]: https://github.com/IBM/ansible-power-linux-sap/compare/v3.2.1...v3.2.2
 [v3.2.1]: https://github.com/IBM/ansible-power-linux-sap/compare/v3.2.0...v3.2.1
 [v3.2.0]: https://github.com/IBM/ansible-power-linux-sap/compare/v3.1.1...v3.2.0
 [v3.1.1]: https://github.com/IBM/ansible-power-linux-sap/compare/v3.1.0...v3.1.1
