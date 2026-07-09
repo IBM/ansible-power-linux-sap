@@ -66,7 +66,7 @@ Edit the configuration file `playbooks/vars/sample-variables-powervs-configure-o
 
 ## Execute the Ansible playbook
 
-To prpeare the OS for SAP system, execute the ansible playbook:
+To prepare the OS for SAP system, execute the ansible playbook:
 `ansible-playbook --connection=local -i "localhost," playbooks/sample-powervs-configure-os-for-sap.yml`
 
 # Notes
