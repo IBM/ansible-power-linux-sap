@@ -183,3 +183,7 @@ Notes
 Version 3.2.3
 Notes
        * Set transparent_hugepage to madvise
+
+Version 3.3.0
+Notes
+       * Add vNIC Support for network configuration

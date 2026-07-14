@@ -16,6 +16,7 @@
         - multipath-tools
         - irqbalance
         - nfs-utils
+        - ethtool
 
     - name: Start and enable services
       ansible.builtin.service:

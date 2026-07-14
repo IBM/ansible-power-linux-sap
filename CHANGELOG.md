@@ -1,5 +1,11 @@
 # Release Notes
 
+<a name="v3.3.0"></a>
+
+# [v3.3.0](https://github.com/IBM/ansible-power-linux-sap/releases/tag/v3.3.0) - 14 Jul 2026
+
+## Release Summary
+* feat: Add vNIC Support for network configuration
 
 <a name="v3.2.3"></a>
 
